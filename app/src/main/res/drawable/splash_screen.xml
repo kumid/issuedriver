@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:drawable="@drawable/app_background"/>
+
+
+    <item android:width="250dp"
+          android:height="250dp"
+          android:top="100dp"
+          android:gravity="top|center_horizontal">
+        <bitmap
+            android:gravity="top|clip_vertical|clip_horizontal"
+            android:src="@drawable/logo_new" />
+
+    </item>
+
+</layer-list>
