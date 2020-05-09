@@ -44,6 +44,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "917777029925-h8gi2bflkcap8ubiap78rajegc0rc786.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ru.test.issuedriver",
+            "certificate_hash": "947a9fbfe7ba2fd33da0d36f60f4464036d1b4ea"
+          }
+        },
+        {
           "client_id": "917777029925-9okonf7qgvrpgaog630fipq6l4j6jvld.apps.googleusercontent.com",
           "client_type": 3
         }

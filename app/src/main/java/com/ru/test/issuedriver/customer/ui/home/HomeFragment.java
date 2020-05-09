@@ -18,7 +18,7 @@ import com.ru.test.issuedriver.R;
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
-    private MapView mMapView;
+//    private MapView mMapView;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -33,9 +33,9 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        mMapView = (MapView) root.findViewById(R.id.mapView);
-        mMapView.onCreate(savedInstanceState);
-        mMapView.onResume(); // needed to get the map to display immediately
+//        mMapView = (MapView) root.findViewById(R.id.mapView);
+//        mMapView.onCreate(savedInstanceState);
+//        mMapView.onResume(); // needed to get the map to display immediately
 
 
         return root;

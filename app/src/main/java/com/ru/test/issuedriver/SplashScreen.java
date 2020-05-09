@@ -2,9 +2,11 @@ package com.ru.test.issuedriver;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 
+
+import com.ru.test.issuedriver.customer.MainActivity;
+import com.ru.test.issuedriver.helpers.googleAuthManager;
+import com.ru.test.issuedriver.helpers.utils;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,7 +19,17 @@ public class SplashScreen extends AppCompatActivity {
 
         instance = this;
 
-//        if (Owin.hasConnection(this)) {
+
+        if (utils.hasConnection(this)) {
+            Intent intent;
+            if(googleAuthManager.init(this))
+                intent = new Intent(instance, MainActivity.class);
+            else
+                intent = new Intent(instance, LoginActivity.class);
+
+            startActivity(intent);
+            finish();
+        }
 //            Owin.GetCurrent().GetWaysFromServer();
 //
 //            Owin.callback4Ways = new ResponseCompleate() {
@@ -43,9 +55,9 @@ public class SplashScreen extends AppCompatActivity {
 //                }
 //            };
 //        }
-//        else
-//        {
-//            setContentView(R.layout.splash_no_internet);
-//        }
+        else
+        {
+            setContentView(R.layout.splash_no_internet);
+        }
     }
 }
