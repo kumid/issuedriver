@@ -22,7 +22,7 @@ public class SplashScreen extends AppCompatActivity {
 
         if (utils.hasConnection(this)) {
             Intent intent;
-            if(googleAuthManager.init(this))
+            if(googleAuthManager.isSigned())
                 intent = new Intent(instance, MainActivity.class);
             else
                 intent = new Intent(instance, LoginActivity.class);

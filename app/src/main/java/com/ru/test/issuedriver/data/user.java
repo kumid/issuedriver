@@ -9,6 +9,7 @@ public class user {
     public String autovin;
     public String autonumber;
     public String tel;
+    public boolean accept;
 
     public user() {}
 
@@ -21,5 +22,6 @@ public class user {
         this.autovin = autovin;
         this.autonumber = autonumber;
         this.tel = tel;
+        this.accept = false;
     }
 }

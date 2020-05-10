@@ -9,7 +9,7 @@
           android:height="150dp"
           android:gravity="center">
         <bitmap
-            android:src="@drawable/logo_new" />
+            android:src="@drawable/logo_splash" />
 
     </item>
 

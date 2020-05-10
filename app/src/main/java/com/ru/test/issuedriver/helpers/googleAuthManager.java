@@ -38,7 +38,12 @@ public class googleAuthManager {
 
     private static GoogleSignInClient mGoogleSignInClient;
 
-    public static boolean init(AppCompatActivity _activity){
+    public static boolean isSigned() {
+        mAuth = FirebaseAuth.getInstance();
+        return mAuth.getCurrentUser() != null;
+    }
+
+        public static void init(AppCompatActivity _activity){
         activity = _activity;
 
         // [START initialize_auth]
@@ -55,9 +60,8 @@ public class googleAuthManager {
         // [END config_signin]
 
         mGoogleSignInClient = GoogleSignIn.getClient(activity, gso);
+     }
 
-        return mAuth.getCurrentUser() != null;
-    }
 
     // [START on_start_check_user]
     public static void onStart() {
@@ -119,7 +123,6 @@ public class googleAuthManager {
                             //Snackbar.make(activity.findViewById(R.id.main_layout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
                             updateUI(null);
                         }
-
 
                         if(callback4Auth != null)
                             callback4Auth.callback(task.isSuccessful());

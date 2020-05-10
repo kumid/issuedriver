@@ -10,7 +10,7 @@
         <ImageView
             android:padding="5dp"
             android:id="@+id/icon"
-            android:src="@drawable/logo"
+            android:src="@drawable/logo_small"
             android:layout_width="80dp"
             android:layout_height="80dp"/>
     </LinearLayout>

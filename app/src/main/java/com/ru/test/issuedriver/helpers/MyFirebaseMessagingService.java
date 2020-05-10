@@ -1,4 +1,4 @@
-package com.ru.test.issuedriver;
+package com.ru.test.issuedriver.helpers;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -17,6 +17,8 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.ru.test.issuedriver.R;
+import com.ru.test.issuedriver.SplashScreen;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -72,7 +74,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         RemoteViews remoteViews=new RemoteViews(getApplicationContext().getPackageName(), R.layout.notification);
         remoteViews.setTextViewText(R.id.title,title);
         remoteViews.setTextViewText(R.id.message,message);
-        remoteViews.setImageViewResource(R.id.icon,R.drawable.logo);
+        remoteViews.setImageViewResource(R.id.icon,R.drawable.logo_small);
         return remoteViews;
     }
 
@@ -83,7 +85,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         PendingIntent pendingIntent=PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_ONE_SHOT);
         Uri uri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder builder=new NotificationCompat.Builder(getApplicationContext(),channel_id)
-                .setSmallIcon(R.drawable.logo)
+                .setSmallIcon(R.drawable.logo_small)
                 .setSound(uri)
                 .setAutoCancel(true)
                 .setVibrate(new long[]{1000,1000,1000,1000,1000})
@@ -96,7 +98,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         else{
             builder=builder.setContentTitle(title)
                     .setContentText(message)
-                    .setSmallIcon(R.drawable.logo);
+                    .setSmallIcon(R.drawable.logo_small);
         }
 
         NotificationManager notificationManager= (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);

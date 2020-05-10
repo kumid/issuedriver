@@ -17,7 +17,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".registration.RegistrationActivity"></activity>
+        <activity android:name=".customer.OrderActivity"></activity>
+        <activity android:name=".customer.ui.registration.RegistrationActivity" />
         <activity android:name=".LoginActivity" />
         <activity
             android:name=".customer.MainActivity"
@@ -34,7 +35,7 @@
         </activity>
 
         <service
-            android:name=".MyFirebaseMessagingService"
+            android:name=".helpers.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

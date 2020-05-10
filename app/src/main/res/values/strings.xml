@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">My Application</string>
-    <string name="title_home">Home</string>
+    <string name="title_map">Карта</string>
     <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_notifications">Уведомления</string>
     <string name="login">Авторизоваться</string>
     <string name="registration_name">ФИО</string>
     <string name="registration_staff">Должность</string>
@@ -15,4 +15,11 @@
     <string name="registration_employee">Пользователь</string>
     <string name="registration">Зарегистрировать</string>
     <string name="registration_tel">Телефон</string>
+    <string name="title_user">Пользователь</string>
+    <string name="order_data">Дата</string>
+    <string name="order_from">Откуда</string>
+    <string name="order_to">Куда</string>
+    <string name="order_purpose">Цель поездки</string>
+    <string name="order_comment">Комментарий</string>
+    <string name="order">Забронировать</string>
 </resources>

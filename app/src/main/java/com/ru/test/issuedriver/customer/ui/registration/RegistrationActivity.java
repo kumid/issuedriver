@@ -1,4 +1,4 @@
-package com.ru.test.issuedriver.registration;
+package com.ru.test.issuedriver.customer.ui.registration;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,7 +23,6 @@ import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -111,31 +110,34 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     private void getUser() {
-        db.collection("users")
-                .whereEqualTo("email", mEmail.getText().toString())
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            List<user> questionsList = new ArrayList<>();
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                user curr = document.toObject(user.class);
-                                questionsList.add(curr);
-                                mFio.setText(curr.fio);
-                                mStaff.setText(curr.staff);
-                                mEmail.setText(curr.email);
-                                mCorp.setText(curr.corp);
-                                mAutomodel.setText(curr.automodel);
-                                mAutovin.setText(curr.autovin);
-                                mAutonumber.setText(curr.autonumber);
-                                mTel.setText(curr.tel);
-                                Log.d("TAG", document.getId() + " => " + document.getData());
+        if(registrationViewModel.currentUser.getValue() == null) {
+            db.collection("users")
+                    .whereEqualTo("email", mEmail.getText().toString())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                List<user> questionsList = new ArrayList<>();
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    user curr = document.toObject(user.class);
+                                    questionsList.add(curr);
+                                    mFio.setText(curr.fio);
+                                    mStaff.setText(curr.staff);
+                                    mEmail.setText(curr.email);
+                                    mCorp.setText(curr.corp);
+                                    mAutomodel.setText(curr.automodel);
+                                    mAutovin.setText(curr.autovin);
+                                    mAutonumber.setText(curr.autonumber);
+                                    mTel.setText(curr.tel);
+                                    Log.d("TAG", document.getId() + " => " + document.getData());
+                                    registrationViewModel.currentUser.postValue(curr);
+                                }
+                            } else {
+                                Log.w("TAG", "Error getting documents.", task.getException());
                             }
-                        } else {
-                            Log.w("TAG", "Error getting documents.", task.getException());
                         }
-                    }
-                });
+                    });
+        }
     }
 }

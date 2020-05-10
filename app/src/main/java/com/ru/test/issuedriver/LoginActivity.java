@@ -9,7 +9,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.ru.test.issuedriver.helpers.googleAuthManager;
-import com.ru.test.issuedriver.registration.RegistrationActivity;
+import com.ru.test.issuedriver.customer.ui.registration.RegistrationActivity;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -29,9 +29,13 @@ public class LoginActivity extends AppCompatActivity {
         googleAuthManager.callback4Auth = new googleAuthManager.AuthCompleate() {
             @Override
             public void callback(boolean isCompleate) {
-                Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
-                startActivity(intent);
-                finish();
+                if(isCompleate) {
+                    Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+
+                }
             }
         };
     }
