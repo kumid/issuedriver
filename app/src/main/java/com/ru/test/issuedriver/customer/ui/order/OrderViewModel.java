@@ -1,12 +1,17 @@
-package com.ru.test.issuedriver.customer.ui.registration;
+package com.ru.test.issuedriver.customer.ui.order;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.ru.test.issuedriver.customer.MainActivity;
+import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.data.user;
 
 import java.util.ArrayList;
@@ -17,23 +22,23 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class RegistrationViewModel extends ViewModel {
+public class OrderViewModel extends ViewModel {
     FirebaseFirestore db;
 
-    public MutableLiveData<user> currentUser;
+    public MutableLiveData<order> currentOrder;
 
-    public RegistrationViewModel() {
-        currentUser = new MutableLiveData<>();
+    public OrderViewModel() {
+        currentOrder = new MutableLiveData<>();
         db = FirebaseFirestore.getInstance();
 //        mText.setValue("This is home fragment");
     }
 
-    public LiveData<user> getCurrentUser() {
-        return currentUser;
+    public LiveData<order> getCurrentOrder() {
+        return currentOrder;
     }
 
     public void getUserFromServer(String email) {
-        if (currentUser.getValue() == null) {
+        if (currentOrder.getValue() == null) {
             db.collection("users")
                     .whereEqualTo("email", email)
                     .get()
@@ -41,11 +46,11 @@ public class RegistrationViewModel extends ViewModel {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
                             if (task.isSuccessful()) {
-                                List<user> questionsList = new ArrayList<>();
+                                List<order> questionsList = new ArrayList<>();
                                 for (QueryDocumentSnapshot document : task.getResult()) {
-                                    user curr = document.toObject(user.class);
+                                    order curr = document.toObject(order.class);
                                     questionsList.add(curr);
-                                    currentUser.postValue(curr);
+                                    currentOrder.postValue(curr);
                                     Log.d("TAG", document.getId() + " => " + document.getData());
                                 }
                             } else {
@@ -55,6 +60,26 @@ public class RegistrationViewModel extends ViewModel {
                     });
         }
     }
+
+    public void sendOrder(order curr){
+        db.collection("orders").document().set(curr)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        //registrationViewModel.currentUser.postValue(current);
+//                        startMainActivity(current);
+                        //Log.d("TAG", "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        MainActivity.showToast("Ошибка сохранения данных", Toast.LENGTH_SHORT);
+//                        Log.w("TAG", "Error writing document", e);
+                    }
+                });
+    }
+
 //    public static getUserComplete getUserCompleteCalback;
 //    public interface getUserComplete{
 //        void callback(boolean pass, user current);

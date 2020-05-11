@@ -153,16 +153,8 @@ public class RegistrationFragment extends Fragment {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     user curr = document.toObject(user.class);
                                     questionsList.add(curr);
-                                    mFio.setText(curr.fio);
-                                    mStaff.setText(curr.staff);
-                                    mEmail.setText(curr.email);
-                                    mCorp.setText(curr.corp);
-                                    mAutomodel.setText(curr.automodel);
-                                    mAutovin.setText(curr.autovin);
-                                    mAutonumber.setText(curr.autonumber);
-                                    mTel.setText(curr.tel);
+                                    fillUserDatas(curr);
                                     Log.d("TAG", document.getId() + " => " + document.getData());
-                                    registrationViewModel.currentUser.postValue(curr);
                                 }
                             } else {
                                 Log.w("TAG", "Error getting documents.", task.getException());
@@ -170,5 +162,20 @@ public class RegistrationFragment extends Fragment {
                         }
                     });
         }
+        else {
+            fillUserDatas(registrationViewModel.currentUser.getValue());
+        }
+    }
+
+    private void fillUserDatas(user curr) {
+        mFio.setText(curr.fio);
+        mStaff.setText(curr.staff);
+        mEmail.setText(curr.email);
+        mCorp.setText(curr.corp);
+        mAutomodel.setText(curr.automodel);
+        mAutovin.setText(curr.autovin);
+        mAutonumber.setText(curr.autonumber);
+        mTel.setText(curr.tel);
+        registrationViewModel.currentUser.postValue(curr);
     }
 }

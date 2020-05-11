@@ -4,10 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -18,7 +20,9 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.gson.Gson;
 import com.ru.test.issuedriver.R;
+import com.ru.test.issuedriver.customer.MainActivity;
 import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 
@@ -55,11 +59,11 @@ public class RegistrationActivity extends AppCompatActivity {
         mRegistrationButton.setOnClickListener(click);
 
         init();
+        getUser();
     }
 
     private void init() {
         mEmail.setText(googleAuthManager.getEmail());
-        getUser();
     }
 
     private View.OnClickListener click = new View.OnClickListener() {
@@ -70,7 +74,7 @@ public class RegistrationActivity extends AppCompatActivity {
     };
 
     private void addUser() {
-        user current =
+        final user current =
                 new user(mFio.getText().toString(),
                         mStaff.getText().toString(),
                         mEmail.getText().toString(),
@@ -81,7 +85,32 @@ public class RegistrationActivity extends AppCompatActivity {
                         mTel.getText().toString()
                 );
 
-        db.collection("users").document(mEmail.getText().toString()).set(current);
+        db.collection("users").document(mEmail.getText().toString()).set(current)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        //registrationViewModel.currentUser.postValue(current);
+                        startMainActivity(current);
+                        //Log.d("TAG", "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        MainActivity.showToast("Ошибка сохранения данных", Toast.LENGTH_SHORT);
+//                        Log.w("TAG", "Error writing document", e);
+                    }
+                });
+    }
+
+    private void startMainActivity(user current) {
+        Gson gson = new Gson();
+        String obj = gson.toJson(current);
+
+        Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
+                       intent.putExtra("object", obj);
+        startActivity(intent);
+        finish();
     }
 
     private void updateUser() {
@@ -133,6 +162,8 @@ public class RegistrationActivity extends AppCompatActivity {
                                     Log.d("TAG", document.getId() + " => " + document.getData());
                                     registrationViewModel.currentUser.postValue(curr);
                                 }
+
+
                             } else {
                                 Log.w("TAG", "Error getting documents.", task.getException());
                             }

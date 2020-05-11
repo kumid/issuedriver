@@ -15,17 +15,22 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.customer.MainActivity;
-import com.ru.test.issuedriver.customer.OrderActivity;
+import com.ru.test.issuedriver.customer.ui.order.OrderActivity;
+import com.ru.test.issuedriver.customer.ui.registration.RegistrationViewModel;
 
 public class MapFragment extends Fragment {
 
     private MapViewModel homeViewModel;
+    private RegistrationViewModel registrationViewModel;
 //    private MapView mMapView;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel =
                 ViewModelProviders.of(this).get(MapViewModel.class);
+        registrationViewModel =
+                ViewModelProviders.of(MainActivity.getInstance()).get(RegistrationViewModel.class);
+
         View root = inflater.inflate(R.layout.fragment_map, container, false);
         final TextView textView = root.findViewById(R.id.text_home);
         homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
@@ -48,4 +53,5 @@ public class MapFragment extends Fragment {
 
         return root;
     }
+
 }
