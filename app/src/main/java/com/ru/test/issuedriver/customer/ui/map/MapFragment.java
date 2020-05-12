@@ -43,6 +43,9 @@ public class MapFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), OrderActivity.class);
+                intent.putExtra("fio", registrationViewModel.currentUser.getValue().fio);
+                intent.putExtra("customer", registrationViewModel.currentUser.getValue().email);
+                intent.putExtra("performer", "performer@gmail.com");
                 startActivity(intent);
             }
         });

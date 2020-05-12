@@ -7,9 +7,11 @@ public class order {
     public String to;
     public String purpose;
     public String comment;
-    public boolean accept;
     public String customer;
     public String performer;
+
+    public boolean accept;
+    public boolean completed;
 
     public order() {}
 
@@ -23,5 +25,6 @@ public class order {
         this.customer = customer;
         this.performer = performer;
         this.accept = false;
+        this.completed = false;
     }
 }

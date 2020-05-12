@@ -69,6 +69,8 @@ public class OrderViewModel extends ViewModel {
                         //registrationViewModel.currentUser.postValue(current);
 //                        startMainActivity(current);
                         //Log.d("TAG", "DocumentSnapshot successfully written!");
+                        if(orderSendCompleteCalback!=null)
+                            orderSendCompleteCalback.callback(true);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -76,12 +78,14 @@ public class OrderViewModel extends ViewModel {
                     public void onFailure(@NonNull Exception e) {
                         MainActivity.showToast("Ошибка сохранения данных", Toast.LENGTH_SHORT);
 //                        Log.w("TAG", "Error writing document", e);
+                        if(orderSendCompleteCalback!=null)
+                            orderSendCompleteCalback.callback(false);
                     }
                 });
     }
 
-//    public static getUserComplete getUserCompleteCalback;
-//    public interface getUserComplete{
-//        void callback(boolean pass, user current);
-
+    public static orderSendComplete orderSendCompleteCalback;
+    public interface orderSendComplete{
+        void callback(boolean pass);
+    }
 }

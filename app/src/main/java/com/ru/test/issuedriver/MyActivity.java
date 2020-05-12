@@ -25,6 +25,7 @@ public class MyActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         instance = this;
+
     }
 
     public static void showToast(final String msg, final int toastLength) {
