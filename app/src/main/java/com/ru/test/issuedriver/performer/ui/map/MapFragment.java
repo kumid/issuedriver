@@ -1,4 +1,4 @@
-package com.ru.test.issuedriver.customer.ui.map;
+package com.ru.test.issuedriver.performer.ui.map;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,16 +7,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.ru.test.issuedriver.R;
+import com.ru.test.issuedriver.performer.PerformerActivity;
+import com.ru.test.issuedriver.performer.ui.order.OrderActivity;
+import com.ru.test.issuedriver.performer.ui.registration.RegistrationViewModel;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-
-import com.ru.test.issuedriver.R;
-import com.ru.test.issuedriver.customer.MainActivity;
-import com.ru.test.issuedriver.customer.ui.order.OrderActivity;
-import com.ru.test.issuedriver.customer.ui.registration.RegistrationViewModel;
 
 public class MapFragment extends Fragment {
 
@@ -29,7 +29,7 @@ public class MapFragment extends Fragment {
         homeViewModel =
                 ViewModelProviders.of(this).get(MapViewModel.class);
         registrationViewModel =
-                ViewModelProviders.of(MainActivity.getInstance()).get(RegistrationViewModel.class);
+                ViewModelProviders.of(PerformerActivity.getInstance()).get(RegistrationViewModel.class);
 
         View root = inflater.inflate(R.layout.fragment_map, container, false);
         final TextView textView = root.findViewById(R.id.text_home);
@@ -39,7 +39,6 @@ public class MapFragment extends Fragment {
                 textView.setText(s);
             }
         });
-
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
