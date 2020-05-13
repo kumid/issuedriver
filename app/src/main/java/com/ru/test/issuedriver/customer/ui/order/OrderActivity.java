@@ -1,7 +1,5 @@
 package com.ru.test.issuedriver.customer.ui.order;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.app.DatePickerDialog;
@@ -19,10 +17,9 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
-import com.ru.test.issuedriver.customer.MainActivity;
+import com.ru.test.issuedriver.customer.CustomerActivity;
 import com.ru.test.issuedriver.customer.ui.registration.RegistrationViewModel;
 import com.ru.test.issuedriver.data.order;
-import com.ru.test.issuedriver.data.user;
 
 import java.util.Calendar;
 
@@ -75,7 +72,7 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
 
     private void initVM() {
         orderViewModel =
-                ViewModelProviders.of(MainActivity.getInstance()).get(OrderViewModel.class);
+                ViewModelProviders.of(CustomerActivity.getInstance()).get(OrderViewModel.class);
     }
 
     // отображаем диалоговое окно для выбора даты

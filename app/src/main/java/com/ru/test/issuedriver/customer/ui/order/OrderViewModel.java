@@ -10,9 +10,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.ru.test.issuedriver.customer.MainActivity;
+import com.ru.test.issuedriver.customer.CustomerActivity;
 import com.ru.test.issuedriver.data.order;
-import com.ru.test.issuedriver.data.user;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +75,7 @@ public class OrderViewModel extends ViewModel {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        MainActivity.showToast("Ошибка сохранения данных", Toast.LENGTH_SHORT);
+                        CustomerActivity.showToast("Ошибка сохранения данных", Toast.LENGTH_SHORT);
 //                        Log.w("TAG", "Error writing document", e);
                         if(orderSendCompleteCalback!=null)
                             orderSendCompleteCalback.callback(false);

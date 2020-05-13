@@ -14,7 +14,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.ru.test.issuedriver.R;
-import com.ru.test.issuedriver.customer.MainActivity;
+import com.ru.test.issuedriver.customer.CustomerActivity;
 import com.ru.test.issuedriver.customer.ui.order.OrderActivity;
 import com.ru.test.issuedriver.customer.ui.registration.RegistrationViewModel;
 
@@ -29,7 +29,7 @@ public class MapFragment extends Fragment {
         homeViewModel =
                 ViewModelProviders.of(this).get(MapViewModel.class);
         registrationViewModel =
-                ViewModelProviders.of(MainActivity.getInstance()).get(RegistrationViewModel.class);
+                ViewModelProviders.of(CustomerActivity.getInstance()).get(RegistrationViewModel.class);
 
         View root = inflater.inflate(R.layout.fragment_map, container, false);
         final TextView textView = root.findViewById(R.id.text_home);

@@ -10,14 +10,13 @@ import com.ru.test.issuedriver.customer.ui.registration.RegistrationViewModel;
 import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-public class MainActivity extends MyActivity {
+public class CustomerActivity extends MyActivity {
 
     RegistrationViewModel registrationViewModel;
 
@@ -29,14 +28,14 @@ public class MainActivity extends MyActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_map, R.id.navigation_dashboard, R.id.navigation_notifications, R.id.navigation_registration)
+                R.id.navigation_notifications, R.id.navigation_dashboard, R.id.navigation_registration)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
         registrationViewModel =
-                ViewModelProviders.of(MainActivity.getInstance()).get(RegistrationViewModel.class);
+                ViewModelProviders.of(CustomerActivity.getInstance()).get(RegistrationViewModel.class);
 
         if(getIntent().hasExtra("object")){
             String obj = getIntent().getStringExtra("object");

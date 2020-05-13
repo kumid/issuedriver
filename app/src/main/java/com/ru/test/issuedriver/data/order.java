@@ -13,9 +13,12 @@ public class order {
     public boolean accept;
     public boolean completed;
 
+    public String id;
+
     public order() {}
 
     public order(String fio, String data, String from, String to, String purpose, String comment, String customer, String performer) {
+        this.id = "";
         this.fio = fio;
         this.data = data;
         this.from = from;

@@ -7,14 +7,25 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ru.test.issuedriver.R;
+import com.ru.test.issuedriver.data.order;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class NotificationsFragment extends Fragment {
+
+    RecyclerView notification_rv;
+    notificationsAdapter adapter;
 
     private NotificationsViewModel notificationsViewModel;
 
@@ -23,13 +34,23 @@ public class NotificationsFragment extends Fragment {
         notificationsViewModel =
                 ViewModelProviders.of(this).get(NotificationsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_notifications, container, false);
-        final TextView textView = root.findViewById(R.id.text_notifications);
-        notificationsViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+
+        initViews(root);
+
+        return root;
+    }
+
+    private void initViews(View root) {
+        notification_rv = root.findViewById(R.id.notification_rv);
+        adapter = new notificationsAdapter(notificationsViewModel, new ArrayList<order>());
+        notification_rv.setLayoutManager(new LinearLayoutManager(getContext()));
+        notification_rv.setAdapter(adapter);
+
+        notificationsViewModel.getNotifications().observe(getViewLifecycleOwner(), new Observer<List<order>>() {
             @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
+            public void onChanged(List<order> orders) {
+                adapter.setChangedData(orders);
             }
         });
-        return root;
     }
 }

@@ -18,7 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ru.test.issuedriver.R;
-import com.ru.test.issuedriver.customer.MainActivity;
+import com.ru.test.issuedriver.customer.CustomerActivity;
 import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 
@@ -40,7 +40,7 @@ public class RegistrationFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         registrationViewModel =
-                ViewModelProviders.of(MainActivity.getInstance()).get(RegistrationViewModel.class);
+                ViewModelProviders.of(CustomerActivity.getInstance()).get(RegistrationViewModel.class);
 
         View root = inflater.inflate(R.layout.activity_registration, container, false);
         //final TextView textView = root.findViewById(R.id.text_notifications);
@@ -100,14 +100,14 @@ public class RegistrationFragment extends Fragment {
                     @Override
                     public void onSuccess(Void aVoid) {
                         registrationViewModel.currentUser.postValue(current);
-                        MainActivity.showToast("Данные успешно синхронизированы", Toast.LENGTH_SHORT);
+                        CustomerActivity.showToast("Данные успешно синхронизированы", Toast.LENGTH_SHORT);
 //                        Log.d("TAG", "DocumentSnapshot successfully written!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        MainActivity.showToast("Ошибка сохранения данных", Toast.LENGTH_SHORT);
+                        CustomerActivity.showToast("Ошибка сохранения данных", Toast.LENGTH_SHORT);
 //                        Log.w("TAG", "Error writing document", e);
                     }
                 });

@@ -22,7 +22,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 import com.ru.test.issuedriver.R;
-import com.ru.test.issuedriver.customer.MainActivity;
+import com.ru.test.issuedriver.customer.CustomerActivity;
 import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 
@@ -97,7 +97,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        MainActivity.showToast("Ошибка сохранения данных", Toast.LENGTH_SHORT);
+                        CustomerActivity.showToast("Ошибка сохранения данных", Toast.LENGTH_SHORT);
 //                        Log.w("TAG", "Error writing document", e);
                     }
                 });
@@ -107,7 +107,7 @@ public class RegistrationActivity extends AppCompatActivity {
         Gson gson = new Gson();
         String obj = gson.toJson(current);
 
-        Intent intent = new Intent(RegistrationActivity.this, MainActivity.class);
+        Intent intent = new Intent(RegistrationActivity.this, CustomerActivity.class);
                        intent.putExtra("object", obj);
         startActivity(intent);
         finish();
