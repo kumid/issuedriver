@@ -42,17 +42,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MapFragment extends Fragment {
+public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickListener {
+
+    private class markerPair{
+        public MarkerOptions markerOption;
+        public Marker marker;
+        public user _user;
+
+        public markerPair(MarkerOptions markerBus, Marker busMarker, user _user) {
+            markerOption = markerBus;
+            marker = busMarker;
+            this._user = _user;
+        }
+    }
 
     private MapViewModel mapViewModel;
     private RegistrationViewModel registrationViewModel;
 
-    Map<user, Marker> markerMap = new HashMap<>();
+    Map<String, markerPair> markerMap = new HashMap<>();
 
     private MapView mMapView;
     private GoogleMap googleMap;
-    private MarkerOptions markerIm, markerBus ;
-    private Marker ImMarker, BusMarker ;
+//    private MarkerOptions markerIm, markerBus ;
+//    private Marker ImMarker, BusMarker ;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -62,18 +74,6 @@ public class MapFragment extends Fragment {
                 ViewModelProviders.of(CustomerActivity.getInstance()).get(RegistrationViewModel.class);
 
         View root = inflater.inflate(R.layout.fragment_map, container, false);
-
-
-//        textView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getActivity(), OrderActivity.class);
-//                intent.putExtra("fio", registrationViewModel.currentUser.getValue().fio);
-//                intent.putExtra("customer", registrationViewModel.currentUser.getValue().email);
-//                intent.putExtra("performer", "performer@gmail.com");
-//                startActivity(intent);
-//            }
-//        });
 
         mMapView = (MapView) root.findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
@@ -90,6 +90,7 @@ public class MapFragment extends Fragment {
             @Override
             public void onMapReady(GoogleMap mMap) {
                 googleMap = mMap;
+                googleMap.setOnMarkerClickListener(MapFragment.this);
                 //setMyPosition(false);
                 //setBusPosition("Автобус", Double.parseDouble("55.412433"), Double.parseDouble("42.525937"));
                 Log.e("MapsLog", "onMapReady");
@@ -106,13 +107,31 @@ public class MapFragment extends Fragment {
         mapViewModel.getUsers().observe(getViewLifecycleOwner(), new Observer<List<user>>() {
             @Override
             public void onChanged(List<user> users) {
+//                googleMap.clear();
                 for (user item : users) {
-                    if (markerBus == null) {
-                        setPerformerPosition(item);
+                    if(markerMap.containsKey(item.email)) {
+
+                        if(markerMap.get(item.email)._user.is_busy != item.is_busy){
+                            markerMap.get(item.email).marker.setVisible(false);
+
+                            int car = item.is_busy ? R.drawable.car_red : R.drawable.car_yellow;
+                            markerMap.get(item.email).markerOption.icon(BitmapDescriptorFactory
+                                    .fromResource(car)); //).defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+
+                            MarkerOptions markerBus = new MarkerOptions().position(
+                                    new LatLng(item.position.getLatitude(), item.position.getLongitude()))
+                                    .title(item.fio);
+
+                            Marker BusMarkerOK = googleMap.addMarker(markerMap.get(item.email).markerOption);
+                            markerMap.get(item.email).marker = BusMarkerOK;
+                            markerMap.get(item.email)._user = item;
+                        } else {
+                            animateMarker(item, markerMap.get(item.email).marker,
+                                    new LatLng(item.position.getLatitude(), item.position.getLongitude()),
+                                    false);
+                        }
                     } else {
-                        animateMarker(BusMarker,
-                                new LatLng(item.position.getLatitude(), item.position.getLongitude()),
-                                false);
+                        setPerformerPosition(item);
                     }
                 }
             }
@@ -123,22 +142,29 @@ public class MapFragment extends Fragment {
         if (googleMap == null) {
             return;
         }
-        markerBus = new MarkerOptions().position(
+        MarkerOptions markerBus = new MarkerOptions().position(
                 new LatLng(item.position.getLatitude(), item.position.getLongitude()))
                 .title(item.fio);
+
+        int car = item.is_busy ? R.drawable.car_red : R.drawable.car_yellow;
         markerBus.icon(BitmapDescriptorFactory
-                .fromResource(R.drawable.car_yellow)); //).defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+                .fromResource(car)); //).defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
 
         // adding marker
-        BusMarker = googleMap.addMarker(markerBus);
+        Marker BusMarker = googleMap.addMarker(markerBus);
+
+        markerMap.put(item.email, new markerPair(markerBus, BusMarker, item));
+
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(new LatLng(item.position.getLatitude(), item.position.getLongitude())).zoom(15).build();
         googleMap.animateCamera(CameraUpdateFactory
                 .newCameraPosition(cameraPosition));
         Log.e("MapsLog", "googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));");
+
+
     }
 
-    public void animateMarker(final Marker marker, final LatLng toPosition, final boolean hideMarker) {
+    public void animateMarker(user item, final Marker marker, final LatLng toPosition, final boolean hideMarker) {
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
         Projection proj = googleMap.getProjection();
@@ -160,10 +186,10 @@ public class MapFragment extends Fragment {
                         * startLatLng.latitude;
                 marker.setPosition(new LatLng(lat, lng));
 
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(toPosition).build();
-                googleMap.animateCamera(CameraUpdateFactory
-                        .newCameraPosition(cameraPosition));
+//                CameraPosition cameraPosition = new CameraPosition.Builder()
+//                        .target(toPosition).build();
+//                googleMap.animateCamera(CameraUpdateFactory
+//                        .newCameraPosition(cameraPosition));
 
                 if (t < 1.0) {
                     // Post again 16ms later.
@@ -177,5 +203,20 @@ public class MapFragment extends Fragment {
                 }
             }
         });
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        for (String item: markerMap.keySet()) {
+            if(markerMap.get(item).marker.equals(marker)){
+                Intent intent = new Intent(getActivity(), OrderActivity.class);
+                intent.putExtra("fio", registrationViewModel.currentUser.getValue().fio);
+                intent.putExtra("customer", registrationViewModel.currentUser.getValue().email);
+                intent.putExtra("performer", item);
+                startActivity(intent);
+                return false;
+            }
+        }
+        return false;
     }
 }

@@ -48,6 +48,7 @@ public class OrderViewModel extends ViewModel {
                                 List<order> questionsList = new ArrayList<>();
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     order curr = document.toObject(order.class);
+                                    curr.id = document.getId();
                                     questionsList.add(curr);
                                     currentOrder.postValue(curr);
                                     Log.d("TAG", document.getId() + " => " + document.getData());

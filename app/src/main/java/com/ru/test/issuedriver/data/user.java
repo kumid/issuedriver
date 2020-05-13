@@ -13,6 +13,7 @@ public class user {
     public String tel;
     public boolean accept;
     public GeoPoint position;
+    public boolean is_busy;
 
     public user() {}
 
@@ -26,5 +27,6 @@ public class user {
         this.autonumber = autonumber;
         this.tel = tel;
         this.accept = false;
+        is_busy = false;
     }
 }
