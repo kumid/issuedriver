@@ -1,5 +1,7 @@
 package com.ru.test.issuedriver.data;
 
+import com.google.firebase.firestore.GeoPoint;
+
 public class user {
     public String fio;
     public String staff;
@@ -10,6 +12,7 @@ public class user {
     public String autonumber;
     public String tel;
     public boolean accept;
+    public GeoPoint position;
 
     public user() {}
 

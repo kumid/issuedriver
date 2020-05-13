@@ -4,9 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 
 
+import com.ru.test.issuedriver.customer.CustomerActivity;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 import com.ru.test.issuedriver.helpers.utils;
-import com.ru.test.issuedriver.performer.PerformerActivity;
 
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +24,7 @@ public class SplashScreen extends AppCompatActivity {
         if (utils.hasConnection(this)) {
             Intent intent;
             if(googleAuthManager.isSigned())
-                intent = new Intent(instance, PerformerActivity.class);
+                intent = new Intent(instance, CustomerActivity.class);
             else
                 intent = new Intent(instance, LoginActivity.class);
 

@@ -37,14 +37,6 @@
             android:label="@string/app_name" />
         <activity android:name=".customer.ui.order.OrderActivity"></activity>
 
-
-        <activity
-            android:name=".performer.PerformerActivity"
-            android:label="@string/app_name" />
-        <activity android:name=".performer.ui.order.OrderActivity"></activity>
-
-
-
         <service
             android:name=".helpers.MyFirebaseMessagingService"
             android:exported="false">
