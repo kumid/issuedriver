@@ -82,7 +82,8 @@ public class RegistrationActivity extends AppCompatActivity {
                         mAutomodel.getText().toString(),
                         mAutovin.getText().toString(),
                         mAutonumber.getText().toString(),
-                        mTel.getText().toString()
+                        mTel.getText().toString(),
+                        false
                 );
 
         db.collection("users").document(mEmail.getText().toString()).set(current)

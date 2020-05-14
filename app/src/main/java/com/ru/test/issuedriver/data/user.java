@@ -14,10 +14,12 @@ public class user {
     public boolean accept;
     public GeoPoint position;
     public boolean is_busy;
+    public boolean is_performer;
+
 
     public user() {}
 
-    public user(String fio, String staff, String email, String corp, String automodel, String autovin, String autonumber, String tel) {
+    public user(String fio, String staff, String email, String corp, String automodel, String autovin, String autonumber, String tel, boolean is_performer) {
         this.fio = fio;
         this.staff = staff;
         this.email = email;
@@ -28,5 +30,6 @@ public class user {
         this.tel = tel;
         this.accept = false;
         is_busy = false;
+        this.is_performer = is_performer;
     }
 }

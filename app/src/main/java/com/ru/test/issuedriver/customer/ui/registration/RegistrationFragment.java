@@ -92,7 +92,8 @@ public class RegistrationFragment extends Fragment {
                         mAutomodel.getText().toString(),
                         mAutovin.getText().toString(),
                         mAutonumber.getText().toString(),
-                        mTel.getText().toString()
+                        mTel.getText().toString(),
+                        false
                 );
 
         db.collection("users").document(mEmail.getText().toString()).set(current)
