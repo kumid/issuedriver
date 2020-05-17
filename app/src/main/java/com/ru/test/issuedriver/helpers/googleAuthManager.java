@@ -1,5 +1,6 @@
 package com.ru.test.issuedriver.helpers;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.util.Log;
 
@@ -116,6 +117,7 @@ public class googleAuthManager {
                             //MainActivity.getInstance().setRefs();
                             //fbStorageUploads.setUserID(googleAuthManager.getUid());
                             //MainActivity.getInstance().loadMarkersFromFB();
+                            mysettings.SetEmail(user.getEmail());
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
@@ -141,15 +143,16 @@ public class googleAuthManager {
     }
     // [END signin]
 
-    public static void signOut() {
-        // Firebase sign out
-        mAuth.signOut();
-
+    public static void signOut(final Activity activity2finish) {
         // Google sign out
         mGoogleSignInClient.signOut().addOnCompleteListener(activity,
                 new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
+                        // Firebase sign out
+                        mAuth.signOut();
+                        if(activity2finish != null)
+                            activity2finish.finish();
                         updateUI(null);
                     }
                 });

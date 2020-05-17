@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">Customer</string>
-    <string name="title_map">Карта</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Уведомления</string>
+    <string name="app_name">Инженер</string>
+    <string name="title_map">Найти авто</string>
+    <string name="title_dashboard">История</string>
+    <string name="title_notifications">Заявки</string>
     <string name="login">Авторизоваться</string>
     <string name="registration_name">ФИО</string>
     <string name="registration_staff">Должность</string>
@@ -15,7 +15,7 @@
     <string name="registration_employee">Пользователь</string>
     <string name="registration">Зарегистрировать</string>
     <string name="registration_tel">Телефон</string>
-    <string name="title_user">Пользователь</string>
+    <string name="title_user">Кабинет</string>
     <string name="order_data">Дата</string>
     <string name="order_from">Откуда</string>
     <string name="order_to">Куда</string>
@@ -23,4 +23,9 @@
     <string name="order_comment">Комментарий</string>
     <string name="order">Забронировать</string>
     <string name="accept_order">Принять</string>
+    <string name="action_exit">Выход</string>
+    <string name="registration_car">Автомобиль</string>
+    <string name="registration_car_number">Госномер</string>
+    <string name="title_activity_customer">CustomerActivity</string>
+    <string name="title_home">Home</string>
 </resources>

@@ -12,6 +12,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ru.test.issuedriver.customer.CustomerActivity;
 import com.ru.test.issuedriver.data.order;
+import com.ru.test.issuedriver.helpers.fsm.sender;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,6 +70,7 @@ public class OrderViewModel extends ViewModel {
                         //registrationViewModel.currentUser.postValue(current);
 //                        startMainActivity(current);
                         //Log.d("TAG", "DocumentSnapshot successfully written!");
+                        sender.send(curr.performer_email);
                         if(orderSendCompleteCalback!=null)
                             orderSendCompleteCalback.callback(true);
                     }

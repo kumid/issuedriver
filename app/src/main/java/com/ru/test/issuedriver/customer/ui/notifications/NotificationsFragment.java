@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.ru.test.issuedriver.R;
+import com.ru.test.issuedriver.customer.CustomerActivity;
+import com.ru.test.issuedriver.customer.ui.registration.RegistrationViewModel;
 import com.ru.test.issuedriver.data.order;
 
 import java.util.ArrayList;
@@ -27,8 +29,12 @@ public class NotificationsFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+
+        RegistrationViewModel registrationViewModel =
+                ViewModelProviders.of(getActivity()).get(RegistrationViewModel.class);
         notificationsViewModel =
-                ViewModelProviders.of(this).get(NotificationsViewModel.class);
+                ViewModelProviders.of(getActivity()).get(NotificationsViewModel.class);
+
         View root = inflater.inflate(R.layout.fragment_notifications, container, false);
 
         initViews(root);

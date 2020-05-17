@@ -4,22 +4,25 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ru.test.issuedriver.data.order;
+import com.ru.test.issuedriver.data.user;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
 public class NotificationsViewModel extends ViewModel {
@@ -28,10 +31,16 @@ public class NotificationsViewModel extends ViewModel {
     public NotificationsViewModel() {
         db = FirebaseFirestore.getInstance();
         listNotifications = new MutableLiveData<>();
-        initNotificationLoad();
+
     }
 
-    private void initNotificationLoad() {
+    public void initNotificationLoad(LifecycleOwner viewLifecycleOwner, MutableLiveData<user> userMutableLiveData) {
+        userMutableLiveData.observe(viewLifecycleOwner, new Observer<user>() {
+            @Override
+            public void onChanged(user user) {
+                observe2notification(user);
+            }
+        });
 //        db.collection("orders")
 //                //.whereEqualTo("email", email)
 //                .get()
@@ -52,7 +61,36 @@ public class NotificationsViewModel extends ViewModel {
 //                    }
 //                });
 
-        final CollectionReference collectionRef = db.collection("orders"); //.document("SF");
+//        final CollectionReference collectionRef = db.collection("orders"); //.document("SF");
+//        collectionRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
+//            @Override
+//            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+//                if (e != null) {
+//                    Log.w("TAG", "Listen failed.", e);
+//                    return;
+//                }
+//                List<order> questionsList = new ArrayList<>();
+//                for (DocumentSnapshot snapshot :
+//                        queryDocumentSnapshots.getDocuments()) {
+//                    if (snapshot != null && snapshot.exists()) {
+//                        order curr = snapshot.toObject(order.class);
+//                        curr.id = snapshot.getId();
+//                        questionsList.add(curr);
+//                        Log.d("TAG", "Current data: " + snapshot.getData());
+//                    } else {
+//                        Log.d("TAG", "Current data: null");
+//                    }
+//                }
+//                listNotifications.postValue(questionsList);
+//            }
+//        });
+
+    }
+
+
+    private void observe2notification(user user) {
+        final Query collectionRef = db.collection("orders")
+                .whereEqualTo("customer_email", user.email); //.document("SF");
         collectionRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
@@ -75,7 +113,6 @@ public class NotificationsViewModel extends ViewModel {
                 listNotifications.postValue(questionsList);
             }
         });
-
     }
 
     private MutableLiveData<List<order>> listNotifications;
@@ -84,19 +121,38 @@ public class NotificationsViewModel extends ViewModel {
         return listNotifications;
     }
 
-    public void setOrderAccept(order item) {
+    public void setOrderAccept(order item, boolean status) {
         DocumentReference orderRef = db.collection("orders").document(item.id);
         orderRef.update("accept", true)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d("TAG", "DocumentSnapshot successfully updated!");
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w("TAG", "Error updating document", e);
+                    }
+                });
+    }
+
+    public void setOrderDelete(order item) {
+        DocumentReference orderRef = db.collection("orders").document(item.id);
+        orderRef.delete()
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("TAG", "DocumentSnapshot successfully deleted!");
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("TAG", "Error delating document", e);
                     }
                 });
     }

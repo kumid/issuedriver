@@ -5,16 +5,20 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.ru.test.issuedriver.R;
@@ -23,8 +27,10 @@ import com.ru.test.issuedriver.SplashScreen;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
-public class MyFirebaseMessagingService extends FirebaseMessagingService {
+import static com.ru.test.issuedriver.helpers.mysettings.APP_PREFERENCES;
 
+public class MyFirebaseMessagingService extends FirebaseMessagingService {
+    private static int counter = 0;
     @Override
     public void onNewToken(String s) {
         FirebaseInstanceId.getInstance().getInstanceId()
@@ -35,10 +41,28 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                            // Log.w(TAG, "getInstanceId failed", task.getException());
                             return;
                         }
-
+                        Log.e("Token","0");
                         // Get new Instance ID token
                         String token = task.getResult().getToken();
                         Log.e("My Token",token);
+
+                        FirebaseMessaging.getInstance().subscribeToTopic("toall")
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        //String msg = getString(R.string.msg_subscribed);
+                                        //if (!task.isSuccessful()) {
+                                        //    msg = getString(R.string.msg_subscribe_failed);
+                                        //}
+                                        Log.e("My Token", "subscribe to topic all");
+                                        //Toast.makeText(MainActivity.this, msg, Toast.LENGTH_SHORT).show();
+                                    }
+                                }) .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Log.e("My Token", e.getLocalizedMessage());
+                            }
+                        });
                     }
                 });
     }
@@ -79,6 +103,19 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     public void showNotification(String title,String message){
+        mysettings.Init(getApplicationContext());
+        if(title.equals("service")) {
+            if(message.equals(mysettings.GetEmail())) {
+                title = "Заявка подтверждена";
+                message = "Заявка принята водителем";
+                Log.e("Token","Внимание");
+            } else {
+                Log.e("Token","4");
+                return;
+            }
+        }
+        Log.e("Token","5");
+
         Intent intent=new Intent(this, SplashScreen.class);
         String channel_id="megapolis_channel";
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -108,7 +145,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             notificationManager.createNotificationChannel(notificationChannel);
         }
 
-        notificationManager.notify(0,builder.build());
+        notificationManager.notify(counter++, builder.build());
     }
 
 }

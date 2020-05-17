@@ -1,11 +1,13 @@
 package com.ru.test.issuedriver.customer.ui.order;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.text.format.DateUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -28,7 +30,7 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
     OrderViewModel orderViewModel;
     RegistrationViewModel registrationViewModel;
 
-    TextInputEditText mOrder_name, mOrder_from, mOrder_to, mOrder_purpose, mOrder_comment;
+    TextInputEditText mOrder_name, mOrder_from, mOrder_to, mOrder_purpose, mOrder_comment, mOrder_car, mOrder_carnumber;
     TextView currentDateTime;
     Button mOrder_btn;
     ProgressBar mProgress_circular;
@@ -39,6 +41,11 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
 
+        ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle("Новая заявка");
+        }
         initExtra();
         initViews();
         initVM();
@@ -46,11 +53,16 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         setInitialDateTime();
     }
 
-    String fio, customer, performer;
+    String customer_fio, customer_phone, customer_email, performer_fio,  performer_phone, performer_email, performer_car, performer_car_numbr;
     private void initExtra() {
-        fio = getIntent().getStringExtra("fio");
-        customer = getIntent().getStringExtra("customer");
-        performer = getIntent().getStringExtra("performer");
+        customer_fio = getIntent().getStringExtra("customer_fio");
+        customer_phone = getIntent().getStringExtra("customer_phone");
+        customer_email = getIntent().getStringExtra("customer_email");
+        performer_fio = getIntent().getStringExtra("performer_fio");
+        performer_phone = getIntent().getStringExtra("performer_phone");
+        performer_email = getIntent().getStringExtra("performer_email");
+        performer_car = getIntent().getStringExtra("performer_car");
+        performer_car_numbr = getIntent().getStringExtra("performer_car_number");
     }
 
 
@@ -63,8 +75,12 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         mOrder_comment = findViewById(R.id.order_comment);
         mOrder_btn = findViewById(R.id.order_btn);
         mProgress_circular = findViewById(R.id.progress_circular);
+        mOrder_car = findViewById(R.id.order_car);
+        mOrder_carnumber = findViewById(R.id.order_carnumber);
 
-        mOrder_name.setText(fio);
+        mOrder_name.setText(performer_fio);
+        mOrder_car.setText(performer_car);
+        mOrder_carnumber.setText(performer_car_numbr);
 
         mOrder_btn.setOnClickListener(this);
         currentDateTime.setOnClickListener(this);
@@ -127,18 +143,24 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         }
 
         order curr = new order(
-                mOrder_name.getText().toString(),
                 currentDateTime.getText().toString(),
                 mOrder_from.getText().toString(),
                 mOrder_to.getText().toString(),
                 mOrder_purpose.getText().toString(),
                 mOrder_comment.getText().toString(),
-                customer,
-                performer);
+                customer_fio,
+                customer_phone,
+                customer_email,
+                performer_fio,
+                performer_phone,
+                performer_email,
+                mOrder_car.getText().toString(),
+                mOrder_carnumber.getText().toString()
+                );
 
         if(curr.from.length() == 0
             || curr.to.length() == 0
-            || curr.performer.length() == 0){
+            || curr.purpose.length() == 0){
             showToast("Заявка заполнена не полностью", Toast.LENGTH_LONG);
             return;
         }
@@ -155,5 +177,17 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
                 }
             }
         };
+    }
+
+    /// ActionBar Back button clicked
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                //Toast.makeText(getApplicationContext(),"Back button clicked", Toast.LENGTH_SHORT).show();
+                break;
+        }
+        return true;
     }
 }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.ru.test.issuedriver.customer.CustomerActivity;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
+import com.ru.test.issuedriver.helpers.mysettings;
 import com.ru.test.issuedriver.helpers.utils;
 
 
@@ -20,6 +21,7 @@ public class SplashScreen extends AppCompatActivity {
 
         instance = this;
 
+        mysettings.Init(getApplicationContext());
 
         if (utils.hasConnection(this)) {
             Intent intent;

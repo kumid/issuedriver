@@ -26,10 +26,20 @@ android {
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "FCM_BASE_URL", "\"https://fcm.googleapis.com/\"")
+            buildConfigField("String", "FCM_SERVER_KEY", "\"AAAA2uPvDwo:APA91bFmR4slk5t9fn0-f-R6RtQ0CY0tT379S0FjtiAs_0zKpGqYzwce2p0DAxOi4ktf6gLlQdlHDqDkRoGEkpFbw_YQUAgMlfxh5xnI0wSNwICyDVBrTyZeWv7l5Dt-GONjftOVvke5\"")
+        }
         release {
+            buildConfigField("String", "FCM_BASE_URL", "\"https://fcm.googleapis.com/\"")
+            buildConfigField("String", "FCM_SERVER_KEY", "\"AAAA2uPvDwo:APA91bFmR4slk5t9fn0-f-R6RtQ0CY0tT379S0FjtiAs_0zKpGqYzwce2p0DAxOi4ktf6gLlQdlHDqDkRoGEkpFbw_YQUAgMlfxh5xnI0wSNwICyDVBrTyZeWv7l5Dt-GONjftOVvke5\"")
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    compileOptions {
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
     }
 
 }
@@ -63,4 +73,9 @@ dependencies {
 
     // Add the Firebase Crashlytics SDK.
     implementation 'com.google.firebase:firebase-crashlytics:17.0.0'
+
+    //  Add these line in your project
+    implementation 'com.squareup.retrofit2:retrofit:2.7.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.5.0'
+    implementation "com.squareup.okhttp3:logging-interceptor:4.3.1"
 }

@@ -2,6 +2,7 @@ package com.ru.test.issuedriver.helpers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,7 +11,7 @@ public class mysettings {
     // именя файла настроек
     public static final String APP_PREFERENCES = "mysettings";
 
-    public static final String APP_PREFERENCES_PHONE = "phone";
+    public static final String APP_PREFERENCES_EMAIL = "email";
     public static final String APP_PREFERENCES_PASS = "pass";
 
     public static final String APP_PREFERENCES_POSITION = "position";
@@ -26,10 +27,16 @@ public class mysettings {
         return instance;
     }
 
-    public static String GetPhone()
+    public static SharedPreferences Init(Context ctx) {
+        if(instance == null)
+            instance = PreferenceManager.getDefaultSharedPreferences(ctx);
+        return instance;
+    }
+
+    public static String GetEmail()
     {
-        if(instance.contains(APP_PREFERENCES_PHONE))
-           return instance.getString(APP_PREFERENCES_PHONE, "");
+        if(instance.contains(APP_PREFERENCES_EMAIL))
+           return instance.getString(APP_PREFERENCES_EMAIL, "");
         return "";
     }
 
@@ -55,9 +62,9 @@ public class mysettings {
         return "";
     }
 
-    public static void SetPhone(String phone) {
+    public static void SetEmail(String email) {
         SharedPreferences.Editor editor = instance.edit();
-        editor.putString(mysettings.APP_PREFERENCES_PHONE, phone);
+        editor.putString(mysettings.APP_PREFERENCES_EMAIL, email);
         editor.apply();
     }
 
@@ -77,4 +84,6 @@ public class mysettings {
         editor.putString(mysettings.APP_PREFERENCES_ORDERS, orders);
         editor.apply();
     }
+
+
 }

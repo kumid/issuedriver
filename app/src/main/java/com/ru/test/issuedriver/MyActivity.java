@@ -1,21 +1,29 @@
 package com.ru.test.issuedriver;
 
-import android.content.Context;
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.PersistableBundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ru.test.issuedriver.helpers.mysettings;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
 //android:paddingTop="?attr/actionBarSize"
 public class MyActivity extends AppCompatActivity {
     private static MyActivity instance;
+    private static final int REQUEST_CODE_PERMISSION_CALL_PHONE = 1199;
 
     public static MyActivity getInstance() {
         return instance;
@@ -25,6 +33,34 @@ public class MyActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         instance = this;
+        mysettings.Init(getApplicationContext());
+
+        checkSelfPermissionCall();
+    }
+
+    public boolean checkSelfPermissionCall() {
+
+        int permissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE);
+
+        if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CALL_PHONE},
+                    REQUEST_CODE_PERMISSION_CALL_PHONE);
+            return false;
+        }
+    }
+
+    private String telNumber;
+
+    public void callPhone(String tel) {
+        telNumber = tel;
+
+        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + telNumber));
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        startActivity(intent);
     }
 
     public static void showToast(final String msg, final int toastLength) {
