@@ -7,6 +7,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
+import com.ru.test.issuedriver.customer.ui.dashboard.HistoryViewModel;
 import com.ru.test.issuedriver.customer.ui.notifications.NotificationsViewModel;
 import com.ru.test.issuedriver.customer.ui.registration.RegistrationViewModel;
 import com.ru.test.issuedriver.data.user;
@@ -15,6 +16,7 @@ import com.ru.test.issuedriver.helpers.googleAuthManager;
 import java.util.EventListener;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
@@ -25,10 +27,16 @@ import androidx.navigation.ui.NavigationUI;
 public class CustomerActivity extends MyActivity {
 
     RegistrationViewModel registrationViewModel;
+    private static CustomerActivity instance;
+    public static CustomerActivity getInstance() {
+        return instance;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance = this;
+
         setContentView(R.layout.activity_customer);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -46,13 +54,7 @@ public class CustomerActivity extends MyActivity {
         else
             Log.e("Error", "actionBar == null");
 
-        registrationViewModel =
-                ViewModelProviders.of(CustomerActivity.this).get(RegistrationViewModel.class);
-
-        NotificationsViewModel notificationsViewModel =
-                ViewModelProviders.of(CustomerActivity.this).get(NotificationsViewModel.class);
-
-        notificationsViewModel.initNotificationLoad(CustomerActivity.this, registrationViewModel.currentUser);
+        initViewModels();
 
         if(getIntent().hasExtra("object")){
             String obj = getIntent().getStringExtra("object");
@@ -63,6 +65,19 @@ public class CustomerActivity extends MyActivity {
         } else {
             registrationViewModel.getUserFromServer(googleAuthManager.getEmail());
         }
+    }
+
+    private void initViewModels() {
+        registrationViewModel =
+                ViewModelProviders.of(CustomerActivity.getInstance()).get(RegistrationViewModel.class);
+
+        NotificationsViewModel notificationsViewModel =
+                ViewModelProviders.of(CustomerActivity.getInstance()).get(NotificationsViewModel.class);
+        notificationsViewModel.initNotificationLoad(CustomerActivity.getInstance(), registrationViewModel.currentUser);
+
+        HistoryViewModel historyViewModel =
+                ViewModelProviders.of(CustomerActivity.getInstance()).get(HistoryViewModel.class);
+        historyViewModel.initNotificationLoad(CustomerActivity.getInstance(), registrationViewModel.currentUser);
     }
 }
 

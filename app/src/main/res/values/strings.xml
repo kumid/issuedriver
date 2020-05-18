@@ -16,7 +16,7 @@
     <string name="registration">Зарегистрировать</string>
     <string name="registration_tel">Телефон</string>
     <string name="title_user">Кабинет</string>
-    <string name="order_data">Дата</string>
+    <string name="order_data">Выберите дату и время поездки</string>
     <string name="order_from">Откуда</string>
     <string name="order_to">Куда</string>
     <string name="order_purpose">Цель поездки</string>

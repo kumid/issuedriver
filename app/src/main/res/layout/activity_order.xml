@@ -71,7 +71,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:helperText="@string/order_data">
-
                 <TextView
                     android:id="@+id/order_data"
                     android:layout_width="match_parent"

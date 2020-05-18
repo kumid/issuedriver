@@ -100,6 +100,30 @@
                     android:text="@string/order_comment"
                     android:textColor="@color/colorPrimary"
                     android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button" />
+
+
+                <LinearLayout
+                    android:id="@+id/notification_item_extra_btns1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="5dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <Button
+                        android:id="@+id/notification_item_btn_cancel"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                        android:background="@drawable/rounded_red"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:text="Отменить"/>
+
+                </LinearLayout>
+
             </LinearLayout>
 
         </LinearLayout>
@@ -113,26 +137,35 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <Button
-                android:id="@+id/notification_item_btn_status0"
+                android:id="@+id/notification_item_btn_status_wait"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-                android:background="@drawable/rounded_yellow"
+                android:background="@drawable/rounded_red"
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:text="В ожидании"/>
             <Button
-                android:id="@+id/notification_item_btn_status1"
+                android:id="@+id/notification_item_btn_status_in_process"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-                android:background="@drawable/rounded_blue"
+                android:background="@drawable/rounded_green"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:text="Подтверждена"/>
+            <Button
+                android:id="@+id/notification_item_btn_status_completed"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                android:background="@drawable/rounded_grey"
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:text="В работе"/>
-
+                android:text="Закрыта"/>
             <ImageView
                 android:id="@+id/notification_item_btn_accept"
                 android:layout_width="match_parent"

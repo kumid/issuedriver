@@ -22,17 +22,17 @@ import androidx.core.content.ContextCompat;
 
 //android:paddingTop="?attr/actionBarSize"
 public class MyActivity extends AppCompatActivity {
-    private static MyActivity instance;
+    private static MyActivity myinstance;
     private static final int REQUEST_CODE_PERMISSION_CALL_PHONE = 1199;
 
-    public static MyActivity getInstance() {
-        return instance;
+    public static MyActivity getMyInstance() {
+        return myinstance;
     }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        instance = this;
+        myinstance = this;
         mysettings.Init(getApplicationContext());
 
         checkSelfPermissionCall();
@@ -68,8 +68,8 @@ public class MyActivity extends AppCompatActivity {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                Toast toast = new Toast(getInstance());
-                View view = LayoutInflater.from(getInstance()).inflate(R.layout.toast_layout, null);
+                Toast toast = new Toast(getMyInstance());
+                View view = LayoutInflater.from(getMyInstance()).inflate(R.layout.toast_layout, null);
                 TextView toastTextView = view.findViewById(R.id.textViewToast);
                 toastTextView.setText(msg);
                 toast.setView(view);

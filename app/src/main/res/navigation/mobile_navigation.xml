@@ -13,9 +13,9 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.ru.test.issuedriver.customer.ui.dashboard.DashboardFragment"
+        android:name="com.ru.test.issuedriver.customer.ui.dashboard.HistoryFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_history" />
 
     <fragment
         android:id="@+id/navigation_notifications"

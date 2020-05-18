@@ -17,6 +17,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.customer.CustomerActivity;
 import com.ru.test.issuedriver.data.user;
@@ -40,7 +41,7 @@ public class RegistrationFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         registrationViewModel =
-                ViewModelProviders.of(getActivity()).get(RegistrationViewModel.class);
+                ViewModelProviders.of(CustomerActivity.getInstance()).get(RegistrationViewModel.class);
 
         View root = inflater.inflate(R.layout.activity_registration, container, false);
         //final TextView textView = root.findViewById(R.id.text_notifications);

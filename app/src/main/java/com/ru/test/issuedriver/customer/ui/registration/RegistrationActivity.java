@@ -21,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
+import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.customer.CustomerActivity;
 import com.ru.test.issuedriver.data.user;
@@ -30,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class RegistrationActivity extends AppCompatActivity {
+public class RegistrationActivity extends MyActivity {
 
     TextInputEditText mFio, mStaff, mEmail, mCorp, mAutomodel, mAutovin, mAutonumber, mTel;
     Button mRegistrationButton;
@@ -43,7 +44,7 @@ public class RegistrationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
         registrationViewModel =
-                ViewModelProviders.of(this).get(RegistrationViewModel.class);
+                ViewModelProviders.of(CustomerActivity.getInstance()).get(RegistrationViewModel.class);
 
         mFio = findViewById(R.id.registration_name);
         mStaff = findViewById(R.id.registration_staff);

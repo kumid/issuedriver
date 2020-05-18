@@ -29,7 +29,7 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
 
     OrderViewModel orderViewModel;
     RegistrationViewModel registrationViewModel;
-
+    ActionBar actionBar;
     TextInputEditText mOrder_name, mOrder_from, mOrder_to, mOrder_purpose, mOrder_comment, mOrder_car, mOrder_carnumber;
     TextView currentDateTime;
     Button mOrder_btn;
@@ -41,7 +41,7 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
 
-        ActionBar actionBar = getSupportActionBar();
+        actionBar = getSupportActionBar();
         if(actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle("Новая заявка");
@@ -185,6 +185,7 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                actionBar.setDisplayHomeAsUpEnabled(false);
                 //Toast.makeText(getApplicationContext(),"Back button clicked", Toast.LENGTH_SHORT).show();
                 break;
         }

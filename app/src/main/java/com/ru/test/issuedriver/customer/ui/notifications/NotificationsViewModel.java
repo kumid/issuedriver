@@ -90,7 +90,8 @@ public class NotificationsViewModel extends ViewModel {
 
     private void observe2notification(user user) {
         final Query collectionRef = db.collection("orders")
-                .whereEqualTo("customer_email", user.email); //.document("SF");
+                .whereEqualTo("customer_email", user.email)
+                .whereEqualTo("completed", false);; //.document("SF");
         collectionRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {

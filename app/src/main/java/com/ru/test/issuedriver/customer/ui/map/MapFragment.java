@@ -31,6 +31,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.customer.CustomerActivity;
 import com.ru.test.issuedriver.customer.ui.order.OrderActivity;
@@ -70,7 +71,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         mapViewModel =
-                ViewModelProviders.of(this).get(MapViewModel.class);
+                ViewModelProviders.of(CustomerActivity.getInstance()).get(MapViewModel.class);
         registrationViewModel =
                 ViewModelProviders.of(CustomerActivity.getInstance()).get(RegistrationViewModel.class);
 
@@ -186,7 +187,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         Projection proj = googleMap.getProjection();
         Point startPoint = proj.toScreenLocation(marker.getPosition());
         final LatLng startLatLng = proj.fromScreenLocation(startPoint);
-        final long duration = 40000;
+        final long duration = 1500;
 
         final Interpolator interpolator = new LinearInterpolator();
 
