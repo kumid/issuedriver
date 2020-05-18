@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Водитель</string>
+    <string name="title_map">Карта</string>
+    <string name="title_dashboard">История</string>
+    <string name="title_notifications">Заявки</string>
+    <string name="login">Авторизоваться</string>
+    <string name="registration_name">ФИО</string>
+    <string name="registration_staff">Должность</string>
+    <string name="registration_email">Email</string>
+    <string name="registration_corp_email">Корпоративный email</string>
+    <string name="registration_auto">Автомобиль</string>
+    <string name="registration_auto_model">Модель</string>
+    <string name="registration_auto_vin">VIN</string>
+    <string name="registration_auto_number">Госномер</string>
+    <string name="registration_employee">Пользователь</string>
+    <string name="registration">Зарегистрировать</string>
+    <string name="registration_tel">Телефон</string>
+    <string name="title_user">Кабинет</string>
+    <string name="order_data">Дата</string>
+    <string name="order_from">Откуда</string>
+    <string name="order_to">Куда</string>
+    <string name="order_purpose">Цель поездки</string>
+    <string name="order_comment">Комментарий</string>
+    <string name="order">Забронировать</string>
+    <string name="accept_order">Принять</string>
+    <string name="registration_car">Автомобиль</string>
+    <string name="registration_car_number">Госномер</string>
+    <string name="order_completed">Завершить</string>
+    <string name="order_time">Время</string>
+    <string name="order_distance">Расстояние</string>
+</resources>
