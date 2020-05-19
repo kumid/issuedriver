@@ -7,6 +7,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
@@ -17,6 +18,7 @@ import com.ru.test.issuedriver.helpers.fcm.sender;
 import com.ru.test.issuedriver.helpers.firestoreHelper;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -29,6 +31,7 @@ import androidx.lifecycle.ViewModel;
 
 public class NotificationsViewModel extends ViewModel {
     FirebaseFirestore db;
+
 
     public NotificationsViewModel() {
         db = FirebaseFirestore.getInstance();
@@ -97,7 +100,6 @@ public class NotificationsViewModel extends ViewModel {
     }
 
     private void notifycateIt(order curr, DocumentSnapshot snapshot) {
-
          snapshot.getReference().update("is_notify", true);
     }
 
@@ -112,7 +114,8 @@ public class NotificationsViewModel extends ViewModel {
             return;
 
         DocumentReference orderRef = db.collection("orders").document(item.id);
-        orderRef.update("accept", true)
+        orderRef.update("accept", true,
+                        "accept_timestamp", FieldValue.serverTimestamp())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

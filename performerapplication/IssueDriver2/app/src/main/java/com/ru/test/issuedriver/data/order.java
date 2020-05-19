@@ -1,6 +1,7 @@
 package com.ru.test.issuedriver.data;
 
-import java.sql.Timestamp;
+
+import com.google.firebase.Timestamp;
 
 public class order {
     public String data;
@@ -20,7 +21,15 @@ public class order {
     public boolean accept;
     public boolean completed;
     public boolean is_notify;
-    public Timestamp timestamp;
+    public Timestamp accept_timestamp;
+    public Timestamp start_timestamp;
+    public Timestamp end_timestamp;
+
+    public String spent_time;
+    public String distance;
+    public String fuel;
+
+
 
     public String id;
 

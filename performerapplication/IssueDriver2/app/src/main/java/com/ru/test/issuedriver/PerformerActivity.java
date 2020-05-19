@@ -133,6 +133,8 @@ public class PerformerActivity extends MyActivity {
             public void onComplete(@NonNull Task<Location> task) {
                 if (task.isSuccessful()) {
                     Location location = task.getResult();
+                    if(location == null)
+                        return;
                     GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
 //                    mUserLocation.setGeo_point(geoPoint);
 //                    mUserLocation.setTimestamp(null);

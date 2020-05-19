@@ -201,7 +201,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
 //            setDate(v);
 //            return;
 //        }
-        ActionBottonSheetDialog dialog = new ActionBottonSheetDialog(mOrder_chronometr.getText().toString(), order_distance.getText().toString());
+        ActionBottonSheetDialog dialog = new ActionBottonSheetDialog(mOrder_chronometr.getText().toString(), distanse);
         dialog.show(getSupportFragmentManager(), null);
     }
 
@@ -211,7 +211,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                ActionBottonSheetDialog dialog = new ActionBottonSheetDialog(mOrder_chronometr.getText().toString(), order_distance.getText().toString());
+                ActionBottonSheetDialog dialog = new ActionBottonSheetDialog(mOrder_chronometr.getText().toString(), distanse);
                 dialog.show(getSupportFragmentManager(), null);
                 //Toast.makeText(getApplicationContext(),"Back button clicked", Toast.LENGTH_SHORT).show();
                 break;
@@ -254,7 +254,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
     }
 
     @Override
-    public void onButtonClicked(int id) {
+    public void onButtonClicked(int id, String time, double dist, double fuel) {
         OrderViewModel.orderCompletedCalback = new OrderViewModel.orderCompleted() {
             @Override
             public void callback(boolean pass) {
@@ -264,7 +264,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
                     MyActivity.showToast("Ошибка передачи данных", Toast.LENGTH_SHORT);
             }
         };
-        orderViewModel.setOrderComleted(orderId, performer_email);
+        orderViewModel.setOrderComleted(orderId, performer_email, time, dist, fuel);
 
         Log.d(TAG, "Close order");
     }

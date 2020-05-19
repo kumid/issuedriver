@@ -44,7 +44,7 @@ public class RegistrationActivity extends MyActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
         registrationViewModel =
-                ViewModelProviders.of(CustomerActivity.getInstance()).get(RegistrationViewModel.class);
+                ViewModelProviders.of(RegistrationActivity.this).get(RegistrationViewModel.class);
 
         mFio = findViewById(R.id.registration_name);
         mStaff = findViewById(R.id.registration_staff);

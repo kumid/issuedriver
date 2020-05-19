@@ -7,9 +7,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.helpers.firestoreHelper;
 
@@ -23,6 +25,7 @@ import androidx.lifecycle.ViewModel;
 
 public class OrderViewModel extends ViewModel {
     FirebaseFirestore db;
+    FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
 
     public MutableLiveData<order> currentOrder;
 
@@ -62,9 +65,13 @@ public class OrderViewModel extends ViewModel {
     }
 
 
-    public void setOrderComleted(String orderId, String performer_email) {
+    public void setOrderComleted(String orderId, String performer_email, String time, double dist, double fuel) {
         DocumentReference orderRef = db.collection("orders").document(orderId);
-        orderRef.update("completed", true)
+        orderRef.update("completed", true,
+                        "end_timestamp", FieldValue.serverTimestamp(),
+                        "spent_time", time,
+                        "distance", String.valueOf(dist),
+                        "fuel", String.valueOf(fuel))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

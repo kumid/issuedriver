@@ -93,6 +93,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             public void onMapReady(GoogleMap mMap) {
                 googleMap = mMap;
                 googleMap.setOnMarkerClickListener(MapFragment.this);
+
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(Double.parseDouble("45.058403"), Double.parseDouble("38.983933"))).zoom(12).build();
+                 googleMap.animateCamera(CameraUpdateFactory
+                        .newCameraPosition(cameraPosition));
+
                 //setMyPosition(false);
                 //setBusPosition("Автобус", Double.parseDouble("55.412433"), Double.parseDouble("42.525937"));
                 Log.e("MapsLog", "onMapReady");
@@ -112,17 +118,24 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             public void onChanged(List<user> users) {
 //                googleMap.clear();
                 for (user item : users) {
+                    if(item.position == null)
+                        continue;
+
                     if(markerMap.containsKey(item.email)) {
+
                         if(markerMap.get(item.email)._user.is_busy != item.is_busy){
                             markerMap.get(item.email).marker.setVisible(false);
                             markerMap.get(item.email).marker.remove();
 
-                            int car = item.is_busy ? R.drawable.car_red : R.drawable.car_yellow;
-                            markerMap.get(item.email).markerOption.icon(getBitmapDescriptor(car, 80, 80)); //).defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+//                            MarkerOptions markerBus = new MarkerOptions().position(
+//                                    new LatLng(item.position.getLatitude(), item.position.getLongitude()))
+//                                    .title(item.fio);
 
-                            MarkerOptions markerBus = new MarkerOptions().position(
+                            int car = item.is_busy ? R.drawable.car_red : R.drawable.car_yellow;
+                            markerMap.get(item.email).markerOption = new MarkerOptions().position(
                                     new LatLng(item.position.getLatitude(), item.position.getLongitude()))
                                     .title(item.fio);
+                            markerMap.get(item.email).markerOption.icon(getBitmapDescriptor(car, 80, 80));
 
                             Marker BusMarkerOK = googleMap.addMarker(markerMap.get(item.email).markerOption);
                             markerMap.get(item.email).marker = BusMarkerOK;
@@ -165,10 +178,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
         markerMap.put(item.email, new markerPair(markerBus, BusMarker, item));
 
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(new LatLng(item.position.getLatitude(), item.position.getLongitude())).zoom(15).build();
-        googleMap.animateCamera(CameraUpdateFactory
-                .newCameraPosition(cameraPosition));
+
+//        CameraPosition cameraPosition = new CameraPosition.Builder()
+//                .target(new LatLng(Double.parseDouble("45.058403"), Double.parseDouble("38.983933"))).zoom(15).build();
+////               .target(new LatLng(item.position.getLatitude(), item.position.getLongitude())).zoom(15).build();
+//        googleMap.animateCamera(CameraUpdateFactory
+//                .newCameraPosition(cameraPosition));
         Log.e("MapsLog", "googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));");
 
     }

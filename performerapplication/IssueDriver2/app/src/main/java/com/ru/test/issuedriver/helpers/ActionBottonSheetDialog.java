@@ -9,13 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Chronometer;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.ru.test.issuedriver.R;
 
 import androidx.annotation.NonNull;
@@ -27,12 +27,15 @@ public class ActionBottonSheetDialog extends BottomSheetDialogFragment implement
     int id;
 
     Chronometer mOrder_chronometr_bottom;
-    TextView mOrder_distance_bottom;
+    TextView mOrder_distance_bottom, mOrder_fuel_bottom;
 
-    String time, dist;
-    public ActionBottonSheetDialog(String time, String dist) {
+    String time;
+    double dist, fuel = 0f;
+    public ActionBottonSheetDialog(String time, double dist) {
         this.time = time;
         this.dist = dist;
+        long fuel_consumption = FirebaseRemoteConfig.getInstance().getLong("fuel_consumption");
+        fuel = dist * fuel_consumption / 100f;
     }
 
     @Override
@@ -64,10 +67,13 @@ public class ActionBottonSheetDialog extends BottomSheetDialogFragment implement
 
         mOrder_chronometr_bottom = view.findViewById(R.id.order_chronometr_bottom);
         mOrder_distance_bottom = view.findViewById(R.id.order_distance_bottom);
+        mOrder_fuel_bottom = view.findViewById(R.id.order_fuel_bottom);
         Button mBottom_sheet_btn = view.findViewById(R.id.bottom_sheet_btn);
 
         mOrder_chronometr_bottom.setText(time);
-        mOrder_distance_bottom.setText(dist);
+        mOrder_distance_bottom.setText(String.valueOf(dist));
+        mOrder_fuel_bottom.setText(String.valueOf(fuel));
+
         mBottom_sheet_btn.setOnClickListener(this);
 
         return view;
@@ -78,14 +84,14 @@ public class ActionBottonSheetDialog extends BottomSheetDialogFragment implement
         switch (v.getId()){
             case R.id.bottom_sheet_btn:
                 //PersonInfoActivity.getInstance().summaFromDialog = mPiBonusSumma.getText().toString();
-                mListener.onButtonClicked(id);
+                mListener.onButtonClicked(id, time, dist, fuel);
                 dismiss();
                 break;
          }
     }
 
     public interface BottomSheetListener{
-        void onButtonClicked(int id);
+        void onButtonClicked(int id, String time, double distance, double fuel);
     }
 
     @Override
