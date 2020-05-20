@@ -4,16 +4,13 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,6 +25,7 @@ import com.google.firebase.firestore.GeoPoint;
 import com.google.gson.Gson;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.data.user;
+import com.ru.test.issuedriver.feedback.FeedbackActivity;
 import com.ru.test.issuedriver.helpers.PerformerBackgroundService;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 import com.ru.test.issuedriver.performer.ui.history.HistoryViewModel;
@@ -36,13 +34,13 @@ import com.ru.test.issuedriver.performer.ui.order.OrderPerformingActivity;
 import com.ru.test.issuedriver.performer.ui.registration.RegistrationViewModel;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
-import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -52,6 +50,7 @@ public class PerformerActivity extends MyActivity {
     private static final String TAG = "myLogs";
 
     private static PerformerActivity inst;
+    private user currentUser;
 
     public static PerformerActivity getInstance(){
         return inst;
@@ -92,6 +91,13 @@ public class PerformerActivity extends MyActivity {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         getLastKnownLocation();
 
+        registrationViewModel.currentUser.observe(this, new Observer<user>() {
+            @Override
+            public void onChanged(user user) {
+                currentUser = user;
+            }
+
+        });
 
     }
 
@@ -272,8 +278,9 @@ public class PerformerActivity extends MyActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_send:
-                Intent intent = new Intent(PerformerActivity.this, FeedbackActivity.class);
-                startActivity(intent);
+                        Intent intent = new Intent(PerformerActivity.this, FeedbackActivity.class);
+                        intent.putExtra("phone", currentUser.tel);
+                        startActivity(intent);
                 return true;
             default:
                 // If we got here, the user's action was not recognized.

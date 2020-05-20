@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FeedbackActivity">
+    tools:context=".feedback.FeedbackActivity">
 
     <EditText
         android:id="@+id/feedback_msg"
@@ -28,6 +28,24 @@
         android:layout_height="40dp"
         android:background="#40b6dede"
         android:layout_margin="10dp"
+        android:hint="Введите номер телефона"
+        android:inputType="phone"
+        android:maxLength="18"
+        android:textAlignment="center"
+        android:textColor="#46179C"
+        android:textColorHint="#7d68a3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/feedback_callme_phone0"
+        android:layout_width="300dp"
+        android:layout_height="40dp"
+        android:background="#40b6dede"
+        android:layout_margin="10dp"
+        android:visibility="gone"
         android:cursorVisible="false"
         android:digits="1234567890+-() "
         android:hint="Введите номер телефона"

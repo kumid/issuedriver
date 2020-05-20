@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Администратор</string>
+    <string name="title_home">Пользователи</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Уведомления</string>
+
+
+    <string name="login">Авторизоваться</string>
+    <string name="user_fio">ФИО</string>
+    <string name="user_email">Email</string>
+</resources>

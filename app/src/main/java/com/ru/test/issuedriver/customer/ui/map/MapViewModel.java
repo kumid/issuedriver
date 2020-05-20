@@ -30,7 +30,8 @@ public class MapViewModel extends ViewModel {
     }
 
     private void initUsersData() {
-        final Query collectionRef = db.collection("users").whereEqualTo("is_performer", true); //.document("SF");
+        final Query collectionRef = db.collection("users").whereEqualTo("is_performer", true)
+                .whereEqualTo("accept", true); //.document("SF");
         collectionRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
