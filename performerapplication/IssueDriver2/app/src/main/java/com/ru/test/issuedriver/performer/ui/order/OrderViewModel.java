@@ -25,7 +25,6 @@ import androidx.lifecycle.ViewModel;
 
 public class OrderViewModel extends ViewModel {
     FirebaseFirestore db;
-    FirebaseRemoteConfig mFirebaseRemoteConfig = FirebaseRemoteConfig.getInstance();
 
     public MutableLiveData<order> currentOrder;
 

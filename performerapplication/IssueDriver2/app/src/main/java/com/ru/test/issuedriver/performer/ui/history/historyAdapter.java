@@ -45,8 +45,8 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
     public void onBindViewHolder(@NonNull VH holder, int position) {
         order item = cards.get(position);
         SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
-        holder.mHistory_item_fio.setText(sfd.format(item.accept_timestamp.toDate()));
-        
+        holder.mHistory_item_accept_date.setText(sfd.format(item.accept_timestamp.toDate()));
+
         holder.mHistory_item_fio.setText(item.performer_fio);
         holder.mHistory_item_purpose.setText(item.purpose);
         holder.mHistory_item_from.setText(item.from);

@@ -30,4 +30,7 @@
     <string name="order_distance">Расстояние</string>
     <string name="history_accept_date">Время принятия заявки</string>
     <string name="order_fuel">Расход топлива</string>
+    <string name="logout">Выход</string>
+    <string name="action_send">Обратная связь</string>
+    <string name="feedback_send">Отправить</string>
 </resources>

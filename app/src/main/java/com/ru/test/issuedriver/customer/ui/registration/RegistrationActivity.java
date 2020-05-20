@@ -34,7 +34,7 @@ import java.util.List;
 public class RegistrationActivity extends MyActivity {
 
     TextInputEditText mFio, mStaff, mEmail, mCorp, mAutomodel, mAutovin, mAutonumber, mTel;
-    Button mRegistrationButton;
+    Button mRegistrationButton, mRegistration_btn_logout;
     FirebaseFirestore db;
 
     RegistrationViewModel registrationViewModel;
@@ -54,11 +54,12 @@ public class RegistrationActivity extends MyActivity {
         mAutovin = findViewById(R.id.registration_auto_vin);
         mAutonumber = findViewById(R.id.registration_auto_number);
         mRegistrationButton = findViewById(R.id.registration_btn);
+        mRegistration_btn_logout = findViewById(R.id.registration_btn_logout);
         mTel = findViewById(R.id.registration_tel);
         db = FirebaseFirestore.getInstance();
 
         mRegistrationButton.setOnClickListener(click);
-
+        mRegistration_btn_logout.setVisibility(View.GONE);
         init();
         getUser();
     }

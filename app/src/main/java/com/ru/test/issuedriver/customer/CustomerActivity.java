@@ -2,6 +2,7 @@ package com.ru.test.issuedriver.customer;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
@@ -15,6 +16,7 @@ import com.ru.test.issuedriver.helpers.googleAuthManager;
 
 import java.util.EventListener;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -36,8 +38,27 @@ public class CustomerActivity extends MyActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         instance = this;
+        googleAuthManager.init(this);
+        googleAuthManager.signIn();
 
         setContentView(R.layout.activity_customer);
+
+        setupNavigation();
+
+        initViewModels();
+
+        if(getIntent().hasExtra("object")){
+            String obj = getIntent().getStringExtra("object");
+            Gson gson = new Gson();
+            user curr = gson.fromJson(obj, user.class);
+            if(curr != null)
+                registrationViewModel.currentUser.setValue(curr);
+        } else {
+            registrationViewModel.getUserFromServer(googleAuthManager.getEmail());
+        }
+    }
+
+    private void setupNavigation() {
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
@@ -54,17 +75,16 @@ public class CustomerActivity extends MyActivity {
         else
             Log.e("Error", "actionBar == null");
 
-        initViewModels();
-
-        if(getIntent().hasExtra("object")){
-            String obj = getIntent().getStringExtra("object");
-            Gson gson = new Gson();
-            user curr = gson.fromJson(obj, user.class);
-            if(curr != null)
-                registrationViewModel.currentUser.setValue(curr);
-        } else {
-            registrationViewModel.getUserFromServer(googleAuthManager.getEmail());
-        }
+        navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                navController.navigate(item.getItemId());
+                actionBar.setDisplayHomeAsUpEnabled(false);
+                if(item.getItemId() == R.id.navigation_map)
+                    actionBar.setTitle("Выберите автомобиль");
+                return false;
+            }
+        });
     }
 
     private void initViewModels() {

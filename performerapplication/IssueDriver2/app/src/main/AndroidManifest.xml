@@ -17,7 +17,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <activity android:name=".FeedbackActivity"></activity>
         <activity
             android:name=".SplashScreen"
             android:screenOrientation="portrait"
@@ -57,7 +57,9 @@
             </intent-filter>
         </service>
 
-        <receiver android:name=".helpers.MyBroadcastReceiver"  android:exported="true">
+        <receiver
+            android:name=".helpers.MyBroadcastReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.ru.test.issuedriver.performer.ui.order.MY_NOTIFICATION" />
             </intent-filter>

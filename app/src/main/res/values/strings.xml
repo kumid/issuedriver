@@ -28,4 +28,9 @@
     <string name="registration_car_number">Госномер</string>
     <string name="title_activity_customer">CustomerActivity</string>
     <string name="title_home">Home</string>
+    <string name="history_accept_date">Время принятия заявки</string>
+    <string name="order_time">Время</string>
+    <string name="order_fuel">Расход топлива</string>
+    <string name="order_distance">Расстояние</string>
+    <string name="logout">Выход</string>
 </resources>

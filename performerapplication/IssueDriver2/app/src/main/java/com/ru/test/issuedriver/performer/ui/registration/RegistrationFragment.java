@@ -34,7 +34,7 @@ public class RegistrationFragment extends Fragment {
 
     private RegistrationViewModel registrationViewModel;
     TextInputEditText mFio, mStaff, mEmail, mCorp, mAutomodel, mAutovin, mAutonumber, mTel;
-    Button mRegistrationButton;
+    Button mRegistrationButton, mRegistration_btn_logout;
     FirebaseFirestore db;
 
 
@@ -62,11 +62,12 @@ public class RegistrationFragment extends Fragment {
         mAutovin = root.findViewById(R.id.registration_auto_vin);
         mAutonumber = root.findViewById(R.id.registration_auto_number);
         mRegistrationButton = root.findViewById(R.id.registration_btn);
+        mRegistration_btn_logout = root.findViewById(R.id.registration_btn_logout);
         mTel = root.findViewById(R.id.registration_tel);
         db = FirebaseFirestore.getInstance();
 
         mRegistrationButton.setOnClickListener(click);
-
+        mRegistration_btn_logout.setOnClickListener(click);
         init();
         return root;
     }
@@ -80,7 +81,17 @@ public class RegistrationFragment extends Fragment {
     private View.OnClickListener click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            addUser();
+            if(v.getId() == R.id.registration_btn_logout) {
+                googleAuthManager.callback4signout = new googleAuthManager.signoutComplete() {
+                    @Override
+                    public void callback() {
+                        PerformerActivity.getInstance().finish();
+                    }
+                };
+                googleAuthManager.signOut();
+            }
+            if(v.getId() == R.id.registration_btn)
+                addUser();
         }
     };
 

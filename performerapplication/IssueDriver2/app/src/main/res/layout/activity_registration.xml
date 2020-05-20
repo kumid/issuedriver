@@ -126,7 +126,16 @@
                     android:enabled="false"
                     android:inputType="textEmailAddress"/>
             </com.google.android.material.textfield.TextInputLayout>
-
+            <Button
+                android:id="@+id/registration_btn_logout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/logout"
+                android:textAppearance="@style/TextAppearance.AppCompat.Button"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:background="@color/toast_bg"
+                android:textColor="@android:color/white"/>
         </LinearLayout>
     </ScrollView>
         <Button

@@ -15,6 +15,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.ru.test.issuedriver.PerformerActivity;
 import com.ru.test.issuedriver.R;
 
 import androidx.annotation.NonNull;
@@ -43,7 +44,7 @@ public class googleAuthManager {
         return mAuth.getCurrentUser() != null;
     }
 
-        public static void init(AppCompatActivity _activity){
+    public static void init(AppCompatActivity _activity) {
         activity = _activity;
 
         // [START initialize_auth]
@@ -60,7 +61,7 @@ public class googleAuthManager {
         // [END config_signin]
 
         mGoogleSignInClient = GoogleSignIn.getClient(activity, gso);
-     }
+    }
 
 
     // [START on_start_check_user]
@@ -84,7 +85,7 @@ public class googleAuthManager {
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                if(account != null)
+                if (account != null)
                     firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
@@ -125,7 +126,7 @@ public class googleAuthManager {
                             updateUI(null);
                         }
 
-                        if(callback4Auth != null)
+                        if (callback4Auth != null)
                             callback4Auth.callback(task.isSuccessful());
                         // [START_EXCLUDE]
                         //hideProgressBar();
@@ -151,7 +152,9 @@ public class googleAuthManager {
                 new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        updateUI(null);
+                        if (callback4signout != null)
+                            callback4signout.callback();
+                        //updateUI(null);
                     }
                 });
     }
@@ -171,6 +174,7 @@ public class googleAuthManager {
     }
 
     public static void updateUI(FirebaseUser user) {
+
         /*
         hideProgressBar();
         if (user != null) {
@@ -193,8 +197,7 @@ public class googleAuthManager {
         String res;
         try {
             res = mAuth.getCurrentUser().getEmail();
-        }
-        catch (NullPointerException ex){
+        } catch (NullPointerException ex) {
             res = "";
         }
 
@@ -204,11 +207,19 @@ public class googleAuthManager {
 
     public static String getUid() {
 
-       return mAuth.getUid();
+        return mAuth.getUid();
     }
 
     public static AuthCompleate callback4Auth;
-    public interface  AuthCompleate {
+
+
+    public interface AuthCompleate {
         void callback(boolean isCompleate);
+    }
+
+    public static signoutComplete callback4signout;
+
+    public interface signoutComplete {
+        void callback();
     }
 }

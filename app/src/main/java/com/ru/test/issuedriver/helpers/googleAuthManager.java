@@ -44,6 +44,9 @@ public class googleAuthManager {
         return mAuth.getCurrentUser() != null;
     }
 
+
+
+
         public static void init(AppCompatActivity _activity){
         activity = _activity;
 
@@ -143,17 +146,17 @@ public class googleAuthManager {
     }
     // [END signin]
 
-    public static void signOut(final Activity activity2finish) {
+    public static void signOut() {
+        mAuth.signOut();
         // Google sign out
         mGoogleSignInClient.signOut().addOnCompleteListener(activity,
                 new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         // Firebase sign out
-                        mAuth.signOut();
-                        if(activity2finish != null)
-                            activity2finish.finish();
-                        updateUI(null);
+                        if(callback4signout != null)
+                            callback4signout.callback();
+//                        updateUI(null);
                     }
                 });
     }
@@ -167,7 +170,9 @@ public class googleAuthManager {
                 new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        updateUI(null);
+                        if(callback4signout != null)
+                            callback4signout.callback();
+                        //updateUI(null);
                     }
                 });
     }
@@ -212,5 +217,11 @@ public class googleAuthManager {
     public static AuthCompleate callback4Auth;
     public interface  AuthCompleate {
         void callback(boolean isCompleate);
+    }
+
+
+    public static signoutComplete callback4signout;
+    public interface  signoutComplete {
+        void callback();
     }
 }

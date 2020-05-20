@@ -15,6 +15,9 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -33,11 +36,13 @@ import com.ru.test.issuedriver.performer.ui.order.OrderPerformingActivity;
 import com.ru.test.issuedriver.performer.ui.registration.RegistrationViewModel;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
@@ -63,16 +68,10 @@ public class PerformerActivity extends MyActivity {
         setContentView(R.layout.activity_performer);
 
         inst = this;
+        googleAuthManager.init(this);
+        googleAuthManager.signIn();
 
-        BottomNavigationView navView = findViewById(R.id.nav_view);
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_notifications, R.id.navigation_dashboard, R.id.navigation_registration)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(navView, navController);
+        setupNavigation();
 
         initViewModels();
 
@@ -92,6 +91,23 @@ public class PerformerActivity extends MyActivity {
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         getLastKnownLocation();
+
+
+    }
+
+    private void setupNavigation() {
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.navigation_notifications, R.id.navigation_dashboard, R.id.navigation_registration)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(navView, navController);
     }
 
     private void initViewModels() {
@@ -243,4 +259,27 @@ public class PerformerActivity extends MyActivity {
         startActivity(intent);
         Log.e(TAG, "");
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.emetgency, menu);
+        return true;
+//        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_send:
+                Intent intent = new Intent(PerformerActivity.this, FeedbackActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+     }
 }

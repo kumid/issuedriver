@@ -24,6 +24,10 @@ public class order {
     public Timestamp start_timestamp;
     public Timestamp end_timestamp;
 
+    public String spent_time;
+    public String distance;
+    public String fuel;
+
     public String id;
 
     public order() {}

@@ -341,4 +341,11 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
         Thread thread = new Thread(runnable);
         thread.start();
     }
+
+    @Override
+    public void onBackPressed() {
+        ActionBottonSheetDialog dialog = new ActionBottonSheetDialog(mOrder_chronometr.getText().toString(), distanse);
+        dialog.show(getSupportFragmentManager(), null);
+//        super.onBackPressed();
+    }
 }

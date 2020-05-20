@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.data.order;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -42,11 +43,18 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
     @Override
     public void onBindViewHolder(@NonNull VH holder, int position) {
         order item = cards.get(position);
+        SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        holder.mHistory_item_accept_date.setText(sfd.format(item.accept_timestamp.toDate()));
+
         holder.mHistory_item_fio.setText(item.performer_fio);
         holder.mHistory_item_purpose.setText(item.purpose);
         holder.mHistory_item_from.setText(item.from);
         holder.mHistory_item_to.setText(item.to);
         holder.mHistory_item_comment.setText(item.comment);
+
+        holder.mHistory_time.setText(item.spent_time);
+        holder.mHistory_distance.setText(String.valueOf(item.distance));
+        holder.mHistory_fuel.setText(String.valueOf(item.fuel));
 
         holder.mHistory_item_extra.setVisibility(View.GONE);
     }
@@ -57,10 +65,11 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
 
 
     class VH extends RecyclerView.ViewHolder{
-        TextView mHistory_item_fio, mHistory_item_purpose, mHistory_item_from, mHistory_item_to, mHistory_item_comment;
+        TextView mHistory_item_fio, mHistory_item_purpose, mHistory_item_from, mHistory_item_to, mHistory_item_comment, mHistory_time, mHistory_distance, mHistory_fuel, mHistory_item_accept_date;
         View mHistory_item_extra, mHistory_item_call;
         Button mHistory_item_btn_status_completed;
         CardView mHistory_item;
+
         public VH(@NonNull View itemView) {
             super(itemView);
 
@@ -68,11 +77,18 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
             mHistory_item_extra = itemView.findViewById(R.id.history_item_extra);
             mHistory_item_btn_status_completed = itemView.findViewById(R.id.history_item_btn_status_completed);
             mHistory_item_call  = itemView.findViewById(R.id.history_item_call);
+            mHistory_item_accept_date = itemView.findViewById(R.id.history_item_accept_date);
             mHistory_item_fio = itemView.findViewById(R.id.history_item_fio);
             mHistory_item_purpose = itemView.findViewById(R.id.history_item_purpose);
             mHistory_item_from  = itemView.findViewById(R.id.history_item_from);
             mHistory_item_to  = itemView.findViewById(R.id.history_item_to);
             mHistory_item_comment = itemView.findViewById(R.id.history_item_comment);
+
+            mHistory_time = itemView.findViewById(R.id.history_time);
+            mHistory_distance = itemView.findViewById(R.id.history_distance);
+            mHistory_fuel = itemView.findViewById(R.id.history_fuel);
+
+
             mHistory_item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
