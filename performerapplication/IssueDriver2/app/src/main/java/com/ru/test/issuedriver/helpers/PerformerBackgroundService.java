@@ -26,6 +26,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.auth.User;
@@ -120,8 +121,8 @@ public class PerformerBackgroundService extends Service {
                                 lastLocation = location;
                                 saveUserLocation(geoPoint);
                             } else {
-                                sendMyBroadcastMessage(location);
-                                if (lastLocation.distanceTo(location) > 200) {
+                                sendMyBroadcastMessage(location, 2);
+                                if (lastLocation.distanceTo(location) > 50) {
                                     saveUserLocation(geoPoint);
                                     lastLocation = location;
                                 }
@@ -138,10 +139,24 @@ public class PerformerBackgroundService extends Service {
                 Looper.myLooper()); // Looper.myLooper tells this to repeat forever until thread is destroyed
     }
 
-    private void sendMyBroadcastMessage(Location location) {
+    /// mode = 1 = send position to activity
+    /// mode = 1 = send onlineState
+    private void sendMyBroadcastMessage(Location location, int mode) {
         Intent intent = new Intent();
         intent.setAction("com.ru.test.issuedriver.performer.ui.order.MY_NOTIFICATION");
-        intent.putExtra("data", location);
+        switch (mode){
+            case 0:
+                intent.putExtra("online", false);
+                break;
+                case 1:
+                    intent.putExtra("online", true);
+                break;
+            default:
+                intent.putExtra("data", location);
+                break;
+        }
+
+
         sendBroadcast(intent);
         Log.d(TAG, "sendMyBroadcastMessage: sended");
     }
@@ -158,13 +173,16 @@ public class PerformerBackgroundService extends Service {
                     .collection("users")
                     .document(FirebaseAuth.getInstance().getCurrentUser().getEmail());
 
-            locationRef.update("position", userLocation).addOnCompleteListener(new OnCompleteListener<Void>() {
+            locationRef.update("position", userLocation,
+                    "last_geo_time", FieldValue.serverTimestamp()).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if(task.isSuccessful()){
                         Log.d(TAG, "onComplete: \ninserted user location into database." +
                                 "\n latitude: " + userLocation.getLatitude() +
                                 "\n longitude: " + userLocation.getLongitude());
+                        sendMyBroadcastMessage(null, 1);
+
                     }
                 }
             });
@@ -172,9 +190,11 @@ public class PerformerBackgroundService extends Service {
             Log.e(TAG, "saveUserLocation: User instance is null, stopping location service.");
             Log.e(TAG, "saveUserLocation: NullPointerException: "  + e.getMessage() );
             //stopSelf();
+            sendMyBroadcastMessage(null, 0);
         }
         catch (Exception e){
             Log.e(TAG, "saveUserLocation: User instance is null, stopping location service.");
+            sendMyBroadcastMessage(null, 0);
         }
     }
 }

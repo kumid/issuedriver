@@ -1,5 +1,12 @@
 package com.ru.test.issuedriver.customer;
 
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -14,12 +21,11 @@ import com.ru.test.issuedriver.customer.ui.registration.RegistrationViewModel;
 import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 
-import java.util.EventListener;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -33,6 +39,8 @@ public class CustomerActivity extends MyActivity {
     public static CustomerActivity getInstance() {
         return instance;
     }
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +64,9 @@ public class CustomerActivity extends MyActivity {
         } else {
             registrationViewModel.getUserFromServer(googleAuthManager.getEmail());
         }
+
+        checkPermission(this);
+
     }
 
     private void setupNavigation() {
@@ -99,32 +110,42 @@ public class CustomerActivity extends MyActivity {
                 ViewModelProviders.of(CustomerActivity.getInstance()).get(HistoryViewModel.class);
         historyViewModel.initNotificationLoad(CustomerActivity.getInstance(), registrationViewModel.currentUser);
     }
-}
 
+    public static final int PERMISSIONS= 123;
+    //check location permession for Android 5.0/+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public static boolean checkPermission(final Context context)
+    {
+        int currentAPIVersion = Build.VERSION.SDK_INT;
+        if(currentAPIVersion>= Build.VERSION_CODES.M)
+        {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.ACCESS_FINE_LOCATION) ) {
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
+                    alertBuilder.setCancelable(true);
+                    alertBuilder.setTitle("Разрешения");
+                    alertBuilder.setMessage("Разрешение необходимо для определения Вашей позиции на карте");
+                    alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS);
 
-/*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.actions, menu);
-        return true;
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-//            case R.id.action_settings:
-//                // User chose the "Settings" item, show the app settings UI...
-//                return true;
+                        }
+                    });
+                    AlertDialog alert = alertBuilder.create();
+                    alert.show();
 
-            case R.id.action_exit:
-                googleAuthManager.signOut(CustomerActivity.this);
+                } else {
+                    ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS);
 
+                }
+                return false;
+            }
+            else {
                 return true;
-
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-
+            }
+        } else {
+            return true;
         }
     }
-*/
+}

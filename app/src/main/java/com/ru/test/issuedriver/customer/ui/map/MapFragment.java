@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -31,7 +32,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.customer.CustomerActivity;
 import com.ru.test.issuedriver.customer.ui.order.OrderActivity;
@@ -46,7 +46,7 @@ import java.util.Map;
 
 public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickListener {
 
-    private class markerPair{
+    private class markerPair {
         public MarkerOptions markerOption;
         public Marker marker;
         public user _user;
@@ -84,7 +84,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         try {
             MapsInitializer.initialize(getContext());
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -95,19 +95,20 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 googleMap.setOnMarkerClickListener(MapFragment.this);
 
                 CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(Double.parseDouble("45.058403"), Double.parseDouble("38.983933"))).zoom(12).build();
-                 googleMap.animateCamera(CameraUpdateFactory
+                        .target(new LatLng(Double.parseDouble("45.058403"), Double.parseDouble("38.983933"))).zoom(15).build();
+                googleMap.animateCamera(CameraUpdateFactory
                         .newCameraPosition(cameraPosition));
 
-                //setMyPosition(false);
-                //setBusPosition("Автобус", Double.parseDouble("55.412433"), Double.parseDouble("42.525937"));
-                Log.e("MapsLog", "onMapReady");
-//                mt = new MyTask();
-//                mt.execute();
+                imHere.myPositionChanged = new imHere.OnMyPositionChanged() {
+                    @Override
+                    public void callBack(Location location) {
+                        setMyPosition(location);
+                    }
+                };
+                imHere.init(getActivity());
                 observe2performers();
             }
         });
-
 
         return root;
     }
@@ -118,12 +119,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             public void onChanged(List<user> users) {
 //                googleMap.clear();
                 for (user item : users) {
-                    if(item.position == null)
+                    if (item.position == null)
                         continue;
 
-                    if(markerMap.containsKey(item.email)) {
+                    if (markerMap.containsKey(item.email)) {
 
-                        if(markerMap.get(item.email)._user.is_busy != item.is_busy){
+                        if (markerMap.get(item.email)._user.is_busy != item.is_busy) {
                             markerMap.get(item.email).marker.setVisible(false);
                             markerMap.get(item.email).marker.remove();
 
@@ -140,10 +141,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                             Marker BusMarkerOK = googleMap.addMarker(markerMap.get(item.email).markerOption);
                             markerMap.get(item.email).marker = BusMarkerOK;
                             markerMap.get(item.email)._user = item;
-                        }
-
-                        else {
-                            if(item.position != null) {
+                        } else {
+                            if (item.position != null) {
                                 animateMarker(item, markerMap.get(item.email).marker,
                                         new LatLng(item.position.getLatitude(), item.position.getLongitude()),
                                         false);
@@ -159,7 +158,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
     private void setPerformerPosition(user item) {
         if (googleMap == null
-            || item.position == null) {
+                || item.position == null) {
             return;
         }
 
@@ -170,7 +169,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         int car = item.is_busy ? R.drawable.car_red : R.drawable.car_yellow;
         markerBus.icon(getBitmapDescriptor(car, 80, 80));
 
-         //        markerBus.icon(BitmapDescriptorFactory
+        //        markerBus.icon(BitmapDescriptorFactory
 //                .fromResource(car)); //).defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
 
         // adding marker
@@ -190,7 +189,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
     @NotNull
     private BitmapDescriptor getBitmapDescriptor(int car, int height, int width) {
-        BitmapDrawable bitmapdraw = (BitmapDrawable)getResources().getDrawable(car);
+        BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(car);
         Bitmap b = bitmapdraw.getBitmap();
         Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
         return BitmapDescriptorFactory.fromBitmap(smallMarker);
@@ -239,9 +238,9 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        for (String item: markerMap.keySet()) {
-            if(markerMap.get(item).marker.equals(marker)){
-                if(markerMap.get(item)._user.is_busy)
+        for (String item : markerMap.keySet()) {
+            if (markerMap.get(item).marker.equals(marker)) {
+                if (markerMap.get(item)._user.is_busy)
                     return false;
 
                 Intent intent = new Intent(getActivity(), OrderActivity.class);
@@ -259,5 +258,35 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             }
         }
         return false;
+    }
+
+    private MarkerOptions markerOptionIm;
+    private Marker ImMarker;
+
+    public void setMyPosition(Location imHere) {
+        if(googleMap == null)
+            return;
+
+        if (markerOptionIm == null) {
+            markerOptionIm = new MarkerOptions()
+                    .position(
+                            new LatLng(imHere.getLatitude(),
+                                    imHere.getLongitude()))
+                    .title("Я");
+            markerOptionIm.icon(getBitmapDescriptor(R.drawable.man, 80, 80));
+            ImMarker = googleMap.addMarker(markerOptionIm);
+
+        } else
+            animateMarker(null, ImMarker,
+                    new LatLng(imHere.getLatitude(),
+                            imHere.getLongitude()),
+                    false);
+            float zoom = googleMap.getCameraPosition().zoom;
+//            CameraPosition cameraPosition = new CameraPosition.Builder()
+//                    .target(new LatLng(imHere.getLatitude(),
+//                            imHere.getLongitude())).zoom(zoom).build();
+//            googleMap.animateCamera(CameraUpdateFactory
+//                    .newCameraPosition(cameraPosition));
+
     }
 }

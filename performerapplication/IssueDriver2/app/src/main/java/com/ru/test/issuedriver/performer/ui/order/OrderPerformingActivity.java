@@ -235,7 +235,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
                 order_log.setText(String.format("%.1f м", newDist));
                 Log.d(TAG, String.format("Form update: %.1f м", newDist));
 
-                if (newDist > 100f) {
+                if (newDist > 50f) {
                     distanse += newDist;
                     lastLocation = position;
 

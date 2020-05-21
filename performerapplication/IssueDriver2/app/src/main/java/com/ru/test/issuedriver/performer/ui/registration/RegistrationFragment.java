@@ -1,11 +1,14 @@
 package com.ru.test.issuedriver.performer.ui.registration;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -17,9 +20,11 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.core.OnlineState;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.data.user;
+import com.ru.test.issuedriver.helpers.MyBroadcastReceiver;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 import com.ru.test.issuedriver.PerformerActivity;
 
@@ -35,6 +40,7 @@ public class RegistrationFragment extends Fragment {
     private RegistrationViewModel registrationViewModel;
     TextInputEditText mFio, mStaff, mEmail, mCorp, mAutomodel, mAutovin, mAutonumber, mTel;
     Button mRegistrationButton, mRegistration_btn_logout;
+    ImageView mRegistration_online, mRegistration_offline;
     FirebaseFirestore db;
 
 
@@ -51,9 +57,6 @@ public class RegistrationFragment extends Fragment {
 //                textView.setText(s);
 //            }
 //        });
-
-
-
         mFio = root.findViewById(R.id.registration_name);
         mStaff = root.findViewById(R.id.registration_staff);
         mEmail = root.findViewById(R.id.registration_email);
@@ -64,6 +67,11 @@ public class RegistrationFragment extends Fragment {
         mRegistrationButton = root.findViewById(R.id.registration_btn);
         mRegistration_btn_logout = root.findViewById(R.id.registration_btn_logout);
         mTel = root.findViewById(R.id.registration_tel);
+        mRegistration_online = root.findViewById(R.id.registration_online);
+        mRegistration_offline = root.findViewById(R.id.registration_ofline);
+
+        OnlineStateListen();
+
         db = FirebaseFirestore.getInstance();
 
         mRegistrationButton.setOnClickListener(click);
@@ -71,6 +79,49 @@ public class RegistrationFragment extends Fragment {
         init();
         return root;
     }
+
+    private void OnlineStateListen() {
+        MyBroadcastReceiver.callback4onlineState = new MyBroadcastReceiver.onlineStateChange() {
+            @Override
+            public void callback(boolean state) {
+                Log.d("TAG", "Online " + state);
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRegistration_online.setVisibility(state ? View.VISIBLE : View.GONE);
+                        mRegistration_offline.setVisibility(!state ? View.VISIBLE : View.GONE);
+                    }
+                });
+            }
+        };
+
+        Runnable runnable = new Runnable() {
+            public void run() {
+
+                while (true) {
+                    synchronized (this) {
+                        try {
+                            wait(10000);
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mRegistration_online.setVisibility(View.GONE);
+                                    mRegistration_offline.setVisibility(View.VISIBLE);
+                                }
+                            });
+
+                        } catch (Exception e) {
+                        }
+                    }
+                }
+             }
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
+    }
+
 
     private void init() {
         mEmail.setText(googleAuthManager.getEmail());

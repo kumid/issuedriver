@@ -1,5 +1,6 @@
 package com.ru.test.issuedriver.data;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.GeoPoint;
 
 public class user {
@@ -16,6 +17,7 @@ public class user {
     public boolean is_busy;
     public boolean is_performer;
 
+    public Timestamp last_geo_time;
 
     public user() {}
 
@@ -29,7 +31,7 @@ public class user {
         this.autonumber = autonumber;
         this.tel = tel;
         this.accept = false;
-        is_busy = false;
+        this.is_busy = false;
         this.is_performer = is_performer;
     }
 }
