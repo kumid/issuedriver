@@ -1,0 +1,46 @@
+<resources>
+    <string name="app_name">Fleet mng</string>
+    <string name="title_map">Найти авто</string>
+    <string name="title_dashboard">История</string>
+    <string name="title_notifications">Заявки</string>
+    <string name="login">Авторизоваться</string>
+    <string name="registration_name">ФИО</string>
+    <string name="registration_staff">Должность</string>
+    <string name="registration_email">Email</string>
+    <string name="registration_corp_email">Корпоративный email</string>
+    <string name="registration_auto">Автомобиль</string>
+    <string name="registration_auto_model">Модель</string>
+    <string name="registration_auto_vin">VIN</string>
+    <string name="registration_auto_number">Госномер</string>
+    <string name="registration_employee">Пользователь</string>
+    <string name="registration">Зарегистрировать</string>
+    <string name="registration_tel">Телефон</string>
+    <string name="title_user">Кабинет</string>
+    <string name="order_data">Выберите дату и время поездки</string>
+    <string name="order_from">Откуда</string>
+    <string name="order_to">Куда</string>
+    <string name="order_purpose">Цель поездки</string>
+    <string name="order_comment">Комментарий</string>
+    <string name="order">Забронировать</string>
+    <string name="accept_order">Принять</string>
+    <string name="action_exit">Выход</string>
+    <string name="registration_car">Автомобиль</string>
+    <string name="registration_car_number">Госномер</string>
+    <string name="title_activity_customer">CustomerActivity</string>
+    <string name="title_home">Home</string>
+    <string name="history_accept_date">Время принятия заявки</string>
+    <string name="order_time">Время</string>
+    <string name="order_fuel">Расход топлива</string>
+    <string name="order_distance">Расстояние</string>
+    <string name="logout">Выход</string>
+    <string name="performer">Водитель</string>
+    <string name="customer">Заказчик</string>
+
+
+    <string name="order_completed">Завершить</string>
+    <string name="action_send">Обратная связь</string>
+    <string name="feedback_send">Отправить</string>
+    <string name="order_now">Сегодня</string>
+    <string name="order_tomorrow">Завтра</string>
+    <string name="data_name">Дата</string>
+</resources>
