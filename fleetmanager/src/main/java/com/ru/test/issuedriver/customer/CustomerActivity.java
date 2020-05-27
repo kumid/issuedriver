@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
+import com.ru.test.issuedriver.customer.ui.notifications.NotificationsViewModel;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 
 import androidx.annotation.NonNull;
@@ -21,6 +22,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -48,7 +50,7 @@ public class CustomerActivity extends MyActivity {
 
         setupNavigation();
 
-//        initViewModels();
+        initViewModels();
 
         checkPermission(this);
 
@@ -83,7 +85,11 @@ public class CustomerActivity extends MyActivity {
         });
     }
 
-//    private void initViewModels() {
+    private void initViewModels() {
+        NotificationsViewModel notificationsViewModel =
+                ViewModelProviders.of(CustomerActivity.this).get(NotificationsViewModel.class);
+        notificationsViewModel.initNotificationLoad(MyActivity.CurrentUser);
+
 //        registrationViewModel =
 //                ViewModelProviders.of(CustomerActivity.this).get(RegistrationViewModel.class);
 
@@ -93,7 +99,7 @@ public class CustomerActivity extends MyActivity {
 //        HistoryViewModel historyViewModel =
 //                ViewModelProviders.of(CustomerActivity.this).get(HistoryViewModel.class);
 //        historyViewModel.initNotificationLoad(CustomerActivity.this, registrationViewModel.currentUser);
-//    }
+    }
 
     public static final int PERMISSIONS= 123;
     //check location permession for Android 5.0/+

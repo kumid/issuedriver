@@ -37,7 +37,7 @@ public class NotificationsFragment extends Fragment {
                 ViewModelProviders.of(getActivity()).get(NotificationsViewModel.class);
 
 //        notificationsViewModel.initNotificationLoad(getViewLifecycleOwner(), registrationViewModel.currentUser);
-        notificationsViewModel.initNotificationLoad(MyActivity.CurrentUser);
+//        notificationsViewModel.initNotificationLoad(MyActivity.CurrentUser);
 
         View root = inflater.inflate(R.layout.fragment_notifications, container, false);
 

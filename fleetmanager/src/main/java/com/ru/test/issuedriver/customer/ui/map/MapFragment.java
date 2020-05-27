@@ -33,10 +33,12 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.customer.CustomerActivity;
+import com.ru.test.issuedriver.customer.ui.notifications.NotificationsViewModel;
 import com.ru.test.issuedriver.customer.ui.order.OrderActivity;
-import com.ru.test.issuedriver.registration.RegistrationViewModel;
+import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.data.user;
 
 import org.jetbrains.annotations.NotNull;
@@ -47,6 +49,10 @@ import java.util.Map;
 
 public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickListener {
 
+
+    private final float carZoomLevel = 16f;
+    private final float dotZoomLevel = 11f;
+    private float zoomLevel = carZoomLevel;
 
     private class markerPair {
         public MarkerOptions markerOption;
@@ -69,13 +75,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     private GoogleMap googleMap;
 //    private MarkerOptions markerIm, markerBus ;
 //    private Marker ImMarker, BusMarker ;
+    NotificationsViewModel notificationsViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        mapViewModel =
-                ViewModelProviders.of(CustomerActivity.getInstance()).get(MapViewModel.class);
-//        registrationViewModel =
-//                ViewModelProviders.of(CustomerActivity.getInstance()).get(RegistrationViewModel.class);
+
+        initViewModels();
 
         View root = inflater.inflate(R.layout.fragment_map, container, false);
 
@@ -97,7 +102,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 googleMap.setOnMarkerClickListener(MapFragment.this);
 
                 CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(Double.parseDouble("45.058403"), Double.parseDouble("38.983933"))).zoom(15).build();
+                        .target(new LatLng(Double.parseDouble("45.058403"), Double.parseDouble("38.983933"))).zoom(carZoomLevel).build();
                 googleMap.animateCamera(CameraUpdateFactory
                         .newCameraPosition(cameraPosition));
 
@@ -109,6 +114,15 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 };
                 imHere.init(getActivity());
                 observe2performers();
+
+                googleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
+                    @Override
+                    public void onCameraIdle() {
+                        float oldZoom = zoomLevel;
+                        zoomLevel = googleMap.getCameraPosition().zoom;
+                        setCarsVisibility(oldZoom, zoomLevel);
+                    }
+                });
             }
         });
 
@@ -120,6 +134,70 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         return root;
     }
 
+    private void initViewModels() {
+        mapViewModel =
+                ViewModelProviders.of(CustomerActivity.getInstance()).get(MapViewModel.class);
+
+        notificationsViewModel =
+                ViewModelProviders.of(getActivity()).get(NotificationsViewModel.class);
+
+        notificationsViewModel.getNotifications().observe(getViewLifecycleOwner(), new Observer<List<order>>() {
+            @Override
+            public void onChanged(List<order> orders) {
+                mapViewModel.setOrders(orders);
+            }
+        });
+    }
+
+    private void setCarsVisibility(float oldZoom, float zoomLevel) {
+
+        if(oldZoom == zoomLevel) {
+            Log.d("myLogs", "Zoom = oldZoom = " + zoomLevel);
+            return;
+        }
+        Log.d("myLogs", "Zoom = " + zoomLevel);
+        boolean isInformed = false;
+        for (String key:
+                markerMap.keySet()) {
+
+            markerPair item = markerMap.get(key);
+
+            boolean inZeroOld = oldZoom < dotZoomLevel;
+            boolean inDotOld = oldZoom >= dotZoomLevel && oldZoom < carZoomLevel;
+            boolean inCarOld = oldZoom >= carZoomLevel;
+
+            boolean inZero = zoomLevel < dotZoomLevel;
+            boolean inDot = zoomLevel >= dotZoomLevel && zoomLevel < carZoomLevel;
+            boolean inCar = zoomLevel >= carZoomLevel;
+
+            if (inZero) {
+                item.marker.setVisible(false);
+                item.marker.remove();
+                //googleMap.clear();
+                continue;
+            }
+
+            boolean isNotChanged = (inDotOld && inDot) || (inCarOld && inCar);  //  (inZeroOld && inZero) ||
+
+            if (!isNotChanged) {
+                item.marker.setVisible(false);
+                item.marker.remove();
+                BitmapDescriptor car = getBitmapDescriptor(item._user);
+//                item.markerOption = new MarkerOptions().position(
+//                        new LatLng(item._user.position.getLatitude(), item._user.position.getLongitude()))
+//                        .title(item._user.fio);
+                item.markerOption.icon(car);
+
+                Marker BusMarkerOK = googleMap.addMarker(item.markerOption);
+                item.marker = BusMarkerOK;
+                if (!isInformed) {
+                    Log.d("myLogs", "Change car visibility");
+                    isInformed = true;
+                }
+            }
+        }
+     }
+
     private void observe2performers() {
         mapViewModel.getUsers().observe(getViewLifecycleOwner(), new Observer<List<user>>() {
             @Override
@@ -129,7 +207,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                     if (item.position == null)
                         continue;
 
-                    if (markerMap.containsKey(item.email)) {
+                     if (markerMap.containsKey(item.email)) {
+                         if(zoomLevel <= dotZoomLevel){
+                             markerMap.get(item.email).marker.setVisible(false);
+                             markerMap.get(item.email).marker.remove();
+                             continue;
+                         }
 
                         if (markerMap.get(item.email)._user.is_busy != item.is_busy) {
                             markerMap.get(item.email).marker.setVisible(false);
@@ -139,11 +222,12 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 //                                    new LatLng(item.position.getLatitude(), item.position.getLongitude()))
 //                                    .title(item.fio);
 
-                            int car = item.is_busy ? R.drawable.car_red : R.drawable.car_yellow;
+                            BitmapDescriptor car = getBitmapDescriptor(item);
+
                             markerMap.get(item.email).markerOption = new MarkerOptions().position(
                                     new LatLng(item.position.getLatitude(), item.position.getLongitude()))
                                     .title(item.fio);
-                            markerMap.get(item.email).markerOption.icon(getBitmapDescriptor(car, 80, 80));
+                            markerMap.get(item.email).markerOption.icon(car);
 
                             Marker BusMarkerOK = googleMap.addMarker(markerMap.get(item.email).markerOption);
                             markerMap.get(item.email).marker = BusMarkerOK;
@@ -152,15 +236,56 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                             if (item.position != null) {
                                 animateMarker(item, markerMap.get(item.email).marker,
                                         new LatLng(item.position.getLatitude(), item.position.getLongitude()),
-                                        false);
+                                        false, false);
                             }
                         }
                     } else {
-                        setPerformerPosition(item);
+                            setPerformerPosition(item);
                     }
                 }
-            }
+                if(markerMap.size() != 0) {
+                    for (Object key :  markerMap.keySet().toArray()) {
+                        boolean forDelete = true;
+                        for (user item : users) {
+                            if (item.is_busy
+                                && !mapViewModel.isOrderExist4driver(item.email)) {                                                // если машина занята
+                                forDelete = true;
+                                break;
+                            }
+                            if (item.email.equals(markerMap.get(key)._user.email)) {     // если аккаунт не активирован
+                                forDelete = false;
+                                break;
+                            }
+
+                        }
+
+                        if (forDelete) {
+//                        markerMap.get(key).markerOption.visible(false);
+//                        markerMap.get(key).marker.setVisible(false);
+                            markerMap.get(key).marker.remove();
+                            markerMap.remove(key);
+                        }
+                    }
+                }
+             }
         });
+    }
+
+    @NotNull
+    private BitmapDescriptor getBitmapDescriptor(user item) {
+        int carId;
+        int size;
+
+        if(zoomLevel >= carZoomLevel){
+            carId = item.is_busy ? R.drawable.car_red2 : R.drawable.car_yellow1;
+            size = 70;
+        } else if(zoomLevel >= dotZoomLevel){
+            carId = R.drawable.dot;
+            size = 25;
+        } else
+            return null;
+
+        return getBitmapDescriptor(carId, size, size);
     }
 
     private void setPerformerPosition(user item) {
@@ -173,8 +298,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                 new LatLng(item.position.getLatitude(), item.position.getLongitude()))
                 .title(item.fio);
 
-        int car = item.is_busy ? R.drawable.car_red : R.drawable.car_yellow;
-        markerBus.icon(getBitmapDescriptor(car, 80, 80));
+        BitmapDescriptor car = getBitmapDescriptor(item);
+        markerBus.icon(car);
 
         //        markerBus.icon(BitmapDescriptorFactory
 //                .fromResource(car)); //).defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
@@ -202,7 +327,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         return BitmapDescriptorFactory.fromBitmap(smallMarker);
     }
 
-    public void animateMarker(user item, final Marker marker, final LatLng toPosition, final boolean hideMarker) {
+    public void animateMarker(user item, final Marker marker, final LatLng toPosition, final boolean hideMarker, boolean cameraMoved) {
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
         Projection proj = googleMap.getProjection();
@@ -224,11 +349,13 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                         * startLatLng.latitude;
                 marker.setPosition(new LatLng(lat, lng));
 
-//                CameraPosition cameraPosition = new CameraPosition.Builder()
-//                        .target(toPosition).build();
-//                googleMap.animateCamera(CameraUpdateFactory
-//                        .newCameraPosition(cameraPosition));
-
+                if(cameraMoved) {
+                    float zoom = googleMap.getCameraPosition().zoom;
+                    CameraPosition cameraPosition = new CameraPosition.Builder()
+                            .target(toPosition).zoom(zoom).build();
+                    googleMap.animateCamera(CameraUpdateFactory
+                            .newCameraPosition(cameraPosition));
+                }
                 if (t < 1.0) {
                     // Post again 16ms later.
                     handler.postDelayed(this, 16);
@@ -283,18 +410,20 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
             markerOptionIm.icon(getBitmapDescriptor(R.drawable.man, 80, 80));
             ImMarker = googleMap.addMarker(markerOptionIm);
 
-        } else
+            float zoom = googleMap.getCameraPosition().zoom;
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(new LatLng(imHere.getLatitude(),
+                            imHere.getLongitude())).zoom(zoom).build();
+            googleMap.animateCamera(CameraUpdateFactory
+                    .newCameraPosition(cameraPosition));
+
+        } else {
             animateMarker(null, ImMarker,
                     new LatLng(imHere.getLatitude(),
                             imHere.getLongitude()),
-                    false);
-            float zoom = googleMap.getCameraPosition().zoom;
-//            CameraPosition cameraPosition = new CameraPosition.Builder()
-//                    .target(new LatLng(imHere.getLatitude(),
-//                            imHere.getLongitude())).zoom(zoom).build();
-//            googleMap.animateCamera(CameraUpdateFactory
-//                    .newCameraPosition(cameraPosition));
-
+                    false,
+                    true);
+        }
     }
 
     private View.OnClickListener clickZoom = new View.OnClickListener() {
