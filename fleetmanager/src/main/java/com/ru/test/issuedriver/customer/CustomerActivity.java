@@ -14,7 +14,7 @@ import android.view.MenuItem;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
-import com.ru.test.issuedriver.customer.ui.notifications.NotificationsViewModel;
+import com.ru.test.issuedriver.customer.ui.orders_list.OrdersListViewModel;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 
 import androidx.annotation.NonNull;
@@ -86,9 +86,9 @@ public class CustomerActivity extends MyActivity {
     }
 
     private void initViewModels() {
-        NotificationsViewModel notificationsViewModel =
-                ViewModelProviders.of(CustomerActivity.this).get(NotificationsViewModel.class);
-        notificationsViewModel.initNotificationLoad(MyActivity.CurrentUser);
+        OrdersListViewModel ordersListViewModel =
+                ViewModelProviders.of(CustomerActivity.this).get(OrdersListViewModel.class);
+        ordersListViewModel.initNotificationLoad(MyActivity.CurrentUser);
 
 //        registrationViewModel =
 //                ViewModelProviders.of(CustomerActivity.this).get(RegistrationViewModel.class);

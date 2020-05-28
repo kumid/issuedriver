@@ -1,4 +1,4 @@
-package com.ru.test.issuedriver.performer.ui.notifications;
+package com.ru.test.issuedriver.performer.ui.orders_list;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,11 +20,11 @@ import androidx.recyclerview.widget.RecyclerView;
 public class notificationsAdapter extends RecyclerView.Adapter<notificationsAdapter.VH> {
 
     List<order> cards;
-    NotificationsViewModel viewModel;
+    OrdersListViewModel viewModel;
 
-    public notificationsAdapter(NotificationsViewModel notificationsViewModel, List<order> lst){
+    public notificationsAdapter(OrdersListViewModel ordersListViewModel, List<order> lst){
         cards = lst;
-        viewModel = notificationsViewModel;
+        viewModel = ordersListViewModel;
     }
     public void setChangedData(List<order> lst) {
         cards = lst;

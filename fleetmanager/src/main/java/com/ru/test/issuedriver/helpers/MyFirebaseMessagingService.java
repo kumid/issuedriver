@@ -23,6 +23,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.SplashScreen;
+import com.ru.test.issuedriver.data.user;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -105,9 +106,18 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     public void showNotification(String title,String message){
         mysettings.Init(getApplicationContext());
         if(title.equals("service")) {
-            if(message.equals(mysettings.GetEmail())) {
-                title = "Заявка подтверждена";
-                message = "Заявка принята водителем";
+            user curr = mysettings.GetUser();
+            if(curr == null)
+                return;
+
+            if(message.equals(curr.email)) {
+                if(curr.is_performer){
+                    title = "Новая заявка";
+                    message = "Поступила новая заявка";
+                } else {
+                   title = "Заявка подтверждена";
+                    message = "Заявка принята водителем";
+                }
                 Log.e("Token","Внимание");
             } else {
                 Log.e("Token","4");
@@ -117,7 +127,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         Log.e("Token","5");
 
         Intent intent=new Intent(this, SplashScreen.class);
-        String channel_id="megapolis_channel";
+        String channel_id="fleet_channel";
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent=PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_ONE_SHOT);
         Uri uri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
@@ -140,7 +150,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         NotificationManager notificationManager= (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
-            NotificationChannel notificationChannel = new NotificationChannel(channel_id,"megapolis_app", NotificationManager.IMPORTANCE_HIGH);
+            NotificationChannel notificationChannel = new NotificationChannel(channel_id,"fleet_app", NotificationManager.IMPORTANCE_HIGH);
             notificationChannel.setSound(uri,null);
             notificationManager.createNotificationChannel(notificationChannel);
         }

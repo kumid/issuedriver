@@ -1,3 +1,2 @@
 rootProject.name='Customer'
 include ':fleetmanager'
-include ':performer'

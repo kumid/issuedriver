@@ -33,10 +33,9 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.customer.CustomerActivity;
-import com.ru.test.issuedriver.customer.ui.notifications.NotificationsViewModel;
+import com.ru.test.issuedriver.customer.ui.orders_list.OrdersListViewModel;
 import com.ru.test.issuedriver.customer.ui.order.OrderActivity;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.data.user;
@@ -75,7 +74,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     private GoogleMap googleMap;
 //    private MarkerOptions markerIm, markerBus ;
 //    private Marker ImMarker, BusMarker ;
-    NotificationsViewModel notificationsViewModel;
+    OrdersListViewModel ordersListViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -138,10 +137,10 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         mapViewModel =
                 ViewModelProviders.of(CustomerActivity.getInstance()).get(MapViewModel.class);
 
-        notificationsViewModel =
-                ViewModelProviders.of(getActivity()).get(NotificationsViewModel.class);
+        ordersListViewModel =
+                ViewModelProviders.of(getActivity()).get(OrdersListViewModel.class);
 
-        notificationsViewModel.getNotifications().observe(getViewLifecycleOwner(), new Observer<List<order>>() {
+        ordersListViewModel.getNotifications().observe(getViewLifecycleOwner(), new Observer<List<order>>() {
             @Override
             public void onChanged(List<order> orders) {
                 mapViewModel.setOrders(orders);

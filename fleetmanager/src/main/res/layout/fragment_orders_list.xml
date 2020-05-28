@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".customer.ui.notifications.NotificationsFragment">
+    tools:context=".customer.ui.orders_list.OrdersListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notification_rv"

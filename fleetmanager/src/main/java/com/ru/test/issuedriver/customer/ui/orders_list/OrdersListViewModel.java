@@ -1,4 +1,4 @@
-package com.ru.test.issuedriver.customer.ui.notifications;
+package com.ru.test.issuedriver.customer.ui.orders_list;
 
 import android.util.Log;
 
@@ -28,10 +28,10 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 
-public class NotificationsViewModel extends ViewModel {
+public class OrdersListViewModel extends ViewModel {
     FirebaseFirestore db;
 
-    public NotificationsViewModel() {
+    public OrdersListViewModel() {
         db = FirebaseFirestore.getInstance();
         listNotifications = new MutableLiveData<>();
     }
