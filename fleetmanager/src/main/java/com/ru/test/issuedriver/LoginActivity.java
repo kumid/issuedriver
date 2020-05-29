@@ -32,6 +32,7 @@ public class LoginActivity extends AppCompatActivity {
             public void callback(boolean isCompleate) {
                 if(isCompleate) {
                     Intent intent = new Intent(LoginActivity.this, RegistrationActivity.class);
+                    intent.putExtra("isFromLogin", true);
                     startActivity(intent);
                     finish();
                 } else {

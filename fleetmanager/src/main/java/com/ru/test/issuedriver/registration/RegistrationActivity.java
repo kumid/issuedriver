@@ -5,10 +5,13 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
@@ -26,29 +29,33 @@ import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.SplashScreen;
 import com.ru.test.issuedriver.customer.CustomerActivity;
+import com.ru.test.issuedriver.customer.CustomerV2Activity;
 import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 import com.ru.test.issuedriver.helpers.mysettings;
 import com.ru.test.issuedriver.performer.PerformerActivity;
+import com.ru.test.issuedriver.performer.helpers.MyBroadcastReceiver;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class RegistrationActivity extends MyActivity {
 
+    private RegistrationViewModel registrationViewModel;
     TextInputEditText mFio, mStaff, mEmail, mCorp, mAutomodel, mAutovin, mAutonumber, mTel;
     Button mRegistrationButton, mRegistration_btn_logout;
+    ImageView mRegistration_online, mRegistration_offline;
     RadioButton mCustomer, mPerformer;
-    View mRegistration_performer_groupe;
+    View mRegistration_performer_groupe, mRegistration_radio_group;
     FirebaseFirestore db;
 
-    RegistrationViewModel registrationViewModel;
+    private boolean isFromLogin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
+
         registrationViewModel =
                 ViewModelProviders.of(RegistrationActivity.this).get(RegistrationViewModel.class);
 
@@ -62,17 +69,20 @@ public class RegistrationActivity extends MyActivity {
         mRegistrationButton = findViewById(R.id.registration_btn);
         mRegistration_btn_logout = findViewById(R.id.registration_btn_logout);
         mTel = findViewById(R.id.registration_tel);
+        mRegistration_online = findViewById(R.id.registration_online);
+        mRegistration_offline = findViewById(R.id.registration_ofline);
+        mRegistration_radio_group = findViewById(R.id.registration_radio_group);
         mRegistration_performer_groupe = findViewById(R.id.registration_performer_groupe);
         mCustomer = findViewById(R.id.radio_customer);
         mPerformer = findViewById(R.id.radio_performer);
+        mCustomer.setEnabled(false);
+        mPerformer.setEnabled(false);
 
         db = FirebaseFirestore.getInstance();
 
         mRegistrationButton.setOnClickListener(click);
-        mRegistration_btn_logout.setVisibility(View.GONE);
+        mRegistration_btn_logout.setOnClickListener(click);
         init();
-        getUser();
-
         mCustomer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -82,13 +92,31 @@ public class RegistrationActivity extends MyActivity {
     }
 
     private void init() {
-        mEmail.setText(googleAuthManager.getEmail());
-    }
+        String email = googleAuthManager.getEmail();
+        mEmail.setText(email);
+
+        if(getIntent().hasExtra("isFromLogin")) {
+            isFromLogin = getIntent().getBooleanExtra("isFromLogin", false);
+            if (isFromLogin) {
+                getUser(email);
+                mRegistration_btn_logout.setVisibility(View.GONE);
+            }
+        } else if(getIntent().hasExtra("user")) {
+            String user = getIntent().getStringExtra("user");
+            getUser(user);
+            mRegistrationButton.setText("Синхронизировать");
+            OnlineStateListen();
+        }
+     }
 
     private View.OnClickListener click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            addUser();
+            if(v.getId() == R.id.registration_btn_logout) {
+                googleAuthManager.signOut();
+            }
+            if(v.getId() == R.id.registration_btn)
+                addUser();
         }
     };
 
@@ -131,7 +159,7 @@ public class RegistrationActivity extends MyActivity {
         String obj = gson.toJson(current);
         Intent intent;
         if(current.accept) {
-            intent = new Intent(RegistrationActivity.this, current.is_performer ? PerformerActivity.class : CustomerActivity.class);
+            intent = new Intent(RegistrationActivity.this, current.is_performer ? PerformerActivity.class : CustomerV2Activity.class);
             //intent.putExtra("object", obj);
             startActivity(intent);
             finish();
@@ -141,10 +169,10 @@ public class RegistrationActivity extends MyActivity {
         }
     }
     user currentUser;
-    private void getUser() {
+    private void getUser(String email) {
         if(registrationViewModel.currentUser.getValue() == null) {
             db.collection("users")
-                    .whereEqualTo("email", mEmail.getText().toString())
+                    .whereEqualTo("email", email)
                     .get()
                     .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
@@ -174,4 +202,49 @@ public class RegistrationActivity extends MyActivity {
                     });
         }
     }
+
+
+
+    private void OnlineStateListen() {
+        MyBroadcastReceiver.callback4onlineState = new MyBroadcastReceiver.onlineStateChange() {
+            @Override
+            public void callback(boolean state) {
+                Log.d("TAG", "Online " + state);
+                Handler handler = new Handler(Looper.getMainLooper());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRegistration_online.setVisibility(state ? View.VISIBLE : View.GONE);
+                        mRegistration_offline.setVisibility(!state ? View.VISIBLE : View.GONE);
+                    }
+                });
+            }
+        };
+
+        Runnable runnable = new Runnable() {
+            public void run() {
+
+                while (true) {
+                    synchronized (this) {
+                        try {
+                            wait(10000);
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    mRegistration_online.setVisibility(View.GONE);
+                                    mRegistration_offline.setVisibility(View.VISIBLE);
+                                }
+                            });
+
+                        } catch (Exception e) {
+                        }
+                    }
+                }
+            }
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
+    }
+
 }

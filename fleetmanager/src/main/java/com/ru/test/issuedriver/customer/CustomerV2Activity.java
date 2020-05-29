@@ -1,10 +1,18 @@
 package com.ru.test.issuedriver.customer;
 
+import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
@@ -15,8 +23,10 @@ import android.view.Menu;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -32,6 +42,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
+import com.ru.test.issuedriver.HistoryActivity;
+import com.ru.test.issuedriver.LoginActivity;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.customer.ui.map.MapViewModel;
@@ -40,6 +52,8 @@ import com.ru.test.issuedriver.customer.ui.order.OrderActivity;
 import com.ru.test.issuedriver.customer.ui.orders_list.OrdersListViewModel;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.data.user;
+import com.ru.test.issuedriver.orders.OrdersListActivity;
+import com.ru.test.issuedriver.registration.RegistrationActivity;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +61,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -121,7 +139,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_orders, R.id.nav_gallery, R.id.nav_cabinet)
+                R.id.nav_orders, R.id.nav_history, R.id.nav_cabinet)
                 .setDrawerLayout(drawer)
                 .build();
         ImageView mCustomer_hamburger = findViewById(R.id.customer_hamburger);
@@ -159,6 +177,8 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
             public void onMapReady(GoogleMap mMap) {
                 googleMap = mMap;
                 googleMap.setOnMarkerClickListener(CustomerV2Activity.this);
+                googleMap.setMinZoomPreference(16f);
+                googleMap.setMaxZoomPreference(17f);
 
                 CameraPosition cameraPosition = new CameraPosition.Builder()
                         .target(new LatLng(Double.parseDouble("45.058403"), Double.parseDouble("38.983933"))).zoom(carZoomLevel).build();
@@ -169,10 +189,21 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
                     @Override
                     public void callBack(Location location) {
                         setMyPosition(location);
+                        googleMap.setMinZoomPreference(10f);
+                        googleMap.setMyLocationEnabled(true);
                     }
                 };
                 imHere.init(CustomerV2Activity.this);
+
                 observe2performers();
+
+//                View locationButton = ((View) mMapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+//                RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
+//                // position on right bottom
+//                rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+//                rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+//                rlp.setMargins(0, 180, 180, 0);
+
 
                 googleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
                     @Override
@@ -189,6 +220,9 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         ImageView mMap_minus = findViewById(R.id.map_minus);
         mMap_plus.setOnClickListener(clickZoom);
         mMap_minus.setOnClickListener(clickZoom);
+
+
+        checkPermission(this);
     }
 
     @Override
@@ -210,16 +244,23 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
+        Intent intent;
         switch (id){
             case R.id.nav_orders:
-                Toast.makeText(getApplicationContext(), "Вы выбрали home", Toast.LENGTH_SHORT).show();
+                intent = new Intent(CustomerV2Activity.this, OrdersListActivity.class);
+                startActivity(intent);
+//                Toast.makeText(getApplicationContext(), "Вы выбрали home", Toast.LENGTH_SHORT).show();
                 break;
-            case R.id.nav_gallery:
-                Toast.makeText(getApplicationContext(), "Вы выбрали galery", Toast.LENGTH_SHORT).show();
+            case R.id.nav_history:
+                intent = new Intent(CustomerV2Activity.this, HistoryActivity.class);
+                startActivity(intent);
+//                Toast.makeText(getApplicationContext(), "Вы выбрали galery", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_cabinet:
-                Toast.makeText(getApplicationContext(), "Вы выбрали slide show", Toast.LENGTH_SHORT).show();
+                intent = new Intent(CustomerV2Activity.this, RegistrationActivity.class);
+                intent.putExtra("user", CurrentUser.email);
+                startActivity(intent);
+//                Toast.makeText(getApplicationContext(), "Вы выбрали slide show", Toast.LENGTH_SHORT).show();
                 break;
         }
 
@@ -239,17 +280,13 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         }
     }
 
-
-
-
-
-
     private void initViewModels() {
         mapViewModel =
                 ViewModelProviders.of(CustomerV2Activity.this).get(MapViewModel.class);
 
         ordersListViewModel =
                 ViewModelProviders.of(CustomerV2Activity.this).get(OrdersListViewModel.class);
+        ordersListViewModel.initNotificationLoad(MyActivity.CurrentUser);
 
         ordersListViewModel.getNotifications().observe(CustomerV2Activity.this, new Observer<List<order>>() {
             @Override
@@ -260,8 +297,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
     }
 
     private void setCarsVisibility(float oldZoom, float zoomLevel) {
-
-        if(oldZoom == zoomLevel) {
+         if(oldZoom == zoomLevel) {
             Log.d("myLogs", "Zoom = oldZoom = " + zoomLevel);
             return;
         }
@@ -346,7 +382,8 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
                             if (item.position != null) {
                                 animateMarker(item, markerMap.get(item.email).marker,
                                         new LatLng(item.position.getLatitude(), item.position.getLongitude()),
-                                        false, false);
+                                        false,
+                                            mapViewModel.isOrderExist4driver(item.email)); // order - активный
                             }
                         }
                     } else {
@@ -525,13 +562,12 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
                             imHere.getLongitude())).zoom(zoom).build();
             googleMap.animateCamera(CameraUpdateFactory
                     .newCameraPosition(cameraPosition));
-
         } else {
             animateMarker(null, ImMarker,
                     new LatLng(imHere.getLatitude(),
                             imHere.getLongitude()),
                     false,
-                    true);
+                    !mapViewModel.isCameraOnPerformer);
         }
     }
 
@@ -563,4 +599,57 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         }
     };
 
+
+    public static final int PERMISSIONS= 123;
+    //check location permession for Android 5.0/+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public static boolean checkPermission(final Context context)
+    {
+        int currentAPIVersion = Build.VERSION.SDK_INT;
+        if(currentAPIVersion>= Build.VERSION_CODES.M)
+        {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.ACCESS_FINE_LOCATION) ) {
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
+                    alertBuilder.setCancelable(true);
+                    alertBuilder.setTitle("Разрешения");
+                    alertBuilder.setMessage("Разрешение необходимо для определения Вашей позиции на карте");
+                    alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS);
+
+                        }
+                    });
+                    AlertDialog alert = alertBuilder.create();
+                    alert.show();
+
+                } else {
+                    ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS);
+
+                }
+                return false;
+            }
+            else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS:
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission granted
+                     imHere.init(CustomerV2Activity.this);
+                } else {
+                    // permission denied
+                }
+                return;
+        }
+    }
 }

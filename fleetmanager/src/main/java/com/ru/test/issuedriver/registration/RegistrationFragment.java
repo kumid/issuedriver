@@ -60,7 +60,6 @@ public class RegistrationFragment extends Fragment {
 //                textView.setText(s);
 //            }
 //        });
-
         mFio = root.findViewById(R.id.registration_name);
         mStaff = root.findViewById(R.id.registration_staff);
         mEmail = root.findViewById(R.id.registration_email);
@@ -71,7 +70,7 @@ public class RegistrationFragment extends Fragment {
         mRegistrationButton = root.findViewById(R.id.registration_btn);
         mRegistration_btn_logout = root.findViewById(R.id.registration_btn_logout);
         mTel = root.findViewById(R.id.registration_tel);
- mRegistration_online = root.findViewById(R.id.registration_online);
+        mRegistration_online = root.findViewById(R.id.registration_online);
         mRegistration_offline = root.findViewById(R.id.registration_ofline);
 
         mRegistration_radio_group = root.findViewById(R.id.registration_radio_group);

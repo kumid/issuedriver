@@ -23,6 +23,7 @@ public class MapViewModel extends ViewModel {
 
     FirebaseFirestore db;
     private MutableLiveData<List<user>> userList;
+    public boolean isCameraOnPerformer = false;
 
     public MapViewModel() {
         db = FirebaseFirestore.getInstance();
@@ -68,16 +69,19 @@ public class MapViewModel extends ViewModel {
     public void setOrders(List<order> _orders) {
         orders.clear();
         for (order item: _orders) {
-            if(!item.completed && item.accept)
+            if(!item.completed && item.accept) {
                 orders.add(item);
+            }
         }
+        isCameraOnPerformer = orders.size() > 0;
     }
 
     public boolean isOrderExist4driver(String email){
-        for (order item: orders) {
-            if(item.performer_email.equals(email))
-                return true;
-        }
+        if(!isCameraOnPerformer)
+            return false;
+        if(orders.get(0).performer_email.equals(email))
+            return true;
+
         return false;
     }
 }

@@ -23,9 +23,10 @@ public class imHere {
     private final static long FASTEST_INTERVAL = 10000; /* 20 sec */
 
     Context ctx;
+    static imHere instance;
 
     public static void init(Context ctx){
-        imHere instance = new imHere(ctx);
+        instance = new imHere(ctx);
     }
 
     private imHere(Context ctx){
@@ -60,6 +61,9 @@ public class imHere {
                         Location location = locationResult.getLastLocation();
 
                         if (location != null) {
+
+//                            location.setLatitude(53.587740);
+//                            location.setLongitude(34.341945);
 
                             if(lastLocation == null) {
                                 Log.d(TAG, "onLocationResult: lastLocation == null");
