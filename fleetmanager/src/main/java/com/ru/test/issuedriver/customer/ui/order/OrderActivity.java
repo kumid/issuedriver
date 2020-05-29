@@ -21,9 +21,8 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
-import com.ru.test.issuedriver.customer.CustomerActivity;
+import com.ru.test.issuedriver.customer.CustomerV2Activity;
 import com.ru.test.issuedriver.helpers.mysettings;
-import com.ru.test.issuedriver.registration.RegistrationViewModel;
 import com.ru.test.issuedriver.data.order;
 
 import org.joda.time.DateTime;
@@ -115,7 +114,7 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
 
     private void initVM() {
         orderViewModel =
-                ViewModelProviders.of(CustomerActivity.getInstance()).get(OrderViewModel.class);
+                ViewModelProviders.of(CustomerV2Activity.getInstance()).get(OrderViewModel.class);
     }
 
     // отображаем диалоговое окно для выбора даты

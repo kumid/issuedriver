@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Fleet management</string>
     <string name="title_map">Найти авто</string>
-    <string name="title_dashboard">История</string>
+    <string name="title_history">История</string>
     <string name="title_notifications">Заявки</string>
     <string name="login">Авторизоваться</string>
     <string name="registration_name">ФИО</string>
@@ -43,4 +43,17 @@
     <string name="order_now">Сегодня</string>
     <string name="order_tomorrow">Завтра</string>
     <string name="data_name">Дата</string>
+    <string name="title_activity_customer_v2">CustomerV2Activity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Fleet management</string>
+    <string name="nav_header_subtitle">iskolnikov1809@gmail.com</string>
+    <string name="nav_header_desc">Заголовок навигации</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="title_cabinet">Личный кабинет</string>
+
+    <string name="home_second">Home Second</string>
 </resources>

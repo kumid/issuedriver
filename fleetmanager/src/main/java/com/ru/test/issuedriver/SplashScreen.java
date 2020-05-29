@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 
 import com.ru.test.issuedriver.customer.CustomerActivity;
+import com.ru.test.issuedriver.customer.CustomerV2Activity;
 import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 import com.ru.test.issuedriver.helpers.mysettings;
@@ -43,7 +44,7 @@ public class SplashScreen extends AppCompatActivity {
             if(googleAuthManager.isSigned()
                 && curr != null) {
                 if (curr.accept) {
-                    Intent intent = new Intent(instance, curr.is_performer ? PerformerActivity.class : CustomerActivity.class);
+                    Intent intent = new Intent(instance, curr.is_performer ? PerformerActivity.class : CustomerV2Activity.class);
                     startActivity(intent);
                     finish();
                 } else {
@@ -84,5 +85,6 @@ public class SplashScreen extends AppCompatActivity {
         {
             setContentView(R.layout.splash_no_internet);
         }
+
     }
 }
