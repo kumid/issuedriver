@@ -63,13 +63,15 @@ public class OrderViewModel extends ViewModel {
     }
 
 
-    public void setOrderComleted(String orderId, String performer_email, String time, double dist, double fuel) {
+    public void setOrderComleted(String orderId, String performer_email, String time, String dist, String fuel) {
+
+
         DocumentReference orderRef = db.collection("orders").document(orderId);
         orderRef.update("completed", true,
                         "end_timestamp", FieldValue.serverTimestamp(),
                         "spent_time", time,
-                        "distance", String.valueOf(dist),
-                        "fuel", String.valueOf(fuel))
+                        "distance", dist,
+                        "fuel", fuel)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

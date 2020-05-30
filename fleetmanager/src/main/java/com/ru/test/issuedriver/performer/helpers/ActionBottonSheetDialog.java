@@ -25,7 +25,7 @@ public class ActionBottonSheetDialog extends BottomSheetDialogFragment implement
 
     private BottomSheetListener mListener;
     int id;
-
+    String distStr, fuelStr;
     Chronometer mOrder_chronometr_bottom;
     TextView mOrder_distance_bottom, mOrder_fuel_bottom;
 
@@ -36,6 +36,19 @@ public class ActionBottonSheetDialog extends BottomSheetDialogFragment implement
         this.dist = dist;
         long fuel_consumption = FirebaseRemoteConfig.getInstance().getLong("fuel_consumption");
         fuel = dist * fuel_consumption / 100f;
+
+        if (dist < 1000) {
+            distStr = String.format("%d м", Math.round(dist));
+
+        } else {
+            distStr = String.format("%.1f км", dist / 1000f);
+        }
+        if (fuel < 1000) {
+            fuelStr = String.format("%d гр.", Math.round(fuel));
+
+        } else {
+            fuelStr = String.format("%.1f л.", fuel / 1000f);
+        }
     }
 
     @Override
@@ -71,8 +84,9 @@ public class ActionBottonSheetDialog extends BottomSheetDialogFragment implement
         Button mBottom_sheet_btn = view.findViewById(R.id.bottom_sheet_btn);
 
         mOrder_chronometr_bottom.setText(time);
-        mOrder_distance_bottom.setText(String.valueOf(dist));
-        mOrder_fuel_bottom.setText(String.valueOf(fuel));
+
+        mOrder_distance_bottom.setText(distStr);
+        mOrder_fuel_bottom.setText(String.valueOf(fuelStr));
 
         mBottom_sheet_btn.setOnClickListener(this);
 
@@ -84,14 +98,14 @@ public class ActionBottonSheetDialog extends BottomSheetDialogFragment implement
         switch (v.getId()){
             case R.id.bottom_sheet_btn:
                 //PersonInfoActivity.getInstance().summaFromDialog = mPiBonusSumma.getText().toString();
-                mListener.onButtonClicked(id, time, dist, fuel);
+                mListener.onButtonClicked(id, time, distStr, fuelStr);
                 dismiss();
                 break;
          }
     }
 
     public interface BottomSheetListener{
-        void onButtonClicked(int id, String time, double distance, double fuel);
+        void onButtonClicked(int id, String time, String distance, String fuel);
     }
 
     @Override

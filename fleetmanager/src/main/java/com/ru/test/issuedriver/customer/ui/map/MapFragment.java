@@ -247,7 +247,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                         boolean forDelete = true;
                         for (user item : users) {
                             if (item.is_busy
-                                && !mapViewModel.isOrderExist4driver(item.email)) {                                                // если машина занята
+                                && !mapViewModel.isOrderInActiveState(item.email)) {                                                // если машина занята
                                 forDelete = true;
                                 break;
                             }

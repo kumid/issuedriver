@@ -11,7 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,10 +22,7 @@ import android.view.Menu;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -42,8 +38,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
-import com.ru.test.issuedriver.HistoryActivity;
-import com.ru.test.issuedriver.LoginActivity;
+import com.ru.test.issuedriver.history.HistoryActivity;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.customer.ui.map.MapViewModel;
@@ -383,27 +378,24 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
                                 animateMarker(item, markerMap.get(item.email).marker,
                                         new LatLng(item.position.getLatitude(), item.position.getLongitude()),
                                         false,
-                                            mapViewModel.isOrderExist4driver(item.email)); // order - активный
+                                            mapViewModel.isOrderInActiveState(item.email)); // order - активный
                             }
                         }
                     } else {
                         setPerformerPosition(item);
                     }
                 }
+                // проверяем актуальность Водителей
                 if(markerMap.size() != 0) {
                     for (Object key :  markerMap.keySet().toArray()) {
+                        // получаем следующий маркер
                         boolean forDelete = true;
+                        // проходим по списку пользователей (Водителей)
                         for (user item : users) {
-                            if (item.is_busy
-                                    && !mapViewModel.isOrderExist4driver(item.email)) {                                                // если машина занята
-                                forDelete = true;
-                                break;
-                            }
-                            if (item.email.equals(markerMap.get(key)._user.email)) {     // если аккаунт не активирован
+                            if (item.email.equals(markerMap.get(key)._user.email)) {     // если водитель все еще в актуальном состоянии
                                 forDelete = false;
                                 break;
                             }
-
                         }
 
                         if (forDelete) {

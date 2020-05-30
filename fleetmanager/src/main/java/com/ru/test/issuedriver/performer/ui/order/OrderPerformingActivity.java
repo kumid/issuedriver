@@ -251,7 +251,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
     }
 
     @Override
-    public void onButtonClicked(int id, String time, double dist, double fuel) {
+    public void onButtonClicked(int id, String time, String dist, String fuel) {
         OrderViewModel.orderCompletedCalback = new OrderViewModel.orderCompleted() {
             @Override
             public void callback(boolean pass) {

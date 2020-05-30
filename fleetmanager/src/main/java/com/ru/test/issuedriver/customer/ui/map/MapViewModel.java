@@ -12,6 +12,7 @@ import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.data.user;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import androidx.annotation.Nullable;
@@ -44,6 +45,7 @@ public class MapViewModel extends ViewModel {
                     Log.w("TAG", "Listen failed.", e);
                     return;
                 }
+
                 List<user> questionsList = new ArrayList<>();
                 for (DocumentSnapshot snapshot :
                         queryDocumentSnapshots.getDocuments()) {
@@ -70,17 +72,23 @@ public class MapViewModel extends ViewModel {
         orders.clear();
         for (order item: _orders) {
             if(!item.completed && item.accept) {
+                if(item.order_active_timestamp != null)
+                    item.order_active_time = item.order_active_timestamp.toDate();
+                else
+                    item.order_active_time  = new Date();
                 orders.add(item);
             }
         }
         isCameraOnPerformer = orders.size() > 0;
     }
 
-    public boolean isOrderExist4driver(String email){
+    public boolean isOrderInActiveState(String email){
         if(!isCameraOnPerformer)
             return false;
-        if(orders.get(0).performer_email.equals(email))
-            return true;
+        order curr = orders.get(0);
+
+        if(curr.performer_email.equals(email))
+            return curr.order_active_time.before(new Date());
 
         return false;
     }
