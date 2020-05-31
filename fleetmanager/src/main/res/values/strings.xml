@@ -56,4 +56,11 @@
     <string name="title_cabinet">Личный кабинет</string>
 
     <string name="home_second">Home Second</string>
+    <string name="cancel_sheet_reason1">Причина 1</string>
+    <string name="cancel_sheet_reason2">Причина 2</string>
+    <string name="cancel_sheet_reason4">Причина 4</string>
+    <string name="cancel_sheet_reason3">Причина 3</string>
+    <string name="cancel_sheet_reason_other_text">Введите причину отмены</string>
+    <string name="cancel_sheet_reason_other_title">Причина отмены заказа</string>
+    <string name="cancel_sheet_reason_other">Отменить</string>
 </resources>

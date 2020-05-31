@@ -1,4 +1,4 @@
-package com.ru.test.issuedriver.performer.helpers;
+package com.ru.test.issuedriver.performer.ui.order;
 
 import android.app.Dialog;
 import android.content.Context;
@@ -21,7 +21,7 @@ import com.ru.test.issuedriver.R;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-public class ActionBottonSheetDialog extends BottomSheetDialogFragment implements View.OnClickListener {
+public class OrderCloseBottonDialog extends BottomSheetDialogFragment implements View.OnClickListener {
 
     private BottomSheetListener mListener;
     int id;
@@ -31,7 +31,7 @@ public class ActionBottonSheetDialog extends BottomSheetDialogFragment implement
 
     String time;
     double dist, fuel = 0f;
-    public ActionBottonSheetDialog(String time, double dist) {
+    public OrderCloseBottonDialog(String time, double dist) {
         this.time = time;
         this.dist = dist;
         long fuel_consumption = FirebaseRemoteConfig.getInstance().getLong("fuel_consumption");
@@ -76,7 +76,7 @@ public class ActionBottonSheetDialog extends BottomSheetDialogFragment implement
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.bottom_sheet_layout, container, false);
+        View view = inflater.inflate(R.layout.close_order_bottom_sheet_layout, container, false);
 
         mOrder_chronometr_bottom = view.findViewById(R.id.order_chronometr_bottom);
         mOrder_distance_bottom = view.findViewById(R.id.order_distance_bottom);

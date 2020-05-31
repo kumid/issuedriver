@@ -181,4 +181,11 @@ private void notifycateIt(order curr, DocumentSnapshot snapshot) {
                     }
                 });
     }
+
+
+
+    public static CancelOrderInterface callback4cancelOrder;
+    public interface  CancelOrderInterface {
+        void callback(order order);
+    }
 }

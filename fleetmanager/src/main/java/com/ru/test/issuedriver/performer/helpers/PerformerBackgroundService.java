@@ -55,16 +55,18 @@ public class PerformerBackgroundService extends Service {
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         if (Build.VERSION.SDK_INT >= 26) {
-            String CHANNEL_ID = "my_channel_01";
+            String CHANNEL_ID = "performer_channel_01";
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
-                    "My Channel",
+                    "Performer Channel",
                     NotificationManager.IMPORTANCE_DEFAULT);
 
             ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
 
             Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
-                    .setContentTitle("")
-                    .setContentText("").build();
+                    .setContentTitle("Fleet manager")
+                    .setContentText("gps tracker")
+                    .setBadgeIconType(NotificationCompat.BADGE_ICON_NONE)
+                    .build();
 
             startForeground(1, notification);
         }

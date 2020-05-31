@@ -22,7 +22,6 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
-import com.ru.test.issuedriver.performer.helpers.ActionBottonSheetDialog;
 import com.ru.test.issuedriver.performer.helpers.MyBroadcastReceiver;
 
 import java.util.ArrayList;
@@ -31,7 +30,7 @@ import java.util.Calendar;
 import androidx.appcompat.app.ActionBar;
 import androidx.lifecycle.ViewModelProviders;
 
-public class OrderPerformingActivity extends MyActivity implements View.OnClickListener, ActionBottonSheetDialog.BottomSheetListener {
+public class OrderPerformingActivity extends MyActivity implements View.OnClickListener, OrderCloseBottonDialog.BottomSheetListener {
 
     private static final String TAG = "myLogs";
     OrderViewModel orderViewModel;
@@ -198,7 +197,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
 //            setDate(v);
 //            return;
 //        }
-        ActionBottonSheetDialog dialog = new ActionBottonSheetDialog(mOrder_chronometr.getText().toString(), distanse);
+        OrderCloseBottonDialog dialog = new OrderCloseBottonDialog(mOrder_chronometr.getText().toString(), distanse);
         dialog.show(getSupportFragmentManager(), null);
     }
 
@@ -208,7 +207,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                ActionBottonSheetDialog dialog = new ActionBottonSheetDialog(mOrder_chronometr.getText().toString(), distanse);
+                OrderCloseBottonDialog dialog = new OrderCloseBottonDialog(mOrder_chronometr.getText().toString(), distanse);
                 dialog.show(getSupportFragmentManager(), null);
                 //Toast.makeText(getApplicationContext(),"Back button clicked", Toast.LENGTH_SHORT).show();
                 break;
@@ -341,7 +340,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
 
     @Override
     public void onBackPressed() {
-        ActionBottonSheetDialog dialog = new ActionBottonSheetDialog(mOrder_chronometr.getText().toString(), distanse);
+        OrderCloseBottonDialog dialog = new OrderCloseBottonDialog(mOrder_chronometr.getText().toString(), distanse);
         dialog.show(getSupportFragmentManager(), null);
 //        super.onBackPressed();
     }

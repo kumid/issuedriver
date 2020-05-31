@@ -3,6 +3,9 @@ package com.ru.test.issuedriver.customer;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,6 +14,8 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -38,6 +43,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
+import com.ru.test.issuedriver.SplashScreen;
 import com.ru.test.issuedriver.history.HistoryActivity;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
@@ -60,6 +66,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.lifecycle.Observer;
@@ -216,9 +223,38 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         mMap_plus.setOnClickListener(clickZoom);
         mMap_minus.setOnClickListener(clickZoom);
 
-
         checkPermission(this);
+
+//        test();
     }
+
+//    private void test() {
+//        Intent intent=new Intent(this, SplashScreen.class);
+//        String channel_id="fleet_channel";
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        PendingIntent pendingIntent=PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_ONE_SHOT);
+//        Uri uri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+//        NotificationCompat.Builder builder=new NotificationCompat.Builder(getApplicationContext(),channel_id)
+//                .setSmallIcon(R.drawable.logo_small)
+//                .setSound(uri)
+//                .setAutoCancel(true)
+//                .setVibrate(new long[]{1000,1000,1000,1000,1000})
+//                .setOnlyAlertOnce(true)
+//                .setContentIntent(pendingIntent);
+//
+//             builder=builder.setContentTitle("title")
+//                    .setContentText("message")
+//                    .setSmallIcon(R.drawable.logo_small);
+//
+//        NotificationManager notificationManager= (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+//        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
+//            NotificationChannel notificationChannel = new NotificationChannel(channel_id,"fleet_app", NotificationManager.IMPORTANCE_HIGH);
+//            notificationChannel.setSound(uri,null);
+//            notificationManager.createNotificationChannel(notificationChannel);
+//        }
+//
+//        notificationManager.notify(100, builder.build());
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

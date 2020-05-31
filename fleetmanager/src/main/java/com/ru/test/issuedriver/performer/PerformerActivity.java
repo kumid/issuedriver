@@ -92,8 +92,6 @@ public class PerformerActivity extends MyActivity {
 //            }
 //
 //        });
-
-
     }
 
     private void setupNavigation() {

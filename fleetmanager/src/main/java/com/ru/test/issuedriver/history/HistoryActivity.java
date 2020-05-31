@@ -31,7 +31,7 @@ public class HistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_history);
 
         historyViewModel =
-                ViewModelProviders.of(CustomerV2Activity.getInstance()).get(HistoryViewModel.class);
+                ViewModelProviders.of(HistoryActivity.this).get(HistoryViewModel.class);
         historyViewModel.initNotificationsHistoryLoad(mysettings.GetUser());
 
         initViews();
@@ -46,10 +46,10 @@ public class HistoryActivity extends AppCompatActivity {
     private void initViews() {
         history_rv = findViewById(R.id.history_rv);
         adapter = new historyAdapter(historyViewModel, new ArrayList<order>());
-        history_rv.setLayoutManager(new LinearLayoutManager(CustomerV2Activity.getInstance()));
+        history_rv.setLayoutManager(new LinearLayoutManager(HistoryActivity.this));
         history_rv.setAdapter(adapter);
 
-        historyViewModel.getNotifications().observe(CustomerV2Activity.getInstance(), new Observer<List<order>>() {
+        historyViewModel.getNotifications().observe(HistoryActivity.this, new Observer<List<order>>() {
             @Override
             public void onChanged(List<order> orders) {
                 adapter.setChangedData(orders);

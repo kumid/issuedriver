@@ -9,6 +9,9 @@ import android.widget.TextView;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.customer.CustomerActivity;
 import com.ru.test.issuedriver.data.order;
+import com.ru.test.issuedriver.helpers.googleAuthManager;
+import com.ru.test.issuedriver.performer.ui.order.OrderCancelBottonDialog;
+import com.ru.test.issuedriver.performer.ui.order.OrderCloseBottonDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -63,23 +66,18 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
                 holder.mNotification_item_btn_status_completed.setVisibility(View.VISIBLE);
                 holder.mNotification_item_btn_status_in_process.setVisibility(View.GONE);
                 holder.mNotification_item_btn_status_wait.setVisibility(View.GONE);
-                holder.mNotification_item_btn_cancel.setVisibility(View.GONE);
+//                holder.mNotification_item_btn_cancel.setVisibility(View.GONE);
             } else {
                 holder.mNotification_item_btn_status_in_process.setVisibility(View.VISIBLE);
                 holder.mNotification_item_btn_status_wait.setVisibility(View.GONE);
-                holder.mNotification_item_btn_cancel.setVisibility(View.GONE);
+//                holder.mNotification_item_btn_cancel.setVisibility(View.GONE);
                 holder.mNotification_item_btn_status_completed.setVisibility(View.GONE);
-//            holder.mNotification_item_btn_accept_ok.setVisibility(View.VISIBLE);
-//            holder.mNotification_item_btn_accept.setVisibility(View.GONE);
             }
         } else {
             holder.mNotification_item_btn_status_wait.setVisibility(View.VISIBLE);
-            holder.mNotification_item_btn_cancel.setVisibility(View.VISIBLE);
+//            holder.mNotification_item_btn_cancel.setVisibility(View.VISIBLE);
             holder.mNotification_item_btn_status_in_process.setVisibility(View.GONE);
             holder.mNotification_item_btn_status_completed.setVisibility(View.GONE);
-
-//            holder.mNotification_item_btn_accept_ok.setVisibility(View.GONE);
-//            holder.mNotification_item_btn_accept.setVisibility(View.VISIBLE);
         }
         setBtnsOnClick(holder, item);
     }
@@ -88,7 +86,11 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
         holder.mNotification_item_btn_cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                viewModel.setOrderDelete(item);
+                if(item.accept) {
+                    if (viewModel.callback4cancelOrder != null)
+                        viewModel.callback4cancelOrder.callback(item);
+                } else
+                    viewModel.setOrderDelete(item);
             }
         });
         holder.mNotification_item_btn_status_in_process.setOnClickListener(new View.OnClickListener() {
@@ -148,4 +150,6 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
             });
         }
     }
+
+
 }

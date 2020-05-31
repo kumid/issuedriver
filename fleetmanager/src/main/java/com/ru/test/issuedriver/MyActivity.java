@@ -1,6 +1,8 @@
 package com.ru.test.issuedriver;
 
 import android.Manifest;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -66,6 +68,10 @@ public class MyActivity extends AppCompatActivity {
                 }
             };
         }
+
+        NotificationManager notificationManager = (NotificationManager) this
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
     }
 
     public boolean checkSelfPermissionCall() {

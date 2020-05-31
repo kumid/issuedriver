@@ -62,7 +62,6 @@ public class OrdersListFragment extends Fragment {
                     adapterPerformer.setChangedData(orders);
                 else
                     adapterCustomer.setChangedData(orders);
-
             }
         });
     }
