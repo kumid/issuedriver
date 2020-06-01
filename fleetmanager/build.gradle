@@ -86,4 +86,6 @@ dependencies {
     implementation 'com.google.firebase:firebase-config:19.1.4'
 
     implementation 'joda-time:joda-time:2.10.5'
+
+    implementation 'com.google.android.libraries.places:places:2.2.0'
 }

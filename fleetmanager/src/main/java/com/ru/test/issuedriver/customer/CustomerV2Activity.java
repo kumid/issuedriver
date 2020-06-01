@@ -3,9 +3,6 @@ package com.ru.test.issuedriver.customer;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -14,8 +11,6 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -43,7 +38,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
-import com.ru.test.issuedriver.SplashScreen;
+import com.ru.test.issuedriver.customer.ui.placesUtils;
 import com.ru.test.issuedriver.history.HistoryActivity;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
@@ -66,7 +61,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
-import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.lifecycle.Observer;
@@ -104,6 +98,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
     }
 
     private MapViewModel mapViewModel;
+
 
     Map<String, markerPair> markerMap = new HashMap<>();
 
@@ -178,6 +173,9 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
             @Override
             public void onMapReady(GoogleMap mMap) {
                 googleMap = mMap;
+
+                placesUtils.Init(CustomerV2Activity.this, googleMap, true);
+
                 googleMap.setOnMarkerClickListener(CustomerV2Activity.this);
                 googleMap.setMinZoomPreference(16f);
                 googleMap.setMaxZoomPreference(17f);
@@ -224,6 +222,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         mMap_minus.setOnClickListener(clickZoom);
 
         checkPermission(this);
+
 
 //        test();
     }
@@ -571,6 +570,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
     private MarkerOptions markerOptionIm;
     private Marker ImMarker;
 
+    boolean yes = false;
     public void setMyPosition(Location imHere) {
         if(googleMap == null)
             return;
