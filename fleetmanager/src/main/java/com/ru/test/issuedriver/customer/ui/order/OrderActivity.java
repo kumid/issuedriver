@@ -22,6 +22,8 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.customer.CustomerV2Activity;
+import com.ru.test.issuedriver.customer.ui.map.imHere;
+import com.ru.test.issuedriver.customer.ui.placesUtils;
 import com.ru.test.issuedriver.helpers.mysettings;
 import com.ru.test.issuedriver.data.order;
 
@@ -236,5 +238,12 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
                 break;
         }
         return true;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //placesUtils.showCurrentPlace(this);
+        placesUtils.getAddressFromLocation(imHere.getLat(), imHere.getLong());
     }
 }

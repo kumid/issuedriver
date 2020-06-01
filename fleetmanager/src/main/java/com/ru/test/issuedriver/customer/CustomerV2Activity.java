@@ -23,6 +23,10 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -35,9 +39,16 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
+import com.ru.test.issuedriver.customer.ui.mapsUtils;
 import com.ru.test.issuedriver.customer.ui.placesUtils;
 import com.ru.test.issuedriver.history.HistoryActivity;
 import com.ru.test.issuedriver.MyActivity;
@@ -53,6 +64,8 @@ import com.ru.test.issuedriver.registration.RegistrationActivity;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,34 +92,15 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         return instance;
     }
 
-    OrdersListViewModel ordersListViewModel;
-    private final float carZoomLevel = 16f;
-    private final float dotZoomLevel = 11f;
-    private float zoomLevel = carZoomLevel;
-
-
-    private class markerPair {
-        public MarkerOptions markerOption;
-        public Marker marker;
-        public user _user;
-
-        public markerPair(MarkerOptions markerBus, Marker busMarker, user _user) {
-            markerOption = markerBus;
-            marker = busMarker;
-            this._user = _user;
-        }
-    }
+    private MapView mMapView;
 
     private MapViewModel mapViewModel;
-
-
-    Map<String, markerPair> markerMap = new HashMap<>();
-
-    private MapView mMapView;
-    private GoogleMap googleMap;
+    private OrdersListViewModel ordersListViewModel;
 
     private static final String TAG = "myLogs";
     private AppBarConfiguration mAppBarConfiguration;
+
+    private static final int AUTOCOMPLETE_REQUEST_CODE = 1002;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,7 +137,18 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         mCustomer_hamburger.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                drawer.openDrawer(GravityCompat.START);
+                //drawer.openDrawer(GravityCompat.START);
+
+                // Set the fields to specify which types of place data to
+// return after the user has made a selection.
+                List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+
+// Start the autocomplete intent.
+                Intent intent = new Autocomplete.IntentBuilder(
+                        AutocompleteActivityMode.FULLSCREEN, fields)
+                        .build(CustomerV2Activity.this);
+                startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
+
             }
         });
 
@@ -162,64 +167,29 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume(); // needed to get the map to display immediately
 
-        try {
-            MapsInitializer.initialize(this);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        mMapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap mMap) {
-                googleMap = mMap;
-
-                placesUtils.Init(CustomerV2Activity.this, googleMap, true);
-
-                googleMap.setOnMarkerClickListener(CustomerV2Activity.this);
-                googleMap.setMinZoomPreference(16f);
-                googleMap.setMaxZoomPreference(17f);
-
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(Double.parseDouble("45.058403"), Double.parseDouble("38.983933"))).zoom(carZoomLevel).build();
-                googleMap.animateCamera(CameraUpdateFactory
-                        .newCameraPosition(cameraPosition));
-
-                imHere.myPositionChanged = new imHere.OnMyPositionChanged() {
-                    @Override
-                    public void callBack(Location location) {
-                        setMyPosition(location);
-                        googleMap.setMinZoomPreference(10f);
-                        googleMap.setMyLocationEnabled(true);
-                    }
-                };
-                imHere.init(CustomerV2Activity.this);
-
-                observe2performers();
-
-//                View locationButton = ((View) mMapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
-//                RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
-//                // position on right bottom
-//                rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
-//                rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
-//                rlp.setMargins(0, 180, 180, 0);
-
-
-                googleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
-                    @Override
-                    public void onCameraIdle() {
-                        float oldZoom = zoomLevel;
-                        zoomLevel = googleMap.getCameraPosition().zoom;
-                        setCarsVisibility(oldZoom, zoomLevel);
-                    }
-                });
-            }
-        });
+        mapsUtils.Init(this, mMapView, mapViewModel);
 
         ImageView mMap_plus = findViewById(R.id.map_plus);
         ImageView mMap_minus = findViewById(R.id.map_minus);
-        mMap_plus.setOnClickListener(clickZoom);
-        mMap_minus.setOnClickListener(clickZoom);
+        mMap_plus.setOnClickListener(mapsUtils.clickZoom);
+        mMap_minus.setOnClickListener(mapsUtils.clickZoom);
+
+
+//        final AutocompleteSupportFragment autocompleteSupportFragment =
+//                (AutocompleteSupportFragment)getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+//        autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.LAT_LNG, Place.Field.NAME));
+//        autocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+//            @Override
+//            public void onPlaceSelected(@NonNull Place place) {
+//                Log.e(TAG, "onPlaceSelected");
+//            }
+//
+//            @Override
+//            public void onError(@NonNull Status status) {
+//                Log.e(TAG, "onError");
+//            }
+//        });
+
 
         checkPermission(this);
 
@@ -255,6 +225,23 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
 //        notificationManager.notify(100, builder.build());
 //    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = Autocomplete.getPlaceFromIntent(data);
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                // TODO: Handle the error.
+                Status status = Autocomplete.getStatusFromIntent(data);
+                Log.i(TAG, status.getStatusMessage());
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -326,307 +313,12 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         });
     }
 
-    private void setCarsVisibility(float oldZoom, float zoomLevel) {
-         if(oldZoom == zoomLevel) {
-            Log.d("myLogs", "Zoom = oldZoom = " + zoomLevel);
-            return;
-        }
-        Log.d("myLogs", "Zoom = " + zoomLevel);
-        boolean isInformed = false;
-        for (String key:
-                markerMap.keySet()) {
 
-            markerPair item = markerMap.get(key);
-
-            boolean inZeroOld = oldZoom < dotZoomLevel;
-            boolean inDotOld = oldZoom >= dotZoomLevel && oldZoom < carZoomLevel;
-            boolean inCarOld = oldZoom >= carZoomLevel;
-
-            boolean inZero = zoomLevel < dotZoomLevel;
-            boolean inDot = zoomLevel >= dotZoomLevel && zoomLevel < carZoomLevel;
-            boolean inCar = zoomLevel >= carZoomLevel;
-
-            if (inZero) {
-                item.marker.setVisible(false);
-                item.marker.remove();
-                //googleMap.clear();
-                continue;
-            }
-
-            boolean isNotChanged = (inDotOld && inDot) || (inCarOld && inCar);  //  (inZeroOld && inZero) ||
-
-            if (!isNotChanged) {
-                item.marker.setVisible(false);
-                item.marker.remove();
-                BitmapDescriptor car = getBitmapDescriptor(item._user);
-//                item.markerOption = new MarkerOptions().position(
-//                        new LatLng(item._user.position.getLatitude(), item._user.position.getLongitude()))
-//                        .title(item._user.fio);
-                item.markerOption.icon(car);
-
-                Marker BusMarkerOK = googleMap.addMarker(item.markerOption);
-                item.marker = BusMarkerOK;
-                if (!isInformed) {
-                    Log.d("myLogs", "Change car visibility");
-                    isInformed = true;
-                }
-            }
-        }
-    }
-
-    private void observe2performers() {
-        mapViewModel.getUsers().observe(CustomerV2Activity.this, new Observer<List<user>>() {
-            @Override
-            public void onChanged(List<user> users) {
-//                googleMap.clear();
-                for (user item : users) {
-                    if (item.position == null)
-                        continue;
-
-                    if (markerMap.containsKey(item.email)) {
-                        if(zoomLevel <= dotZoomLevel){
-                            markerMap.get(item.email).marker.setVisible(false);
-                            markerMap.get(item.email).marker.remove();
-                            continue;
-                        }
-
-                        if (markerMap.get(item.email)._user.is_busy != item.is_busy) {
-                            markerMap.get(item.email).marker.setVisible(false);
-                            markerMap.get(item.email).marker.remove();
-
-//                            MarkerOptions markerBus = new MarkerOptions().position(
-//                                    new LatLng(item.position.getLatitude(), item.position.getLongitude()))
-//                                    .title(item.fio);
-
-                            BitmapDescriptor car = getBitmapDescriptor(item);
-
-                            markerMap.get(item.email).markerOption = new MarkerOptions().position(
-                                    new LatLng(item.position.getLatitude(), item.position.getLongitude()))
-                                    .title(item.fio);
-                            markerMap.get(item.email).markerOption.icon(car);
-
-                            Marker BusMarkerOK = googleMap.addMarker(markerMap.get(item.email).markerOption);
-                            markerMap.get(item.email).marker = BusMarkerOK;
-                            markerMap.get(item.email)._user = item;
-                        } else {
-                            if (item.position != null) {
-                                animateMarker(item, markerMap.get(item.email).marker,
-                                        new LatLng(item.position.getLatitude(), item.position.getLongitude()),
-                                        false,
-                                            mapViewModel.isOrderInActiveState(item.email)); // order - активный
-                            }
-                        }
-                    } else {
-                        setPerformerPosition(item);
-                    }
-                }
-                // проверяем актуальность Водителей
-                if(markerMap.size() != 0) {
-                    for (Object key :  markerMap.keySet().toArray()) {
-                        // получаем следующий маркер
-                        boolean forDelete = true;
-                        // проходим по списку пользователей (Водителей)
-                        for (user item : users) {
-                            if (item.email.equals(markerMap.get(key)._user.email)) {     // если водитель все еще в актуальном состоянии
-                                forDelete = false;
-                                break;
-                            }
-                        }
-
-                        if (forDelete) {
-//                        markerMap.get(key).markerOption.visible(false);
-//                        markerMap.get(key).marker.setVisible(false);
-                            markerMap.get(key).marker.remove();
-                            markerMap.remove(key);
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    @NotNull
-    private BitmapDescriptor getBitmapDescriptor(user item) {
-        int carId;
-        int size;
-
-        if(zoomLevel >= carZoomLevel){
-            carId = item.is_busy ? R.drawable.car_red2 : R.drawable.car_yellow1;
-            size = 70;
-        } else if(zoomLevel >= dotZoomLevel){
-            carId = R.drawable.dot;
-            size = 25;
-        } else
-            return null;
-
-        return getBitmapDescriptor(carId, size, size);
-    }
-
-    private void setPerformerPosition(user item) {
-        if (googleMap == null
-                || item.position == null) {
-            return;
-        }
-
-        MarkerOptions markerBus = new MarkerOptions().position(
-                new LatLng(item.position.getLatitude(), item.position.getLongitude()))
-                .title(item.fio);
-
-        BitmapDescriptor car = getBitmapDescriptor(item);
-        markerBus.icon(car);
-
-        //        markerBus.icon(BitmapDescriptorFactory
-//                .fromResource(car)); //).defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
-
-        // adding marker
-        Marker BusMarker = googleMap.addMarker(markerBus);
-
-        markerMap.put(item.email, new markerPair(markerBus, BusMarker, item));
-
-//        CameraPosition cameraPosition = new CameraPosition.Builder()
-//                .target(new LatLng(Double.parseDouble("45.058403"), Double.parseDouble("38.983933"))).zoom(15).build();
-////               .target(new LatLng(item.position.getLatitude(), item.position.getLongitude())).zoom(15).build();
-//        googleMap.animateCamera(CameraUpdateFactory
-//                .newCameraPosition(cameraPosition));
-        Log.e("MapsLog", "googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));");
-
-    }
-
-    @NotNull
-    private BitmapDescriptor getBitmapDescriptor(int car, int height, int width) {
-        BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(car);
-        Bitmap b = bitmapdraw.getBitmap();
-        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
-        return BitmapDescriptorFactory.fromBitmap(smallMarker);
-    }
-
-    public void animateMarker(user item, final Marker marker, final LatLng toPosition, final boolean hideMarker, boolean cameraMoved) {
-        final Handler handler = new Handler();
-        final long start = SystemClock.uptimeMillis();
-        Projection proj = googleMap.getProjection();
-        Point startPoint = proj.toScreenLocation(marker.getPosition());
-        final LatLng startLatLng = proj.fromScreenLocation(startPoint);
-        final long duration = 1500;
-
-        final Interpolator interpolator = new LinearInterpolator();
-
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                long elapsed = SystemClock.uptimeMillis() - start;
-                float t = interpolator.getInterpolation((float) elapsed
-                        / duration);
-                double lng = t * toPosition.longitude + (1 - t)
-                        * startLatLng.longitude;
-                double lat = t * toPosition.latitude + (1 - t)
-                        * startLatLng.latitude;
-                marker.setPosition(new LatLng(lat, lng));
-
-                if(cameraMoved) {
-                    float zoom = googleMap.getCameraPosition().zoom;
-                    CameraPosition cameraPosition = new CameraPosition.Builder()
-                            .target(toPosition).zoom(zoom).build();
-                    googleMap.animateCamera(CameraUpdateFactory
-                            .newCameraPosition(cameraPosition));
-                }
-                if (t < 1.0) {
-                    // Post again 16ms later.
-                    handler.postDelayed(this, 16);
-                } else {
-                    if (hideMarker) {
-                        marker.setVisible(false);
-                    } else {
-                        marker.setVisible(true);
-                    }
-                }
-            }
-        });
-    }
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        for (String item : markerMap.keySet()) {
-            if (markerMap.get(item).marker.equals(marker)) {
-                if (markerMap.get(item)._user.is_busy)
-                    return false;
-
-                Intent intent = new Intent(CustomerV2Activity.this, OrderActivity.class);
-//                intent.putExtra("customer_fio", registrationViewModel.currentUser.getValue().fio);
-//                intent.putExtra("customer_phone", registrationViewModel.currentUser.getValue().tel);
-//                intent.putExtra("customer_email", registrationViewModel.currentUser.getValue().email);
-                intent.putExtra("performer_fio", markerMap.get(item)._user.fio);
-                intent.putExtra("performer_phone", markerMap.get(item)._user.tel);
-                intent.putExtra("performer_email", markerMap.get(item)._user.email);
-                intent.putExtra("performer_car", markerMap.get(item)._user.automodel);
-                intent.putExtra("performer_car_number", markerMap.get(item)._user.autonumber);
-
-                startActivity(intent);
-                return false;
-            }
-        }
-        return false;
+        return mapsUtils.onMarkerClick(marker);
     }
-
-    private MarkerOptions markerOptionIm;
-    private Marker ImMarker;
-
-    boolean yes = false;
-    public void setMyPosition(Location imHere) {
-        if(googleMap == null)
-            return;
-
-        if (markerOptionIm == null) {
-            markerOptionIm = new MarkerOptions()
-                    .position(
-                            new LatLng(imHere.getLatitude(),
-                                    imHere.getLongitude()))
-                    .title("Я");
-            markerOptionIm.icon(getBitmapDescriptor(R.drawable.man, 80, 80));
-            ImMarker = googleMap.addMarker(markerOptionIm);
-
-            float zoom = googleMap.getCameraPosition().zoom;
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(new LatLng(imHere.getLatitude(),
-                            imHere.getLongitude())).zoom(zoom).build();
-            googleMap.animateCamera(CameraUpdateFactory
-                    .newCameraPosition(cameraPosition));
-        } else {
-            animateMarker(null, ImMarker,
-                    new LatLng(imHere.getLatitude(),
-                            imHere.getLongitude()),
-                    false,
-                    !mapViewModel.isCameraOnPerformer);
-        }
-    }
-
-    private View.OnClickListener clickZoom = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            float zoom = 0f;
-            CameraPosition cameraPosition = null;
-            switch (v.getId()){
-                case R.id.map_plus:
-                    zoom = googleMap.getCameraPosition().zoom + 1f;
-                    cameraPosition = new CameraPosition.Builder()
-                            .target(googleMap.getCameraPosition().target).zoom(zoom).build();
-                    break;
-
-                case R.id.map_minus:
-                    zoom = googleMap.getCameraPosition().zoom - 1f;
-                    cameraPosition = new CameraPosition.Builder()
-                            .target(googleMap.getCameraPosition().target).zoom(zoom).build();
-                    break;
-                default:
-
-                    break;
-            }
-            if(zoom != 0f)
-                googleMap.animateCamera(CameraUpdateFactory
-                        .newCameraPosition(cameraPosition));
-
-        }
-    };
-
 
     public static final int PERMISSIONS= 123;
     //check location permession for Android 5.0/+

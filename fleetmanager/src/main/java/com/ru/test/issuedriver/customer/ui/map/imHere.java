@@ -36,6 +36,14 @@ public class imHere {
     }
 
     private static Location lastLocation;
+
+    public static double getLat() {
+        return  lastLocation.getLatitude();
+    }
+    public static double getLong() {
+        return  lastLocation.getLongitude();
+    }
+
     private void getLocation() {
 
         // ---------------------------------- LocationRequest ------------------------------------

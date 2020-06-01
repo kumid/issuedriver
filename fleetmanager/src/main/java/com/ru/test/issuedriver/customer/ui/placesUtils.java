@@ -1,7 +1,12 @@
 package com.ru.test.issuedriver.customer.ui;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.location.Address;
+import android.location.Geocoder;
 import android.util.Log;
+import android.widget.AutoCompleteTextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -15,18 +20,21 @@ import com.google.android.libraries.places.api.model.PlaceLikelihood;
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
 import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.ru.test.issuedriver.R;
-import com.ru.test.issuedriver.customer.CustomerV2Activity;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class placesUtils {
     private static final String TAG = "myLogs";
-    private static CustomerV2Activity mapActivity;
+    private static Activity mapActivity;
     // Create a new Places client instance
     private static PlacesClient mPlacesClient;
     private static GoogleMap mMap;
@@ -41,7 +49,7 @@ public class placesUtils {
 
 
 
-    public static void Init(CustomerV2Activity _mapActivity, GoogleMap map, boolean _locationPermissionGranted){
+    public static void Init(AppCompatActivity _mapActivity, GoogleMap map, boolean _locationPermissionGranted){
         mapActivity = _mapActivity;
         mMap = map;
 //        // Initialize the SDK
@@ -56,7 +64,7 @@ public class placesUtils {
      * current place on the map - provided the user has granted location permission.
      */
     // [START maps_current_place_show_current_place]
-    public static void showCurrentPlace() {
+    public static void showCurrentPlace(Activity activity) {
         if (mMap == null) {
             return;
         }
@@ -111,7 +119,7 @@ public class placesUtils {
 
                         // Show a dialog offering the user the list of likely places, and add a
                         // marker at the selected place.
-                        openPlacesDialog();
+                        openPlacesDialog(activity);
                     }
                     else {
                         Log.e(TAG, "Exception: %s", task.getException());
@@ -138,7 +146,7 @@ public class placesUtils {
      * Displays a form allowing the user to select a place from a list of likely places.
      */
     // [START maps_current_place_open_places_dialog]
-    private static void openPlacesDialog() {
+    private static void openPlacesDialog(Activity activity) {
         // Ask the user to choose the place where they are now.
         DialogInterface.OnClickListener listener = new DialogInterface.OnClickListener() {
             @Override
@@ -164,9 +172,36 @@ public class placesUtils {
         };
 
         // Display the dialog.
-        AlertDialog dialog = new AlertDialog.Builder(mapActivity)
+        AlertDialog dialog = new AlertDialog.Builder(activity == null? mapActivity:activity)
                 .setTitle("Выберите место")
                 .setItems(likelyPlaceNames, listener)
                 .show();
     }
+
+    public static void getAddressFromLocation(double latitude, double longitude) {
+
+            Geocoder geocoder = new Geocoder(mapActivity, Locale.forLanguageTag("RU"));
+
+            try {
+                List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 3);
+
+                if (addresses.size() > 0) {
+                    Address fetchedAddress = addresses.get(0);
+                    StringBuilder strAddress = new StringBuilder();
+                    for (int i = 0; i < fetchedAddress.getMaxAddressLineIndex(); i++) {
+                        strAddress.append(fetchedAddress.getAddressLine(i)).append(" ");
+                    }
+
+                    //txtLocationAddress.setText(strAddress.toString());
+
+                } else {
+                    //txtLocationAddress.setText("Searching Current Address");
+                }
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                //printToast("Could not get address..!");
+            }
+        }
+
 }
