@@ -158,7 +158,7 @@ public class RegistrationActivity extends MyActivity {
         Gson gson = new Gson();
         String obj = gson.toJson(current);
         Intent intent;
-        if(current.accept) {
+        if(current.accept || true) {  // true - в боевой версии убрать
             intent = new Intent(RegistrationActivity.this, current.is_performer ? PerformerActivity.class : CustomerV2Activity.class);
             //intent.putExtra("object", obj);
             startActivity(intent);

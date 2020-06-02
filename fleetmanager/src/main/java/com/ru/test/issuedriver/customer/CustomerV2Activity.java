@@ -39,7 +39,11 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.RectangularBounds;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
@@ -137,18 +141,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         mCustomer_hamburger.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //drawer.openDrawer(GravityCompat.START);
-
-                // Set the fields to specify which types of place data to
-// return after the user has made a selection.
-                List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
-
-// Start the autocomplete intent.
-                Intent intent = new Autocomplete.IntentBuilder(
-                        AutocompleteActivityMode.FULLSCREEN, fields)
-                        .build(CustomerV2Activity.this);
-                startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE);
-
+                drawer.openDrawer(GravityCompat.START);
             }
         });
 
@@ -175,24 +168,23 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         mMap_minus.setOnClickListener(mapsUtils.clickZoom);
 
 
-//        final AutocompleteSupportFragment autocompleteSupportFragment =
-//                (AutocompleteSupportFragment)getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
-//        autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.LAT_LNG, Place.Field.NAME));
-//        autocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//            @Override
-//            public void onPlaceSelected(@NonNull Place place) {
-//                Log.e(TAG, "onPlaceSelected");
-//            }
-//
-//            @Override
-//            public void onError(@NonNull Status status) {
-//                Log.e(TAG, "onError");
-//            }
-//        });
+            final AutocompleteSupportFragment autocompleteSupportFragment =
+                (AutocompleteSupportFragment)getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
+        autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.LAT_LNG, Place.Field.NAME));
+        autocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NonNull Place place) {
+                Log.e(TAG, "onPlaceSelected");
+            }
+
+            @Override
+            public void onError(@NonNull Status status) {
+                Log.e(TAG, "onError");
+            }
+        });
 
 
         checkPermission(this);
-
 
 //        test();
     }
@@ -225,23 +217,6 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
 //        notificationManager.notify(100, builder.build());
 //    }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                Place place = Autocomplete.getPlaceFromIntent(data);
-                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
-            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
-                // TODO: Handle the error.
-                Status status = Autocomplete.getStatusFromIntent(data);
-                Log.i(TAG, status.getStatusMessage());
-            } else if (resultCode == RESULT_CANCELED) {
-                // The user canceled the operation.
-            }
-        }
-    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

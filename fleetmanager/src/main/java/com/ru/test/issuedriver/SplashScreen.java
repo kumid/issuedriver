@@ -43,7 +43,8 @@ public class SplashScreen extends AppCompatActivity {
             user curr = mysettings.GetUser();
             if(googleAuthManager.isSigned()
                 && curr != null) {
-                if (curr.accept) {
+                if (curr.accept || true) // true - в боевой версии убрать
+                {
                     Intent intent = new Intent(instance, curr.is_performer ? PerformerActivity.class : CustomerV2Activity.class);
                     startActivity(intent);
                     finish();

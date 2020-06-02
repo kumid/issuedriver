@@ -11,6 +11,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/fleetmanager" />
+            <option value="$PROJECT_DIR$/taxi" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

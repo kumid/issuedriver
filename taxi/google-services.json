@@ -1,0 +1,123 @@
+{
+  "project_info": {
+    "project_number": "940126965514",
+    "firebase_url": "https://fleet-management-8dfc9.firebaseio.com",
+    "project_id": "fleet-management-8dfc9",
+    "storage_bucket": "fleet-management-8dfc9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:940126965514:android:8364d77e9e67e4e4c174f3",
+        "android_client_info": {
+          "package_name": "com.ru.test.issuedriver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "940126965514-94dlavgqmgvuh7rb29chq03mm949e3uf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCOgMe2LQF-KNCDEL4Pk7fXht62Cz01gc"
+        },
+        {
+          "current_key": "AIzaSyCZMnVZBBlBQV5sI8FHtmgoANRSEZAjCrM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "940126965514-94dlavgqmgvuh7rb29chq03mm949e3uf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:940126965514:android:a4f1a7102132efc0c174f3",
+        "android_client_info": {
+          "package_name": "com.ru.test.issuedriver.admin"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "940126965514-t82b2ol5atf8vqm3tcnqmkre98ech68r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ru.test.issuedriver.admin",
+            "certificate_hash": "009267c2b9857accff8d538118834410c7f41d02"
+          }
+        },
+        {
+          "client_id": "940126965514-algi2lb8944oso373fq7pmc55scum5hm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ru.test.issuedriver.admin",
+            "certificate_hash": "6914d46e96e6ae455834f09cfbd3abf47038bf06"
+          }
+        },
+        {
+          "client_id": "940126965514-94dlavgqmgvuh7rb29chq03mm949e3uf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCOgMe2LQF-KNCDEL4Pk7fXht62Cz01gc"
+        },
+        {
+          "current_key": "AIzaSyCZMnVZBBlBQV5sI8FHtmgoANRSEZAjCrM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "940126965514-94dlavgqmgvuh7rb29chq03mm949e3uf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:940126965514:android:425284331fa97b7fc174f3",
+        "android_client_info": {
+          "package_name": "com.ru.test.issuedriver.taxi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "940126965514-94dlavgqmgvuh7rb29chq03mm949e3uf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBCOgMe2LQF-KNCDEL4Pk7fXht62Cz01gc"
+        },
+        {
+          "current_key": "AIzaSyCZMnVZBBlBQV5sI8FHtmgoANRSEZAjCrM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "940126965514-94dlavgqmgvuh7rb29chq03mm949e3uf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

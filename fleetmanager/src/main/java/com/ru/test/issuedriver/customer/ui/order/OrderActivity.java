@@ -244,6 +244,6 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
     protected void onResume() {
         super.onResume();
         //placesUtils.showCurrentPlace(this);
-        placesUtils.getAddressFromLocation(imHere.getLat(), imHere.getLong());
+        //placesUtils.getAddressFromLocation(imHere.getLat(), imHere.getLong());
     }
 }

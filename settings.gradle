@@ -1,2 +1,3 @@
 rootProject.name='Customer'
 include ':fleetmanager'
+include ':taxi'
