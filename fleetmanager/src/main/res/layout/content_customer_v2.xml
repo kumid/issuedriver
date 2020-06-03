@@ -34,12 +34,13 @@
 
     </LinearLayout>
 
+
     <com.google.android.gms.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        xmlns:android="http://schemas.android.com/apk/res/android" />
-
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp" />
 
     <LinearLayout
         android:layout_width="wrap_content"
@@ -56,13 +57,13 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:src="@drawable/plus"
-            android:alpha="0.3" />
+            android:alpha="0.6" />
 
         <ImageView
             android:id="@+id/map_minus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/minus"
-            android:alpha="0.3"/>
+            android:alpha="0.6"/>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

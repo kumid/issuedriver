@@ -31,6 +31,7 @@ import com.ru.test.issuedriver.taxi.customer.ui.map.MapViewModel;
 import com.ru.test.issuedriver.taxi.customer.ui.map.imHere;
 import com.ru.test.issuedriver.taxi.customer.ui.mapsUtils;
 import com.ru.test.issuedriver.taxi.customer.ui.orders_list.OrdersListViewModel;
+import com.ru.test.issuedriver.taxi.customer.ui.placesUtils;
 import com.ru.test.issuedriver.taxi.data.order;
 import com.ru.test.issuedriver.taxi.history.HistoryActivity;
 import com.ru.test.issuedriver.taxi.orders.OrdersListActivity;
@@ -62,6 +63,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
     }
 
     private MapView mMapView;
+    ImageView mImgLocationPinUp;
 
     private MapViewModel mapViewModel;
     private OrdersListViewModel ordersListViewModel;
@@ -82,7 +84,8 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                String address = placesUtils.getAddressFromLocation(mapsUtils.getMarkerPinPosition());
+                Snackbar.make(view, address, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -125,7 +128,8 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume(); // needed to get the map to display immediately
 
-        mapsUtils.Init(this, mMapView, mapViewModel);
+        mImgLocationPinUp = findViewById(R.id.imgLocationPinUp);
+        mapsUtils.Init(this, mMapView, mapViewModel, mImgLocationPinUp);
 
         ImageView mMap_plus = findViewById(R.id.map_plus);
         ImageView mMap_minus = findViewById(R.id.map_minus);

@@ -178,30 +178,38 @@ public class placesUtils {
                 .show();
     }
 
-    public static void getAddressFromLocation(double latitude, double longitude) {
+    public static String getAddressFromLocation(LatLng pos) {
+        return getAddressFromLocation(pos.latitude, pos.longitude);
+    }
+    public static String getAddressFromLocation(double latitude, double longitude) {
 
-            Geocoder geocoder = new Geocoder(mapActivity, Locale.forLanguageTag("RU"));
+        Geocoder geocoder = new Geocoder(mapActivity, Locale.forLanguageTag("RU"));
 
-            try {
-                List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 3);
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
 
-                if (addresses.size() > 0) {
-                    Address fetchedAddress = addresses.get(0);
-                    StringBuilder strAddress = new StringBuilder();
-                    for (int i = 0; i < fetchedAddress.getMaxAddressLineIndex(); i++) {
-                        strAddress.append(fetchedAddress.getAddressLine(i)).append(" ");
-                    }
-
-                    //txtLocationAddress.setText(strAddress.toString());
-
-                } else {
-                    //txtLocationAddress.setText("Searching Current Address");
+            if (addresses.size() > 0) {
+                Address fetchedAddress = addresses.get(0);
+                StringBuilder strAddress = new StringBuilder();
+                if(fetchedAddress.getMaxAddressLineIndex() == 0)
+                    return fetchedAddress.getAddressLine(0);
+                for (int i = 0; i < fetchedAddress.getMaxAddressLineIndex(); i++) {
+                    strAddress.append(fetchedAddress.getAddressLine(i)).append(" ");
                 }
 
-            } catch (IOException e) {
-                e.printStackTrace();
-                //printToast("Could not get address..!");
+                return strAddress.toString();
+                //txtLocationAddress.setText(strAddress.toString());
+
+            } else {
+                return "Searching Current Address";
+                //txtLocationAddress.setText("Searching Current Address");
             }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Could not get address..!";
+            //printToast("Could not get address..!");
         }
+    }
 
 }

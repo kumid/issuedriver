@@ -116,6 +116,8 @@ public class mapsUtils {
                         setMyPosition(location);
                         googleMap.setMinZoomPreference(10f);
                         googleMap.setMyLocationEnabled(true);
+                        googleMap.getUiSettings().setCompassEnabled(false);
+
                     }
                 };
                 imHere.init(mapActivity);

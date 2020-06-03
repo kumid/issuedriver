@@ -95,6 +95,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "940126965514-q38fkurnlrgogj9lbjjq26lg2q05cvqt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ru.test.issuedriver.taxi",
+            "certificate_hash": "947a9fbfe7ba2fd33da0d36f60f4464036d1b4ea"
+          }
+        },
+        {
           "client_id": "940126965514-94dlavgqmgvuh7rb29chq03mm949e3uf.apps.googleusercontent.com",
           "client_type": 3
         }

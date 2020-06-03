@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.ImageView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -45,6 +46,8 @@ public class mapsUtils {
     private static final String TAG = "myLogs";
     private static CustomerV2Activity mapActivity;
     private static GoogleMap googleMap;
+    private static ImageView mImgLocationPinUp;
+    private static Marker markerPin;
 
     private static MapViewModel mapViewModel;
 
@@ -56,6 +59,10 @@ public class mapsUtils {
 
     private static MarkerOptions markerOptionIm;
     private static Marker ImMarker;
+
+    public static LatLng getMarkerPinPosition() {
+        return markerPin.getPosition();
+    }
 
     private static class markerPair {
         public MarkerOptions markerOption;
@@ -71,10 +78,11 @@ public class mapsUtils {
 
     private static Map<String, markerPair> markerMap = new HashMap<>();
 
-    public static void Init(CustomerV2Activity activity, MapView mMapView, MapViewModel _mapViewModel){
+    public static void Init(CustomerV2Activity activity, MapView mMapView, MapViewModel _mapViewModel, ImageView imgLocationPinUp){
 
         mapActivity = activity;
         mapViewModel = _mapViewModel;
+        mImgLocationPinUp = imgLocationPinUp;
 
         try {
             MapsInitializer.initialize( mapActivity);
@@ -119,12 +127,39 @@ public class mapsUtils {
 //                rlp.setMargins(0, 180, 180, 0);
 
 
+                googleMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
+                    @Override
+                    public void onCameraMove() {
+                        mImgLocationPinUp.setVisibility(View.VISIBLE);
+                        if(markerPin!=null)
+                            markerPin.remove();
+                    }
+                });
+
                 googleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
                     @Override
                     public void onCameraIdle() {
                         float oldZoom = zoomLevel;
                         zoomLevel = googleMap.getCameraPosition().zoom;
                         setCarsVisibility(oldZoom, zoomLevel);
+
+                        mImgLocationPinUp.setVisibility(View.GONE);
+
+                        MarkerOptions markerOptions = new MarkerOptions().position(googleMap.getCameraPosition().target)
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.pin))
+                                .title("Я");
+
+//                        BitmapDrawable bitmapdraw = (BitmapDrawable) mapActivity.getResources().getDrawable(car);
+//                        Bitmap b = bitmapdraw.getBitmap();
+//                        Bitmap smallMarker = Bitmap.createScaledBitmap(b, width, height, false);
+//                        return BitmapDescriptorFactory.fromBitmap(smallMarker);
+//                        markerPin.icon(car);
+
+                        //        markerBus.icon(BitmapDescriptorFactory
+//                .fromResource(car)); //).defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
+
+                        // adding marker
+                        markerPin = googleMap.addMarker(markerOptions);
                     }
                 });
             }
