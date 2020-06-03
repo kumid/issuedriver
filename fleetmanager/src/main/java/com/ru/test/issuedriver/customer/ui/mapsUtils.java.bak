@@ -1,6 +1,6 @@
-package com.ru.test.issuedriver.taxi.customer.ui;
+package com.ru.test.issuedriver.customer.ui;
 
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
-import android.widget.ImageView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -26,31 +25,37 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.ru.test.issuedriver.taxi.R;
-import com.ru.test.issuedriver.taxi.customer.CustomerV2Activity;
-import com.ru.test.issuedriver.taxi.customer.ui.map.MapViewModel;
-import com.ru.test.issuedriver.taxi.customer.ui.map.imHere;
-import com.ru.test.issuedriver.taxi.customer.ui.order.OrderActivity;
-import com.ru.test.issuedriver.taxi.customer.ui.orders_list.OrdersListViewModel;
-import com.ru.test.issuedriver.taxi.data.user;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.PlaceLikelihood;
+import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
+import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.ru.test.issuedriver.R;
+import com.ru.test.issuedriver.customer.CustomerV2Activity;
+import com.ru.test.issuedriver.customer.ui.map.MapViewModel;
+import com.ru.test.issuedriver.customer.ui.map.imHere;
+import com.ru.test.issuedriver.customer.ui.order.OrderActivity;
+import com.ru.test.issuedriver.customer.ui.orders_list.OrdersListViewModel;
+import com.ru.test.issuedriver.data.user;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.Observer;
 
 public class mapsUtils {
-    // показывать маркер в центре экрана
-    private static boolean isImgLocationPinUpOn = false;
-
     private static final String TAG = "myLogs";
     private static CustomerV2Activity mapActivity;
     private static GoogleMap googleMap;
-    private static ImageView mImgLocationPinUp;
-    private static Marker markerPin;
 
     private static MapViewModel mapViewModel;
 
@@ -62,10 +67,6 @@ public class mapsUtils {
 
     private static MarkerOptions markerOptionIm;
     private static Marker ImMarker;
-
-    public static LatLng getMarkerPinPosition() {
-        return markerPin.getPosition();
-    }
 
     private static class markerPair {
         public MarkerOptions markerOption;
@@ -81,16 +82,13 @@ public class mapsUtils {
 
     private static Map<String, markerPair> markerMap = new HashMap<>();
 
-    public static void Init(CustomerV2Activity activity, MapView mMapView, MapViewModel _mapViewModel, ImageView imgLocationPinUp){
+    public static void Init(CustomerV2Activity activity, MapView mMapView, MapViewModel _mapViewModel){
 
         mapActivity = activity;
         mapViewModel = _mapViewModel;
-        mImgLocationPinUp = imgLocationPinUp;
-        if(!isImgLocationPinUpOn)
-            mImgLocationPinUp.setVisibility(View.GONE);
 
         try {
-            MapsInitializer.initialize( mapActivity);
+            MapsInitializer.initialize(mapActivity);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -118,6 +116,8 @@ public class mapsUtils {
                         setMyPosition(location);
                         googleMap.setMinZoomPreference(10f);
                         googleMap.setMyLocationEnabled(true);
+                        googleMap.getUiSettings().setCompassEnabled(false);
+
                     }
                 };
                 imHere.init(mapActivity);
@@ -132,33 +132,12 @@ public class mapsUtils {
 //                rlp.setMargins(0, 180, 180, 0);
 
 
-                googleMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
-                    @Override
-                    public void onCameraMove() {
-                        if(!isImgLocationPinUpOn)
-                            return;
-
-                        mImgLocationPinUp.setVisibility(View.VISIBLE);
-                        if(markerPin!=null)
-                            markerPin.remove();
-                    }
-                });
-
                 googleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
                     @Override
                     public void onCameraIdle() {
                         float oldZoom = zoomLevel;
                         zoomLevel = googleMap.getCameraPosition().zoom;
                         setCarsVisibility(oldZoom, zoomLevel);
-
-                        if (isImgLocationPinUpOn) {
-                            mImgLocationPinUp.setVisibility(View.GONE);
-                            MarkerOptions markerOptions = new MarkerOptions().position(googleMap.getCameraPosition().target)
-                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.pin))
-                                    .title("Я");
-                            // adding marker
-                            markerPin = googleMap.addMarker(markerOptions);
-                        }
                     }
                 });
             }
@@ -190,8 +169,7 @@ public class mapsUtils {
                     new LatLng(imHere.getLatitude(),
                             imHere.getLongitude()),
                     false,
-                    !mapViewModel.isCameraOnPerformer,
-                    false);
+                    !mapViewModel.isCameraOnPerformer);
         }
     }
 
@@ -235,7 +213,7 @@ public class mapsUtils {
                                 animateMarker(item, markerMap.get(item.email).marker,
                                         new LatLng(item.position.getLatitude(), item.position.getLongitude()),
                                         false,
-                                        mapViewModel.isOrderInActiveState(item.email), true); // order - активный
+                                        mapViewModel.isOrderInActiveState(item.email)); // order - активный
                             }
                         }
                     } else {
@@ -399,17 +377,10 @@ public class mapsUtils {
         return BitmapDescriptorFactory.fromBitmap(smallMarker);
     }
 
-public static void animateMarker(user item, final Marker marker, final LatLng toPosition, final boolean hideMarker, boolean cameraMoved, boolean isRotation) {
+    public static void animateMarker(user item, final Marker marker, final LatLng toPosition, final boolean hideMarker, boolean cameraMoved) {
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
         Projection proj = googleMap.getProjection();
-
-        if(isRotation) {
-            marker.setAnchor(0.5f, 0.5f);
-            float bearing = getBearing(marker.getPosition(), toPosition);
-            marker.setRotation(bearing);
-        }
-
         Point startPoint = proj.toScreenLocation(marker.getPosition());
         final LatLng startLatLng = proj.fromScreenLocation(startPoint);
         final long duration = 1500;
@@ -473,18 +444,4 @@ public static void animateMarker(user item, final Marker marker, final LatLng to
         return false;
     }
 
-private static float getBearing(LatLng begin, LatLng end) {
-        double lat = Math.abs(begin.latitude - end.latitude);
-        double lng = Math.abs(begin.longitude - end.longitude);
-
-        if (begin.latitude < end.latitude && begin.longitude < end.longitude)
-            return (float) (Math.toDegrees(Math.atan(lng / lat)));
-        else if (begin.latitude >= end.latitude && begin.longitude < end.longitude)
-            return (float) ((90 - Math.toDegrees(Math.atan(lng / lat))) + 90);
-        else if (begin.latitude >= end.latitude && begin.longitude >= end.longitude)
-            return (float) (Math.toDegrees(Math.atan(lng / lat)) + 180);
-        else if (begin.latitude < end.latitude && begin.longitude >= end.longitude)
-            return (float) ((90 - Math.toDegrees(Math.atan(lng / lat))) + 270);
-        return -1;
-    }
 }

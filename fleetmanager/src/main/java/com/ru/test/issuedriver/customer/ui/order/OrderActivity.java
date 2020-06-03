@@ -26,6 +26,8 @@ import com.ru.test.issuedriver.customer.ui.map.imHere;
 import com.ru.test.issuedriver.customer.ui.placesUtils;
 import com.ru.test.issuedriver.helpers.mysettings;
 import com.ru.test.issuedriver.data.order;
+import com.ru.test.issuedriver.performer.helpers.firestoreHelper;
+import com.ru.test.issuedriver.performer.ui.order.OrderCloseBottonDialog;
 
 import org.joda.time.DateTime;
 
@@ -232,6 +234,7 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                firestoreHelper.setUserBusy(performer_email, false);
                 finish();
                 actionBar.setDisplayHomeAsUpEnabled(false);
                 //Toast.makeText(getApplicationContext(),"Back button clicked", Toast.LENGTH_SHORT).show();
@@ -246,4 +249,11 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         //placesUtils.showCurrentPlace(this);
         //placesUtils.getAddressFromLocation(imHere.getLat(), imHere.getLong());
     }
+
+    @Override
+    public void onBackPressed() {
+        firestoreHelper.setUserBusy(performer_email, false);
+        super.onBackPressed();
+    }
+
 }

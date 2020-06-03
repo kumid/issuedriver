@@ -190,8 +190,7 @@ public class mapsUtils {
                     new LatLng(imHere.getLatitude(),
                             imHere.getLongitude()),
                     false,
-                    !mapViewModel.isCameraOnPerformer,
-                    false);
+                    !mapViewModel.isCameraOnPerformer);
         }
     }
 
@@ -235,7 +234,7 @@ public class mapsUtils {
                                 animateMarker(item, markerMap.get(item.email).marker,
                                         new LatLng(item.position.getLatitude(), item.position.getLongitude()),
                                         false,
-                                        mapViewModel.isOrderInActiveState(item.email), true); // order - активный
+                                        mapViewModel.isOrderInActiveState(item.email)); // order - активный
                             }
                         }
                     } else {
@@ -399,17 +398,10 @@ public class mapsUtils {
         return BitmapDescriptorFactory.fromBitmap(smallMarker);
     }
 
-public static void animateMarker(user item, final Marker marker, final LatLng toPosition, final boolean hideMarker, boolean cameraMoved, boolean isRotation) {
+    public static void animateMarker(user item, final Marker marker, final LatLng toPosition, final boolean hideMarker, boolean cameraMoved) {
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
         Projection proj = googleMap.getProjection();
-
-        if(isRotation) {
-            marker.setAnchor(0.5f, 0.5f);
-            float bearing = getBearing(marker.getPosition(), toPosition);
-            marker.setRotation(bearing);
-        }
-
         Point startPoint = proj.toScreenLocation(marker.getPosition());
         final LatLng startLatLng = proj.fromScreenLocation(startPoint);
         final long duration = 1500;
@@ -473,18 +465,4 @@ public static void animateMarker(user item, final Marker marker, final LatLng to
         return false;
     }
 
-private static float getBearing(LatLng begin, LatLng end) {
-        double lat = Math.abs(begin.latitude - end.latitude);
-        double lng = Math.abs(begin.longitude - end.longitude);
-
-        if (begin.latitude < end.latitude && begin.longitude < end.longitude)
-            return (float) (Math.toDegrees(Math.atan(lng / lat)));
-        else if (begin.latitude >= end.latitude && begin.longitude < end.longitude)
-            return (float) ((90 - Math.toDegrees(Math.atan(lng / lat))) + 90);
-        else if (begin.latitude >= end.latitude && begin.longitude >= end.longitude)
-            return (float) (Math.toDegrees(Math.atan(lng / lat)) + 180);
-        else if (begin.latitude < end.latitude && begin.longitude >= end.longitude)
-            return (float) ((90 - Math.toDegrees(Math.atan(lng / lat))) + 270);
-        return -1;
-    }
 }

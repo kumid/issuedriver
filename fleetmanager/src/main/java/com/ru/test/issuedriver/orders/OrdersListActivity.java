@@ -109,6 +109,6 @@ public class OrdersListActivity extends AppCompatActivity implements OrderCancel
     @Override
     public void onButtonClicked(order item, int id) {
         Log.e("myLogs", "" + id);
-        //ordersListViewModel.setOrderDelete(item);
+        ordersListViewModel.setOrderDelete(item);
     }
 }

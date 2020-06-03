@@ -20,12 +20,22 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.ru.test.issuedriver.data.user;
+import com.ru.test.issuedriver.data.user_position;
+import com.ru.test.issuedriver.helpers.mysettings;
+
+import java.sql.Timestamp;
+import java.util.Date;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -161,7 +171,33 @@ public class PerformerBackgroundService extends Service {
 //            return;
 //        }
 //        counter = 1;
-        try{
+        try {
+
+//            mysettings.Init(getApplicationContext());
+//            user user = mysettings.GetUser();
+//            if(user == null)
+//                return;
+//
+//            user_position pos = new user_position(userLocation.getLatitude(), userLocation.getLongitude(), (new Date()).getTime());
+//            // Write a pos to the database
+//            FirebaseDatabase database = FirebaseDatabase.getInstance();
+//            DatabaseReference myRef = database.getReference();
+//            myRef.child("positions").child(user.UUID).setValue(pos)
+//                .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                        @Override
+//                        public void onSuccess(Void aVoid) {
+//                            // Write was successful!
+//                            sendMyBroadcastMessage(null, 1);
+//                        }
+//                    })
+//                    .addOnFailureListener(new OnFailureListener() {
+//                        @Override
+//                        public void onFailure(@NonNull Exception e) {
+//                            // Write failed
+//                            Log.e(TAG, "Error");
+//                        }
+//                    });
+
             DocumentReference locationRef = FirebaseFirestore.getInstance()
                     .collection("users")
                     .document(FirebaseAuth.getInstance().getCurrentUser().getEmail());
@@ -175,7 +211,6 @@ public class PerformerBackgroundService extends Service {
                                 "\n latitude: " + userLocation.getLatitude() +
                                 "\n longitude: " + userLocation.getLongitude());
                         sendMyBroadcastMessage(null, 1);
-
                     }
                 }
             });

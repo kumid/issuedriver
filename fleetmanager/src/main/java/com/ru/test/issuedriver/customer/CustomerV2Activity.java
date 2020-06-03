@@ -39,6 +39,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.RectangularBounds;
@@ -52,6 +54,9 @@ import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.ru.test.issuedriver.customer.ui.mapsUtils;
 import com.ru.test.issuedriver.customer.ui.placesUtils;
 import com.ru.test.issuedriver.history.HistoryActivity;
@@ -69,10 +74,12 @@ import com.ru.test.issuedriver.registration.RegistrationActivity;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
@@ -97,6 +104,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
     }
 
     private MapView mMapView;
+    ImageView mImgLocationPinUp;
 
     private MapViewModel mapViewModel;
     private OrdersListViewModel ordersListViewModel;
@@ -119,8 +127,9 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+//String address = placesUtils.getAddressFromLocation(mapsUtils.getMarkerPinPosition());
+//                Snackbar.make(view, address, Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null).show();
             }
         });
 
@@ -162,7 +171,8 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume(); // needed to get the map to display immediately
 
-        mapsUtils.Init(this, mMapView, mapViewModel);
+        mImgLocationPinUp = findViewById(R.id.imgLocationPinUp);
+        mapsUtils.Init(this, mMapView, mapViewModel, mImgLocationPinUp);
 
         ImageView mMap_plus = findViewById(R.id.map_plus);
         ImageView mMap_minus = findViewById(R.id.map_minus);
@@ -184,8 +194,6 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
                 Log.e(TAG, "onError");
             }
         });
-
-
         checkPermission(this);
 
 //        test();

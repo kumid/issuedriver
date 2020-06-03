@@ -3,6 +3,8 @@ package com.ru.test.issuedriver.data;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.GeoPoint;
 
+import java.util.UUID;
+
 public class user {
     public String fio;
     public String staff;
@@ -19,6 +21,8 @@ public class user {
 
     public Timestamp last_geo_time;
 
+    public String UUID;
+
     public user() {}
 
     public user(String fio, String staff, String email, String corp, String automodel, String autovin, String autonumber, String tel, boolean is_performer, boolean isAccepted) {
@@ -34,5 +38,7 @@ public class user {
         this.is_busy = false;
         this.is_performer = is_performer;
         this.accept = isAccepted;
+
+        UUID = java.util.UUID.randomUUID().toString();
     }
 }

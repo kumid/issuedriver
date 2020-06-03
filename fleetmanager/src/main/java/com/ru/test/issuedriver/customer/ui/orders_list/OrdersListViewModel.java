@@ -171,7 +171,7 @@ private void notifycateIt(order curr, DocumentSnapshot snapshot) {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d("TAG", "DocumentSnapshot successfully deleted!");
-
+                        firestoreHelper.setUserBusy(item.performer_email, false);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
