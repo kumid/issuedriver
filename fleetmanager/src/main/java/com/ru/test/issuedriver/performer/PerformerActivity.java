@@ -28,6 +28,9 @@ import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 import com.ru.test.issuedriver.performer.feedback.FeedbackActivity;
 import com.ru.test.issuedriver.performer.helpers.PerformerBackgroundService;
+import com.ru.test.issuedriver.performer.helpers.callBacks;
+import com.ru.test.issuedriver.performer.helpers.firestoreHelper;
+import com.ru.test.issuedriver.performer.ui.order.OrderCancelBottonDialog;
 import com.ru.test.issuedriver.performer.ui.order.OrderPerformingActivity;
 
 import androidx.annotation.NonNull;
@@ -39,7 +42,9 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-public class PerformerActivity extends MyActivity {
+import static com.ru.test.issuedriver.performer.helpers.firestoreHelper.setDefaultUserState;
+
+public class PerformerActivity extends MyActivity implements UserStateBottonDialog.BottomSheetListener{
 
     private static final String TAG = "myLogs";
 
@@ -67,6 +72,7 @@ public class PerformerActivity extends MyActivity {
         setupNavigation();
 
         initViewModels();
+       // setDefaultUserState();
 
 //        if(getIntent().hasExtra("object")){
 //            String obj = getIntent().getStringExtra("object");
@@ -259,10 +265,17 @@ public class PerformerActivity extends MyActivity {
         Log.e(TAG, "");
     }
 
+    MenuItem onlineStateItem;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.emetgency, menu);
+        onlineStateItem = menu.findItem(R.id.action_state);
+        if(MyActivity.CurrentUser.state == 0)
+            onlineStateItem.setIcon(ContextCompat.getDrawable(this, R.drawable.online));
+        else
+            onlineStateItem.setIcon(ContextCompat.getDrawable(this, R.drawable.offline));
         return true;
 //        return super.onCreateOptionsMenu(menu);
     }
@@ -275,6 +288,10 @@ public class PerformerActivity extends MyActivity {
                         intent.putExtra("phone", CurrentUser.tel);
                         startActivity(intent);
                 return true;
+            case R.id.action_state:
+                UserStateBottonDialog dialog = new UserStateBottonDialog();
+                dialog.show(getSupportFragmentManager(), null);
+                return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
@@ -282,4 +299,24 @@ public class PerformerActivity extends MyActivity {
 
         }
      }
+
+    @Override
+    public void onButtonClicked(int state) {
+        callBacks.userStateChangedCalback = new callBacks.userStateChanged() {
+            @Override
+            public void callback(int callback_state) {
+                if (callback_state == 99)
+                    Log.e(TAG, "userStateChangedCalback -> ERROR");
+                else {
+                    Log.e(TAG, "userStateChangedCalback -> OK");
+                    MyActivity.CurrentUser.state = state;
+                    if(state == 0)
+                        onlineStateItem.setIcon(ContextCompat.getDrawable(PerformerActivity.this, R.drawable.online));
+                    else
+                        onlineStateItem.setIcon(ContextCompat.getDrawable(PerformerActivity.this, R.drawable.offline));
+                }
+            }
+        };
+        firestoreHelper.setUserState(MyActivity.CurrentUser.email, state);
+    }
 }

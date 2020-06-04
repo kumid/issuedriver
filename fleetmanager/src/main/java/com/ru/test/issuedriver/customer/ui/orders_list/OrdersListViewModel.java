@@ -101,7 +101,7 @@ public class OrdersListViewModel extends ViewModel {
         String email = user.is_performer? "performer_email" : "customer_email";
         final Query collectionRef = db.collection("orders")
                 .whereEqualTo(email, user.email)
-                .whereEqualTo("completed", false);; //.document("SF");
+                .whereEqualTo("completed", false); //.document("SF");
         collectionRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {

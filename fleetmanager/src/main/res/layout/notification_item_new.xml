@@ -17,24 +17,33 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="20dp"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                     android:textColor="@color/colorPrimary"
+                    android:textAppearance="@style/TextAppearance.Compat.Notification"  />
+
                 <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="40dp"
+                    android:layout_width="20dp"
+                    android:layout_height="30dp"
                     android:layout_gravity="center"
-                    android:layout_margin="5dp"
+                    android:layout_marginHorizontal="5dp"
                     android:src="@drawable/marker_from"
                     android:alpha="0.3"/>
                 <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="40dp"
+                    android:layout_width="20dp"
+                    android:layout_height="30dp"
                     android:layout_gravity="center"
-                    android:layout_margin="5dp"
+                    android:layout_marginHorizontal="5dp"
                     android:src="@drawable/marker_to"
                     android:alpha="0.3"/>
             </LinearLayout>
@@ -48,6 +57,22 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="@string/data_name"
+                    android:visibility="gone"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+                <TextView
+                    android:id="@+id/notification_item_data"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:text="@string/data_name"
+                    android:textColor="@color/colorPrimary"
+                    android:textAppearance="@style/TextAppearance.Compat.Notification"  />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="@string/order_from"
                     android:visibility="gone"
                     android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
@@ -56,26 +81,28 @@
                     android:id="@+id/notification_item_from"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="0.5"
+                    android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:text="@string/order_from"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button" />
+                    android:textColor="@color/colorPrimary"
+                    android:textAppearance="@style/TextAppearance.Compat.Notification" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/order_to"
                     android:visibility="gone"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                    android:textAppearance="@style/TextAppearance.Compat.Notification" />
 
                 <TextView
                     android:id="@+id/notification_item_to"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:layout_weight="0.5"
+                    android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:text="@string/order_to"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button" />
+                    android:textColor="@color/colorPrimary"
+                    android:textAppearance="@style/TextAppearance.Compat.Notification" />
 
 
 
@@ -113,20 +140,6 @@
                 android:text="@string/registration_name"
                 android:textColor="@color/colorPrimary"
                 android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/data_name"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
-
-            <TextView
-                android:id="@+id/notification_item_data"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/data_name"
-                android:textColor="@color/colorPrimary"
-                android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button" />
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -226,6 +239,16 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:text="Закрыта"/>
+            <Button
+                android:id="@+id/notification_item_btn_status_canceled"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                android:background="@drawable/rounded_grey"
+                android:textColor="@android:color/white"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:text="Отменена"/>
             <ImageView
                 android:id="@+id/notification_item_btn_accept"
                 android:layout_width="match_parent"

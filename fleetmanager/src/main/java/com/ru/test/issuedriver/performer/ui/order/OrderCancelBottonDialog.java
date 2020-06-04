@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.FrameLayout;
@@ -18,14 +17,12 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.data.order;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.cardview.widget.CardView;
 
 public class OrderCancelBottonDialog extends BottomSheetDialogFragment implements View.OnClickListener {
 
@@ -34,7 +31,7 @@ public class OrderCancelBottonDialog extends BottomSheetDialogFragment implement
     TextView mOrder_distance_bottom, mOrder_fuel_bottom;
     View mCancel_action_standard_group, mCancel_action_other_group;
     CheckBox mCancel_action_other_check;
-    TextInputEditText mCancel_sheet_reason_other_text;
+    TextInputEditText mCancel_sheet_reason_other_input_value;
 
     order item;
 
@@ -70,7 +67,7 @@ public class OrderCancelBottonDialog extends BottomSheetDialogFragment implement
         View view = inflater.inflate(R.layout.cancel_order_bottom_sheet_layout, container, false);
 
         mCancel_action_other_check = view.findViewById(R.id.cancel_action_other_check);
-        mCancel_sheet_reason_other_text = view.findViewById(R.id.cancel_sheet_reason_other_text);
+        mCancel_sheet_reason_other_input_value = view.findViewById(R.id.cancel_sheet_reason_other_text);
         mCancel_action_other_group  = view.findViewById(R.id.cancel_action_other_group);
         mCancel_action_standard_group  = view.findViewById(R.id.cancel_action_standard_group);
 
@@ -94,11 +91,11 @@ public class OrderCancelBottonDialog extends BottomSheetDialogFragment implement
                 if(isChecked){
                     mCancel_action_other_group.setVisibility(View.VISIBLE);
                     mCancel_action_standard_group.setVisibility(View.GONE);
-                    imm.showSoftInput(mCancel_sheet_reason_other_text, 0);
+                    imm.showSoftInput(mCancel_sheet_reason_other_input_value, 0);
                 } else {
                     mCancel_action_other_group.setVisibility(View.GONE);
                     mCancel_action_standard_group.setVisibility(View.VISIBLE);
-                    imm.hideSoftInputFromWindow(mCancel_sheet_reason_other_text.getWindowToken(), 0);
+                    imm.hideSoftInputFromWindow(mCancel_sheet_reason_other_input_value.getWindowToken(), 0);
                 }
             }
         });
@@ -108,12 +105,33 @@ public class OrderCancelBottonDialog extends BottomSheetDialogFragment implement
 
     @Override
     public void onClick(View v) {
-        mListener.onButtonClicked(item, v.getId());
+        String reason = "";
+        switch (v.getId()){
+            case R.id.cancel_sheet_reason1:
+                reason = getActivity().getResources().getString(R.string.cancel_sheet_reason1);
+                break;
+            case R.id.cancel_sheet_reason2:
+                reason = getActivity().getResources().getString(R.string.cancel_sheet_reason2);
+                break;
+            case R.id.cancel_sheet_reason3:
+                reason = getActivity().getResources().getString(R.string.cancel_sheet_reason3);
+                break;
+            case R.id.cancel_sheet_reason4:
+                reason = getActivity().getResources().getString(R.string.cancel_sheet_reason4);
+                break;
+            case R.id.cancel_sheet_reason_other:
+                reason = mCancel_sheet_reason_other_input_value.getText().toString();
+                break;
+
+        }
+        item.state = 1;
+        item.cancel_reason = reason;
+        mListener.onButtonClicked(item);
         dismiss();
     }
 
     public interface BottomSheetListener{
-        void onButtonClicked(order item,  int id);
+        void onButtonClicked(order item);
     }
 
     @Override

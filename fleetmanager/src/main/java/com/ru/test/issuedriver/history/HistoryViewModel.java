@@ -46,7 +46,7 @@ public class HistoryViewModel extends ViewModel {
         String email = user.is_performer? "performer_email" : "customer_email";
         final Query collectionRef = db.collection("orders")
                 .whereEqualTo(email, user.email)
-                .whereEqualTo("completed", true);; //.document("SF");
+                .whereEqualTo("completed", true) ;//.document("SF");
         collectionRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {

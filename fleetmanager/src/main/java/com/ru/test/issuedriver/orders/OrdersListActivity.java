@@ -19,6 +19,7 @@ import com.ru.test.issuedriver.customer.ui.orders_list.OrdersListViewModel;
 import com.ru.test.issuedriver.customer.ui.orders_list.notificationsCustomerAdapter;
 import com.ru.test.issuedriver.customer.ui.orders_list.notificationsPerformerAdapter;
 import com.ru.test.issuedriver.data.order;
+import com.ru.test.issuedriver.performer.helpers.firestoreHelper;
 import com.ru.test.issuedriver.performer.ui.order.OrderCancelBottonDialog;
 
 import java.util.ArrayList;
@@ -107,8 +108,9 @@ public class OrdersListActivity extends AppCompatActivity implements OrderCancel
     }
 
     @Override
-    public void onButtonClicked(order item, int id) {
-        Log.e("myLogs", "" + id);
-        ordersListViewModel.setOrderDelete(item);
+    public void onButtonClicked(order item) {
+        Log.e("myLogs", "");
+        firestoreHelper.setOrderState(item, 1, item.cancel_reason);
+        //ordersListViewModel.setOrderDelete(item);
     }
 }

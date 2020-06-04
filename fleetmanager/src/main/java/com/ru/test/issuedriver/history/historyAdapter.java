@@ -43,7 +43,7 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
     @Override
     public void onBindViewHolder(@NonNull VH holder, int position) {
         order item = cards.get(position);
-        if(item.accept_timestamp!=null) {
+        if (item.accept_timestamp != null) {
             SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
             holder.mHistory_item_accept_date.setText(sfd.format(item.accept_timestamp.toDate()));
         }
@@ -58,6 +58,18 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
         holder.mHistory_fuel.setText(String.valueOf(item.fuel));
 
         holder.mHistory_item_extra.setVisibility(View.GONE);
+
+        if (item.state == 0) {
+            holder.mHistory_item_btn_status_completed.setText("Закрыта");
+            holder.mHistory_item_distance_calc_group.setVisibility(View.VISIBLE);
+            holder.mHistory_item_cancel_reason.setVisibility(View.GONE);
+            holder.mHistory_item_cancel_reason.setText("");
+        } else {
+            holder.mHistory_item_btn_status_completed.setText("Отменена");
+            holder.mHistory_item_distance_calc_group.setVisibility(View.GONE);
+            holder.mHistory_item_cancel_reason.setVisibility(View.VISIBLE);
+            holder.mHistory_item_cancel_reason.setText(item.cancel_reason);
+        }
     }
     @Override
     public int getItemCount() {
@@ -66,8 +78,8 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
 
 
     class VH extends RecyclerView.ViewHolder{
-        TextView mHistory_item_fio, mHistory_item_purpose, mHistory_item_from, mHistory_item_to, mHistory_item_comment, mHistory_time, mHistory_distance, mHistory_fuel, mHistory_item_accept_date;
-        View mHistory_item_extra, mHistory_item_call;
+        TextView mHistory_item_fio, mHistory_item_purpose, mHistory_item_from, mHistory_item_to, mHistory_item_comment, mHistory_time, mHistory_distance, mHistory_fuel, mHistory_item_accept_date, mHistory_item_cancel_reason;
+        View mHistory_item_extra, mHistory_item_call, mHistory_item_cancel_line, mHistory_item_distance_calc_group;
         Button mHistory_item_btn_status_completed;
         CardView mHistory_item;
 
@@ -84,6 +96,10 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
             mHistory_item_from  = itemView.findViewById(R.id.history_item_from);
             mHistory_item_to  = itemView.findViewById(R.id.history_item_to);
             mHistory_item_comment = itemView.findViewById(R.id.history_item_comment);
+
+            mHistory_item_cancel_reason = itemView.findViewById(R.id.history_item_cancel_reason);
+            mHistory_item_cancel_line = itemView.findViewById(R.id.history_item_cancel_line);
+            mHistory_item_distance_calc_group = itemView.findViewById(R.id.history_item_distance_calc_group);
 
             mHistory_time = itemView.findViewById(R.id.history_time);
             mHistory_distance = itemView.findViewById(R.id.history_distance);

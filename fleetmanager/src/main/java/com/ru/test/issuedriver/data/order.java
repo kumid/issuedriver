@@ -43,6 +43,9 @@ public class order {
     public String fuel;
 
     public String id;
+    /// 0 - норм, 1 - отменен
+    public int state;
+    public String cancel_reason;
 
     public order() {}
 
@@ -64,12 +67,12 @@ public class order {
         this.is_notify = false;
         this.car = car;
         this.car_number = car_number;
-
+        this.state = 0;
+        this.cancel_reason = "";
 
         org.joda.time.DateTime jtime = new DateTime(time);
         jtime = jtime.minusMinutes(30);
         this.order_active_timestamp = new Timestamp(jtime.toDate());
-
     }
 
 //    public order(String data, String from, String to, String purpose, String comment,

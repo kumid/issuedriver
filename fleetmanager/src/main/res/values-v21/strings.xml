@@ -7,4 +7,10 @@
     <string name="cancel_sheet_reason_other_text">Введите причину отмены</string>
     <string name="cancel_sheet_reason_other_title">Причина отмены заказа</string>
     <string name="cancel_sheet_reason_other">Отменить</string>
+    <string name="saveprofile">Сохранить</string>
+    <string name="user_state_bottom_sheet_title">Внимание! Состояние будет изменено</string>
+    <string name="user_state_sheet_1">Свободен</string>
+    <string name="user_state_sheet_2">Занят</string>
+    <string name="user_state_sheet_3">Ремонт</string>
+    <string name="order_cancel_reason">Причина отмены</string>
 </resources>

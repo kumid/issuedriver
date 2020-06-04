@@ -104,7 +104,7 @@ public class RegistrationActivity extends MyActivity {
         } else if(getIntent().hasExtra("user")) {
             String user = getIntent().getStringExtra("user");
             getUser(user);
-            mRegistrationButton.setText("Синхронизировать");
+            mRegistrationButton.setText(getResources().getString(R.string.saveprofile) );
             OnlineStateListen();
         }
      }

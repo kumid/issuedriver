@@ -7,4 +7,10 @@
         android:icon="@drawable/ic_mail_white_24dp"
         android:title="@string/action_send"
         app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_state"
+        android:icon="@drawable/online"
+        android:title="@string/action_send"
+        app:showAsAction="always"/>
 </menu>

@@ -63,7 +63,14 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
 
         if(item.accept) {
             if (item.completed) {
-                holder.mNotification_item_btn_status_completed.setVisibility(View.VISIBLE);
+                if (item.state == 0) {
+                    holder.mNotification_item_btn_status_completed.setVisibility(View.VISIBLE);
+                    holder.mNotification_item_btn_status_canceled.setVisibility(View.GONE);
+                } else {
+                    holder.mNotification_item_btn_status_completed.setVisibility(View.GONE);
+                    holder.mNotification_item_btn_status_canceled.setVisibility(View.VISIBLE);
+                }
+
                 holder.mNotification_item_btn_status_in_process.setVisibility(View.GONE);
                 holder.mNotification_item_btn_status_wait.setVisibility(View.GONE);
 //                holder.mNotification_item_btn_cancel.setVisibility(View.GONE);
@@ -72,12 +79,14 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
                 holder.mNotification_item_btn_status_wait.setVisibility(View.GONE);
 //                holder.mNotification_item_btn_cancel.setVisibility(View.GONE);
                 holder.mNotification_item_btn_status_completed.setVisibility(View.GONE);
+                holder.mNotification_item_btn_status_canceled.setVisibility(View.GONE);
             }
         } else {
             holder.mNotification_item_btn_status_wait.setVisibility(View.VISIBLE);
 //            holder.mNotification_item_btn_cancel.setVisibility(View.VISIBLE);
             holder.mNotification_item_btn_status_in_process.setVisibility(View.GONE);
             holder.mNotification_item_btn_status_completed.setVisibility(View.GONE);
+            holder.mNotification_item_btn_status_canceled.setVisibility(View.GONE);
         }
         setBtnsOnClick(holder, item);
     }
@@ -122,7 +131,7 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
     class VH extends RecyclerView.ViewHolder{
         TextView mNotification_item_fio, mNotification_item_purpose, mNotification_item_from, mNotification_item_to, mNotification_item_comment, mNotification_item_data;
         View mNotification_item_extra, mNotification_item_btn_accept, mNotification_item_call, mNotification_item_btn_accept_ok, mNotification_item_extra_btns;
-        Button mNotification_item_btn_status_wait, mNotification_item_btn_status_in_process, mNotification_item_btn_status_completed, mNotification_item_btn_cancel;
+        Button mNotification_item_btn_status_wait, mNotification_item_btn_status_in_process, mNotification_item_btn_status_completed, mNotification_item_btn_cancel, mNotification_item_btn_status_canceled;
         CardView mNotification_item;
         public VH(@NonNull View itemView) {
             super(itemView);
@@ -133,6 +142,7 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
             mNotification_item_btn_status_wait = itemView.findViewById(R.id.notification_item_btn_status_wait);
             mNotification_item_btn_status_in_process = itemView.findViewById(R.id.notification_item_btn_status_in_process);
             mNotification_item_btn_status_completed = itemView.findViewById(R.id.notification_item_btn_status_completed);
+            mNotification_item_btn_status_canceled = itemView.findViewById(R.id.notification_item_btn_status_canceled);
             mNotification_item_btn_cancel  = itemView.findViewById(R.id.notification_item_btn_cancel);
             mNotification_item_btn_accept  = itemView.findViewById(R.id.notification_item_btn_accept);
             mNotification_item_btn_accept_ok  = itemView.findViewById(R.id.notification_item_btn_accept_ok);

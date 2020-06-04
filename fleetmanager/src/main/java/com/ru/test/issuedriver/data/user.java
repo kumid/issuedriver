@@ -22,6 +22,8 @@ public class user {
     public Timestamp last_geo_time;
 
     public String UUID;
+    /// 0 - свободен, 1 - занят, 2 - ремонт
+    public int state;
 
     public user() {}
 
@@ -40,5 +42,6 @@ public class user {
         this.accept = isAccepted;
 
         UUID = java.util.UUID.randomUUID().toString();
+        state = 0;
     }
 }

@@ -59,6 +59,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ru.test.issuedriver.customer.ui.mapsUtils;
 import com.ru.test.issuedriver.customer.ui.placesUtils;
+import com.ru.test.issuedriver.helpers.googleAuthManager;
 import com.ru.test.issuedriver.history.HistoryActivity;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
@@ -263,6 +264,10 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
                 intent.putExtra("user", CurrentUser.email);
                 startActivity(intent);
 //                Toast.makeText(getApplicationContext(), "Вы выбрали slide show", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.nav_exit:
+                googleAuthManager.signOut();
                 break;
         }
 

@@ -137,7 +137,7 @@ private void OnlineStateListen() {
     }
     private void init() {
         mEmail.setText(googleAuthManager.getEmail());
-        mRegistrationButton.setText("Синхронизировать");
+        mRegistrationButton.setText(getResources().getString(R.string.saveprofile));
         getUser();
     }
 

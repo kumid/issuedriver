@@ -82,6 +82,8 @@ public class RegistrationFragment extends Fragment {
         OnlineStateListen();
         db = FirebaseFirestore.getInstance();
 
+        mRegistration_btn_logout.setVisibility(View.VISIBLE);
+
         mRegistrationButton.setOnClickListener(click);
         mRegistration_btn_logout.setOnClickListener(click);
         init();
@@ -138,7 +140,7 @@ private void OnlineStateListen() {
     }
     private void init() {
         mEmail.setText(googleAuthManager.getEmail());
-        mRegistrationButton.setText("Синхронизировать");
+        mRegistrationButton.setText(getResources().getString(R.string.saveprofile));
         getUser();
     }
 

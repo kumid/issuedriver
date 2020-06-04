@@ -36,7 +36,9 @@ public class MapViewModel extends ViewModel {
     private void initUsersData() {
         final Query collectionRef = db.collection("users")
                 .whereEqualTo("is_performer", true) // водители
-                .whereEqualTo("accept", true);       // аккаунт активирован
+                .whereEqualTo("accept", true)       // аккаунт активирован
+                .whereEqualTo("state", 0);       // состояние
+
 //                .whereEqualTo("is_busy", false);    // если машина занята
         collectionRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
