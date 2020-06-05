@@ -13,4 +13,5 @@
     <string name="user_state_sheet_2">Занят</string>
     <string name="user_state_sheet_3">Ремонт</string>
     <string name="order_cancel_reason">Причина отмены</string>
+    <string name="order_performong_data">Дату и время поездки</string>
 </resources>

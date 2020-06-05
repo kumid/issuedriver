@@ -7,11 +7,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.ru.test.issuedriver.R;
-import com.ru.test.issuedriver.customer.CustomerActivity;
+import com.ru.test.issuedriver.customer.CustomerV2Activity;
 import com.ru.test.issuedriver.data.order;
-import com.ru.test.issuedriver.helpers.googleAuthManager;
-import com.ru.test.issuedriver.performer.ui.order.OrderCancelBottonDialog;
-import com.ru.test.issuedriver.performer.ui.order.OrderCloseBottonDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -117,7 +114,7 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
         holder.mNotification_item_call.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CustomerActivity.getInstance().callPhone(item.performer_phone);
+                CustomerV2Activity.getInstance().callPhone(item.performer_phone);
             }
         });
     }

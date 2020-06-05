@@ -1,6 +1,5 @@
 package com.ru.test.issuedriver.customer.ui;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -33,7 +32,7 @@ import com.ru.test.issuedriver.customer.ui.map.imHere;
 import com.ru.test.issuedriver.customer.ui.order.OrderActivity;
 import com.ru.test.issuedriver.customer.ui.orders_list.OrdersListViewModel;
 import com.ru.test.issuedriver.data.user;
-import com.ru.test.issuedriver.performer.helpers.firestoreHelper;
+import com.ru.test.issuedriver.helpers.firestoreHelper;
 
 import org.jetbrains.annotations.NotNull;
 

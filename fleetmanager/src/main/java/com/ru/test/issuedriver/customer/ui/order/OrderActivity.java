@@ -22,17 +22,12 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.customer.CustomerV2Activity;
-import com.ru.test.issuedriver.customer.ui.map.imHere;
-import com.ru.test.issuedriver.customer.ui.placesUtils;
-import com.ru.test.issuedriver.helpers.mysettings;
 import com.ru.test.issuedriver.data.order;
-import com.ru.test.issuedriver.performer.helpers.firestoreHelper;
-import com.ru.test.issuedriver.performer.ui.order.OrderCloseBottonDialog;
+import com.ru.test.issuedriver.helpers.firestoreHelper;
 
 import org.joda.time.DateTime;
 
 import java.util.Calendar;
-import java.util.Date;
 
 public class OrderActivity extends MyActivity implements View.OnClickListener {
 
@@ -66,9 +61,9 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
 
     String customer_fio, customer_phone, customer_email, performer_fio,  performer_phone, performer_email, performer_car, performer_car_numbr;
     private void initExtra() {
-        customer_fio = mysettings.GetUser().fio;
-        customer_phone = mysettings.GetUser().tel;
-        customer_email = mysettings.GetUser().email;
+        customer_fio = CurrentUser.fio;
+        customer_phone = CurrentUser.tel;
+        customer_email = CurrentUser.email;
 //        customer_fio = getIntent().getStringExtra("customer_fio");
 //        customer_phone = getIntent().getStringExtra("customer_phone");
 //        customer_email = getIntent().getStringExtra("customer_email");

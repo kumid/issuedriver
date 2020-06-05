@@ -2,10 +2,8 @@ package com.ru.test.issuedriver;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 
 
-import com.ru.test.issuedriver.customer.CustomerActivity;
 import com.ru.test.issuedriver.customer.CustomerV2Activity;
 import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.helpers.googleAuthManager;

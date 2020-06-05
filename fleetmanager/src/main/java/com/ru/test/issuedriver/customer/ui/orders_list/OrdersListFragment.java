@@ -47,13 +47,15 @@ public class OrdersListFragment extends Fragment {
 
     private void initViews(View root) {
         notification_rv = root.findViewById(R.id.notification_rv);
-        if(MyActivity.CurrentUser.is_performer)
-            adapterPerformer = new notificationsPerformerAdapter(ordersListViewModel, new ArrayList<order>());
-        else
-            adapterCustomer = new notificationsCustomerAdapter(ordersListViewModel, new ArrayList<order>());
-
         notification_rv.setLayoutManager(new LinearLayoutManager(getContext()));
-        notification_rv.setAdapter(adapterCustomer);
+        if(MyActivity.CurrentUser.is_performer) {
+            adapterPerformer = new notificationsPerformerAdapter(ordersListViewModel, new ArrayList<order>());
+            notification_rv.setAdapter(adapterPerformer);
+        } else {
+            adapterCustomer = new notificationsCustomerAdapter(ordersListViewModel, new ArrayList<order>());
+            notification_rv.setAdapter(adapterCustomer);
+        }
+
 
         ordersListViewModel.getNotifications().observe(getViewLifecycleOwner(), new Observer<List<order>>() {
             @Override

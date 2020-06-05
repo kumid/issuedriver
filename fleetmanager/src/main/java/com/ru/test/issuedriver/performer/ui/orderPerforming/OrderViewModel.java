@@ -1,18 +1,18 @@
-package com.ru.test.issuedriver.customer.ui.order;
+package com.ru.test.issuedriver.performer.ui.orderPerforming;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.ru.test.issuedriver.customer.CustomerV2Activity;
 import com.ru.test.issuedriver.data.order;
-import com.ru.test.issuedriver.helpers.fsm.sender;
+import com.ru.test.issuedriver.helpers.firestoreHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,32 +62,62 @@ public class OrderViewModel extends ViewModel {
         }
     }
 
-    public void sendOrder(order curr){
-        db.collection("orders").document().set(curr)
+
+    public void setOrderComleted(String orderId, String performer_email, String time, String dist, String fuel) {
+
+
+        DocumentReference orderRef = db.collection("orders").document(orderId);
+        orderRef.update("completed", true,
+                        "end_timestamp", FieldValue.serverTimestamp(),
+                        "spent_time", time,
+                        "distance", dist,
+                        "fuel", fuel)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        //registrationViewModel.currentUser.postValue(current);
-//                        startMainActivity(current);
-                        //Log.d("TAG", "DocumentSnapshot successfully written!");
-                        sender.send(curr.performer_email);
-                        if(orderSendCompleteCalback!=null)
-                            orderSendCompleteCalback.callback(true);
+                        firestoreHelper.setUserBusy(performer_email, false);
+                        Log.d("TAG", "DocumentSnapshot successfully updated!");
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        CustomerV2Activity.showToast("Ошибка сохранения данных", Toast.LENGTH_SHORT);
-//                        Log.w("TAG", "Error writing document", e);
-                        if(orderSendCompleteCalback!=null)
-                            orderSendCompleteCalback.callback(false);
+                        Log.w("TAG", "Error updating document", e);
                     }
                 });
     }
 
-    public static orderSendComplete orderSendCompleteCalback;
-    public interface orderSendComplete{
+    public static orderCompleted orderCompletedCalback;
+    public interface orderCompleted {
         void callback(boolean pass);
     }
+
+//    public void sendOrder(order curr){
+//        db.collection("orders").document().set(curr)
+//                .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//                        //registrationViewModel.currentUser.postValue(current);
+////                        startMainActivity(current);
+//                        //Log.d("TAG", "DocumentSnapshot successfully written!");
+//                        //sender.send(curr.performer_email);
+//                        if(orderSendCompleteCalback!=null)
+//                            orderSendCompleteCalback.callback(true);
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        MyActivity.showToast("Ошибка сохранения данных", Toast.LENGTH_SHORT);
+////                        Log.w("TAG", "Error writing document", e);
+//                        if(orderSendCompleteCalback!=null)
+//                            orderSendCompleteCalback.callback(false);
+//                    }
+//                });
+//    }
+//
+//    public static orderSendComplete orderSendCompleteCalback;
+//    public interface orderSendComplete{
+//        void callback(boolean pass);
+//    }
 }

@@ -10,7 +10,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.ru.test.issuedriver.helpers.googleAuthManager;
-import com.ru.test.issuedriver.registration.RegistrationActivity;
+import com.ru.test.issuedriver.ui.registration.RegistrationActivity;
 
 public class LoginActivity extends AppCompatActivity {
 

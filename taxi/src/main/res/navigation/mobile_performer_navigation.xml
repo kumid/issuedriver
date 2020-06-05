@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.ru.test.issuedriver.history.HistoryFragment"
+        android:name="com.ru.test.issuedriver.ui.history.HistoryFragment"
         android:label="@string/title_history"
         tools:layout="@layout/fragment_history" />
 
@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/navigation_registration"
-        android:name="com.ru.test.issuedriver.registration.RegistrationFragment"
+        android:name="com.ru.test.issuedriver.ui.registration.RegistrationFragment"
         android:label="@string/title_user"
         tools:layout="@layout/activity_registration" />
 </navigation>

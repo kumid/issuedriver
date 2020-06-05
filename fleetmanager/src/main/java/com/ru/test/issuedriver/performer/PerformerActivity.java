@@ -24,25 +24,26 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.GeoPoint;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
+import com.ru.test.issuedriver.bottom_dialogs.UserStateBottonDialog;
+import com.ru.test.issuedriver.customer.ui.orders_list.OrdersListViewModel;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
-import com.ru.test.issuedriver.performer.feedback.FeedbackActivity;
-import com.ru.test.issuedriver.performer.helpers.PerformerBackgroundService;
-import com.ru.test.issuedriver.performer.helpers.callBacks;
-import com.ru.test.issuedriver.performer.helpers.firestoreHelper;
-import com.ru.test.issuedriver.performer.ui.order.OrderCancelBottonDialog;
-import com.ru.test.issuedriver.performer.ui.order.OrderPerformingActivity;
+import com.ru.test.issuedriver.performer.ui.feedback.FeedbackActivity;
+import com.ru.test.issuedriver.helpers.PerformerBackgroundService;
+import com.ru.test.issuedriver.helpers.callBacks;
+import com.ru.test.issuedriver.helpers.firestoreHelper;
+import com.ru.test.issuedriver.performer.ui.orderPerforming.OrderPerformingActivity;
+import com.ru.test.issuedriver.ui.history.HistoryViewModel;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
-import static com.ru.test.issuedriver.performer.helpers.firestoreHelper.setDefaultUserState;
 
 public class PerformerActivity extends MyActivity implements UserStateBottonDialog.BottomSheetListener{
 
@@ -56,8 +57,8 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
     }
 
 //    RegistrationViewModel registrationViewModel;
-//    NotificationsViewModel notificationsViewModel;
-//    HistoryViewModel historyViewModel;
+    OrdersListViewModel ordersListViewModel;
+    HistoryViewModel historyViewModel;
 
 
     @Override
@@ -118,12 +119,15 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
     private void initViewModels() {
 //        registrationViewModel =
 //                ViewModelProviders.of(PerformerActivity.getInstance()).get(RegistrationViewModel.class);
-//        notificationsViewModel =
-//                ViewModelProviders.of(PerformerActivity.getInstance()).get(NotificationsViewModel.class);
-//        notificationsViewModel.initNotificationLoad(PerformerActivity.getInstance(), registrationViewModel.currentUser);
-//        historyViewModel =
-//                ViewModelProviders.of(PerformerActivity.getInstance()).get(HistoryViewModel.class);
-//        historyViewModel.initNotificationLoad(PerformerActivity.getInstance(), registrationViewModel.currentUser);
+
+
+        ordersListViewModel =
+                ViewModelProviders.of(PerformerActivity.this).get(OrdersListViewModel.class);
+        ordersListViewModel.initNotificationLoad(MyActivity.CurrentUser);
+
+        historyViewModel =
+                ViewModelProviders.of(PerformerActivity.this).get(HistoryViewModel.class);
+        historyViewModel.initNotificationsHistoryLoad(CurrentUser);
     }
 
 
@@ -161,7 +165,10 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
 //                    mUserLocation.setTimestamp(null);
 //                    saveUserLocation();
                     startLocationService();
+                } else {
+                    Log.d("TAG", "getLastKnownLocation: called.");
                 }
+
             }
         });
 
