@@ -1,24 +1,45 @@
 package com.ru.test.issuedriver.customer.ui.order;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.AutocompletePrediction;
+import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
+import com.google.android.libraries.places.api.model.LocationBias;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.RectangularBounds;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteActivity;
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textview.MaterialTextView;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.customer.CustomerV2Activity;
@@ -27,20 +48,40 @@ import com.ru.test.issuedriver.helpers.firestoreHelper;
 
 import org.joda.time.DateTime;
 
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 public class OrderActivity extends MyActivity implements View.OnClickListener {
 
+    private static final int AUTOCOMPLETE_FROM_REQUEST_CODE = 12345;
+    private static final int AUTOCOMPLETE_TO_REQUEST_CODE = 12346;
+    private static final String TAG = "myLogs";
     OrderViewModel orderViewModel;
 //    RegistrationViewModel registrationViewModel;
     ActionBar actionBar;
-    TextInputEditText mOrder_name, mOrder_from, mOrder_to, mOrder_purpose, mOrder_comment, mOrder_car, mOrder_carnumber;
+    TextInputEditText mOrder_from, mOrder_to, mOrder_purpose, mOrder_comment;
+    MaterialTextView mOrder_name, mOrder_car, mOrder_carnumber;
     TextView currentDateTime;
     TimePicker mOrderTime;
+    View mOrder_from_btn, mOrder_to_btn;
     Button mOrder_btn;
     RadioButton mOrder_now, mOrder_tomorrow;
     ProgressBar mProgress_circular;
     Calendar dateAndTime=Calendar.getInstance();
+
+    /*
+     *Client that exposes the Places API methods
+     */
+    PlacesClient placesClient;
+
+    /*
+     * Token used for sessionizing multiple instances of FindAutocompletePredictionsRequest.
+     * The same token can also be used for a subsequent FetchPlaceRequest on one of the autocomplete prediction results returned.
+     * */
+    AutocompleteSessionToken token;
+    private AutoCompleteTextView autocomplete_place_from, autocomplete_place_to;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +98,66 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         initVM();
         initExtra();
         setInitialDateTime();
+        initAutocomplete();
     }
+
+    private void initAutocomplete() {
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), getResources().getString(R.string.google_api_key));
+        }
+
+// Create a new Places client instance.
+        PlacesClient placesClient = Places.createClient(this);
+    }
+
+    public void onSearchCalled(int mode) {
+        // Set the fields to specify which types of place data to return.
+        List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.ADDRESS_COMPONENTS, Place.Field.LAT_LNG);
+
+        // Create a RectangularBounds object.
+        RectangularBounds bounds = RectangularBounds.newInstance(
+                new LatLng(53.5663927,34.3128526),
+                new LatLng(53.617667, 34.346756));
+        // Start the autocomplete intent.
+        Intent intent = new Autocomplete.IntentBuilder(
+                AutocompleteActivityMode.FULLSCREEN, fields).setCountry("RU")
+                //.setLocationRestriction(bounds)
+//                .setInitialQuery("Дятьково")
+                .build(this);
+        startActivityForResult(intent, mode == 1 ? AUTOCOMPLETE_FROM_REQUEST_CODE : AUTOCOMPLETE_TO_REQUEST_CODE);
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == AUTOCOMPLETE_FROM_REQUEST_CODE
+                || requestCode == AUTOCOMPLETE_TO_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = Autocomplete.getPlaceFromIntent(data);
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId() + ", " + place.getAddress());
+                //Toast.makeText(AutocompleteFromIntentActivity.this, "ID: " + place.getId() + "address:" + place.getAddress() + "Name:" + place.getName() + " latlong: " + place.getLatLng(), Toast.LENGTH_LONG).show();
+                String address = place.getAddress();
+                if(requestCode == AUTOCOMPLETE_FROM_REQUEST_CODE)
+                    mOrder_from.setText(address);
+                else
+                    mOrder_to.setText(address);
+                // do query with address
+
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                // TODO: Handle the error.
+                Status status = Autocomplete.getStatusFromIntent(data);
+//                Toast.makeText(AutocompleteFromIntentActivity.this, "Error: " + status.getStatusMessage(), Toast.LENGTH_LONG).show();
+                Log.i(TAG, status.getStatusMessage());
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
+    }
+
+
+
+
+
+
 
     String customer_fio, customer_phone, customer_email, performer_fio,  performer_phone, performer_email, performer_car, performer_car_numbr;
     private void initExtra() {
@@ -89,6 +189,8 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         mOrderTime = findViewById(R.id.order_time);
         mOrder_now  = findViewById(R.id.order_now);
         mOrder_tomorrow  = findViewById(R.id.order_tomorrow);
+        mOrder_from_btn   = findViewById(R.id.order_from_btn);
+        mOrder_to_btn   = findViewById(R.id.order_to_btn);
 
         final Calendar c = Calendar.getInstance();
         int mHour = c.get(Calendar.HOUR_OF_DAY);
@@ -108,7 +210,11 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         mOrder_carnumber.setText(performer_car_numbr);
 
         mOrder_btn.setOnClickListener(this);
+        mOrder_from_btn.setOnClickListener(this);
+        mOrder_to_btn.setOnClickListener(this);
         currentDateTime.setOnClickListener(this);
+
+//        mOrder_from.setShowSoftInputOnFocus(false);
     }
 
     private void initVM() {
@@ -165,10 +271,13 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         if(v.getId() == R.id.order_data){
             setDate(v);
             return;
+        } else if(v.getId() == R.id.order_from_btn){
+            onSearchCalled(1);
+            return;
+        } else if(v.getId() == R.id.order_to_btn){
+            onSearchCalled(2);
+            return;
         }
-
-//        Calendar calendar = Calendar.getInstance();
-//        calendar.setTime(new Date());
 
         org.joda.time.DateTime time = new DateTime();
 
