@@ -20,25 +20,28 @@ import androidx.annotation.Nullable;
 public class firestoreHelper {
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+    освободить машину при отмене ордера
+
     public static void setUserBusy(String performer, boolean isBusy) {
-        DocumentReference userRef = db.collection("users").document(performer);
-        userRef.update("is_busy", isBusy)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("TAG", "DocumentSnapshot successfully updated!");
-                        if(OrderViewModel.orderCompletedCalback != null)
-                            OrderViewModel.orderCompletedCalback.callback(true);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("TAG", "Error updating document", e);
-                        if(OrderViewModel.orderCompletedCalback != null)
-                            OrderViewModel.orderCompletedCalback.callback(false);
-                    }
-                });
+        setUserState(performer, isBusy ? 1: 0);
+//        DocumentReference userRef = db.collection("users").document(performer);
+//        userRef.update("is_busy", isBusy)
+//                .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                    @Override
+//                    public void onSuccess(Void aVoid) {
+//                        Log.d("TAG", "DocumentSnapshot successfully updated!");
+//                        if(OrderViewModel.orderCompletedCalback != null)
+//                            OrderViewModel.orderCompletedCalback.callback(true);
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Log.w("TAG", "Error updating document", e);
+//                        if(OrderViewModel.orderCompletedCalback != null)
+//                            OrderViewModel.orderCompletedCalback.callback(false);
+//                    }
+//                });
 
     }
 
@@ -72,7 +75,7 @@ public class firestoreHelper {
                     public void onSuccess(Void aVoid) {
                         Log.d("TAG", "DocumentSnapshot successfully updated!");
 
-                        setUserBusy(_order.performer_email, false);
+//                        setUserBusy(_order.performer_email, false);
 
                         if(callBacks.orderStateChangedCalback != null)
                             callBacks.orderStateChangedCalback.callback(true);

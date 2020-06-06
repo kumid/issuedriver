@@ -10,6 +10,7 @@ import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.performer.PerformerActivity;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import androidx.annotation.NonNull;
@@ -45,11 +46,15 @@ public class notificationsPerformerAdapter extends RecyclerView.Adapter<notifica
         order item = cards.get(position);
         holder.mNotification_item_fio.setText(item.customer_fio);
         holder.mNotification_item_purpose.setText(item.purpose);
+        if(item.order_timestamp != null) {
+            SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            holder.mNotification_item_data.setText(sfd.format(item.order_timestamp.toDate()));
+        }
         holder.mNotification_item_from.setText(item.from);
         holder.mNotification_item_to.setText(item.to);
         holder.mNotification_item_comment.setText(item.comment);
 
-        holder.mNotification_item_extra.setVisibility(View.GONE);
+        //holder.mNotification_item_extra.setVisibility(View.GONE);
 
         if(item.accept) {
             if (item.completed) {
@@ -117,8 +122,8 @@ public class notificationsPerformerAdapter extends RecyclerView.Adapter<notifica
 
 
     class VH extends RecyclerView.ViewHolder{
-        TextView mNotification_item_fio, mNotification_item_purpose, mNotification_item_from, mNotification_item_to, mNotification_item_comment;
-        View mNotification_item_extra, mNotification_item_extra_btns1, mNotification_item_btn_accept, mNotification_item_call, mNotification_item_btn_accept_ok;
+        TextView mNotification_item_fio, mNotification_item_purpose, mNotification_item_from, mNotification_item_to, mNotification_item_comment, mNotification_item_data;
+        View mNotification_item_extra, mNotification_item_btn_accept, mNotification_item_call, mNotification_item_btn_accept_ok;
         Button mNotification_item_btn_status_wait, mNotification_item_btn_status_in_process, mNotification_item_btn_status_completed, mNotification_item_btn_start;
         CardView mNotification_item;
         public VH(@NonNull View itemView) {
@@ -133,12 +138,12 @@ public class notificationsPerformerAdapter extends RecyclerView.Adapter<notifica
             mNotification_item_btn_accept_ok  = itemView.findViewById(R.id.notification_item_btn_accept_ok);
             mNotification_item_call  = itemView.findViewById(R.id.notification_item_call);
             mNotification_item_fio = itemView.findViewById(R.id.notification_item_fio);
+            mNotification_item_data  = itemView.findViewById(R.id.notification_item_data);
             mNotification_item_purpose = itemView.findViewById(R.id.notification_item_purpose);
             mNotification_item_from  = itemView.findViewById(R.id.notification_item_from);
             mNotification_item_to  = itemView.findViewById(R.id.notification_item_to);
             mNotification_item_comment = itemView.findViewById(R.id.notification_item_comment);
 
-            mNotification_item_extra_btns1 = itemView.findViewById(R.id.notification_item_extra_btns1);
             mNotification_item_btn_start = itemView.findViewById(R.id.notification_item_btn_start);
 
             mNotification_item.setOnClickListener(new View.OnClickListener() {

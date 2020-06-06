@@ -33,19 +33,19 @@
                     android:textAppearance="@style/TextAppearance.Compat.Notification"  />
 
                 <ImageView
-                    android:layout_width="20dp"
+                    android:layout_width="15dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center"
-                    android:layout_marginHorizontal="5dp"
-                    android:src="@drawable/marker_from"
-                    android:alpha="0.3"/>
+                    android:layout_marginHorizontal="10dp"
+                    android:src="@drawable/blue_circle"
+                    android:alpha="0.7"/>
                 <ImageView
-                    android:layout_width="20dp"
+                    android:layout_width="15dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center"
-                    android:layout_marginHorizontal="5dp"
-                    android:src="@drawable/marker_to"
-                    android:alpha="0.3"/>
+                    android:layout_marginHorizontal="10dp"
+                    android:src="@drawable/red_circle"
+                    android:alpha="0.7"/>
             </LinearLayout>
 
             <LinearLayout

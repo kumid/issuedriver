@@ -29,10 +29,12 @@ android {
         debug {
             buildConfigField("String", "FCM_BASE_URL", "\"https://fcm.googleapis.com/\"")
             buildConfigField("String", "FCM_SERVER_KEY", "\"AAAA2uPvDwo:APA91bFmR4slk5t9fn0-f-R6RtQ0CY0tT379S0FjtiAs_0zKpGqYzwce2p0DAxOi4ktf6gLlQdlHDqDkRoGEkpFbw_YQUAgMlfxh5xnI0wSNwICyDVBrTyZeWv7l5Dt-GONjftOVvke5\"")
+            buildConfigField("String", "PLACES_KEY", "\"AIzaSyBCOgMe2LQF-KNCDEL4Pk7fXht62Cz01gc\"")
         }
         release {
             buildConfigField("String", "FCM_BASE_URL", "\"https://fcm.googleapis.com/\"")
             buildConfigField("String", "FCM_SERVER_KEY", "\"AAAA2uPvDwo:APA91bFmR4slk5t9fn0-f-R6RtQ0CY0tT379S0FjtiAs_0zKpGqYzwce2p0DAxOi4ktf6gLlQdlHDqDkRoGEkpFbw_YQUAgMlfxh5xnI0wSNwICyDVBrTyZeWv7l5Dt-GONjftOVvke5\"")
+            buildConfigField("String", "PLACES_KEY", "\"AIzaSyBCOgMe2LQF-KNCDEL4Pk7fXht62Cz01gc\"")
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }

@@ -52,6 +52,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import com.ru.test.issuedriver.BuildConfig;
+
 public class OrderActivity extends MyActivity implements View.OnClickListener {
 
     private static final int AUTOCOMPLETE_FROM_REQUEST_CODE = 12345;
@@ -70,19 +72,6 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
     ProgressBar mProgress_circular;
     Calendar dateAndTime=Calendar.getInstance();
 
-    /*
-     *Client that exposes the Places API methods
-     */
-    PlacesClient placesClient;
-
-    /*
-     * Token used for sessionizing multiple instances of FindAutocompletePredictionsRequest.
-     * The same token can also be used for a subsequent FetchPlaceRequest on one of the autocomplete prediction results returned.
-     * */
-    AutocompleteSessionToken token;
-    private AutoCompleteTextView autocomplete_place_from, autocomplete_place_to;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,85 +82,31 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle("Новая заявка");
         }
-        initExtra();
-        initViews();
         initVM();
+
+        initExtra();
+
+        initViews();
+
         initExtra();
         setInitialDateTime();
         initAutocomplete();
     }
 
-    private void initAutocomplete() {
-        if (!Places.isInitialized()) {
-            Places.initialize(getApplicationContext(), getResources().getString(R.string.google_api_key));
-        }
-
-// Create a new Places client instance.
-        PlacesClient placesClient = Places.createClient(this);
-    }
-
-    public void onSearchCalled(int mode) {
-        // Set the fields to specify which types of place data to return.
-        List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.ADDRESS_COMPONENTS, Place.Field.LAT_LNG);
-
-        // Create a RectangularBounds object.
-        RectangularBounds bounds = RectangularBounds.newInstance(
-                new LatLng(53.5663927,34.3128526),
-                new LatLng(53.617667, 34.346756));
-        // Start the autocomplete intent.
-        Intent intent = new Autocomplete.IntentBuilder(
-                AutocompleteActivityMode.FULLSCREEN, fields).setCountry("RU")
-                //.setLocationRestriction(bounds)
-//                .setInitialQuery("Дятьково")
-                .build(this);
-        startActivityForResult(intent, mode == 1 ? AUTOCOMPLETE_FROM_REQUEST_CODE : AUTOCOMPLETE_TO_REQUEST_CODE);
-    }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == AUTOCOMPLETE_FROM_REQUEST_CODE
-                || requestCode == AUTOCOMPLETE_TO_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                Place place = Autocomplete.getPlaceFromIntent(data);
-                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId() + ", " + place.getAddress());
-                //Toast.makeText(AutocompleteFromIntentActivity.this, "ID: " + place.getId() + "address:" + place.getAddress() + "Name:" + place.getName() + " latlong: " + place.getLatLng(), Toast.LENGTH_LONG).show();
-                String address = place.getAddress();
-                if(requestCode == AUTOCOMPLETE_FROM_REQUEST_CODE)
-                    mOrder_from.setText(address);
-                else
-                    mOrder_to.setText(address);
-                // do query with address
-
-            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
-                // TODO: Handle the error.
-                Status status = Autocomplete.getStatusFromIntent(data);
-//                Toast.makeText(AutocompleteFromIntentActivity.this, "Error: " + status.getStatusMessage(), Toast.LENGTH_LONG).show();
-                Log.i(TAG, status.getStatusMessage());
-            } else if (resultCode == RESULT_CANCELED) {
-                // The user canceled the operation.
-            }
-        }
-    }
-
-
-
-
-
-
-
-    String customer_fio, customer_phone, customer_email, performer_fio,  performer_phone, performer_email, performer_car, performer_car_numbr;
     private void initExtra() {
-        customer_fio = CurrentUser.fio;
-        customer_phone = CurrentUser.tel;
-        customer_email = CurrentUser.email;
+        orderViewModel.customer_fio = CurrentUser.fio;
+        orderViewModel.customer_phone = CurrentUser.tel;
+        orderViewModel.customer_email = CurrentUser.email;
 //        customer_fio = getIntent().getStringExtra("customer_fio");
 //        customer_phone = getIntent().getStringExtra("customer_phone");
 //        customer_email = getIntent().getStringExtra("customer_email");
-        performer_fio = getIntent().getStringExtra("performer_fio");
-        performer_phone = getIntent().getStringExtra("performer_phone");
-        performer_email = getIntent().getStringExtra("performer_email");
-        performer_car = getIntent().getStringExtra("performer_car");
-        performer_car_numbr = getIntent().getStringExtra("performer_car_number");
+        orderViewModel.performer_fio = getIntent().getStringExtra("performer_fio");
+        orderViewModel.performer_phone = getIntent().getStringExtra("performer_phone");
+        orderViewModel.performer_email = getIntent().getStringExtra("performer_email");
+        orderViewModel.performer_car = getIntent().getStringExtra("performer_car");
+        orderViewModel.performer_car_numbr = getIntent().getStringExtra("performer_car_number");
+
+        orderViewModel.setOrder();
     }
 
 
@@ -205,9 +140,9 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         }
         mOrderTime.setIs24HourView(true);
 
-        mOrder_name.setText(performer_fio);
-        mOrder_car.setText(performer_car);
-        mOrder_carnumber.setText(performer_car_numbr);
+        mOrder_name.setText(orderViewModel.performer_fio);
+        mOrder_car.setText(orderViewModel.performer_car);
+        mOrder_carnumber.setText(orderViewModel.performer_car_numbr);
 
         mOrder_btn.setOnClickListener(this);
         mOrder_from_btn.setOnClickListener(this);
@@ -219,8 +154,70 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
 
     private void initVM() {
         orderViewModel =
-                ViewModelProviders.of(CustomerV2Activity.getInstance()).get(OrderViewModel.class);
+                ViewModelProviders.of(OrderActivity.this).get(OrderViewModel.class);
     }
+
+
+    private void initAutocomplete() {
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), BuildConfig.PLACES_KEY);
+        }
+    }
+
+    public void onSearchCalled(int mode) {
+        // Set the fields to specify which types of place data to return.
+        List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.ADDRESS_COMPONENTS, Place.Field.LAT_LNG);
+
+        // Create a RectangularBounds object.
+        RectangularBounds bounds = RectangularBounds.newInstance(
+                new LatLng(53.5663927,34.3128526),
+                new LatLng(53.617667, 34.346756));
+        // Start the autocomplete intent.
+        Intent intent = new Autocomplete.IntentBuilder(
+                AutocompleteActivityMode.OVERLAY, fields).setCountry("RU")
+                //.setLocationRestriction(bounds)
+//                .setInitialQuery("Дятьково")
+                .build(this);
+        startActivityForResult(intent, mode == 1 ? AUTOCOMPLETE_FROM_REQUEST_CODE : AUTOCOMPLETE_TO_REQUEST_CODE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == AUTOCOMPLETE_FROM_REQUEST_CODE
+                || requestCode == AUTOCOMPLETE_TO_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = Autocomplete.getPlaceFromIntent(data);
+                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId() + ", " + place.getAddress());
+                //Toast.makeText(AutocompleteFromIntentActivity.this, "ID: " + place.getId() + "address:" + place.getAddress() + "Name:" + place.getName() + " latlong: " + place.getLatLng(), Toast.LENGTH_LONG).show();
+                String address = place.getAddress();
+                if(requestCode == AUTOCOMPLETE_FROM_REQUEST_CODE) {
+                    mOrder_from.setText(address);
+                    orderViewModel.getCurrentOrder().setFrom_position(address, place.getLatLng());
+                }
+                else {
+                    mOrder_to.setText(address);
+                    orderViewModel.getCurrentOrder().setTo_position(address, place.getLatLng());
+                }// do query with address
+
+            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                // TODO: Handle the error.
+                Status status = Autocomplete.getStatusFromIntent(data);
+//                Toast.makeText(AutocompleteFromIntentActivity.this, "Error: " + status.getStatusMessage(), Toast.LENGTH_LONG).show();
+                Log.i(TAG, status.getStatusMessage());
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
+    }
+
+
+
+
+
+
+
+
 
     // отображаем диалоговое окно для выбора даты
     public void setDate(View v) {
@@ -268,20 +265,20 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.order_data){
+        if (v.getId() == R.id.order_data) {
             setDate(v);
             return;
-        } else if(v.getId() == R.id.order_from_btn){
+        } else if (v.getId() == R.id.order_from_btn) {
             onSearchCalled(1);
             return;
-        } else if(v.getId() == R.id.order_to_btn){
+        } else if (v.getId() == R.id.order_to_btn) {
             onSearchCalled(2);
             return;
         }
 
         org.joda.time.DateTime time = new DateTime();
 
-        if(mOrder_tomorrow.isChecked())
+        if (mOrder_tomorrow.isChecked())
             time = time.plusDays(1); //calendar.add(Calendar.DAY_OF_MONTH, 1);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             time = time.withTime(mOrderTime.getHour(), mOrderTime.getMinute(), 0, 0);
@@ -293,41 +290,47 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
 //            calendar.set(Calendar.MINUTE, mOrderTime.getCurrentMinute());
         }
 
+        order curr = orderViewModel.getCurrentOrder();
+        curr.setTime(time.toDate());
+        curr.from = mOrder_from.getText().toString();
+        curr.to = mOrder_to.getText().toString();
+        curr.purpose = mOrder_purpose.getText().toString();
+        curr.comment = mOrder_comment.getText().toString();
 
-        order curr = new order(
-//                currentDateTime.getText().toString(),
-//                calendar.getTime(),
-                time.toDate(),
-                mOrder_from.getText().toString(),
-                mOrder_to.getText().toString(),
-                mOrder_purpose.getText().toString(),
-                mOrder_comment.getText().toString(),
-                customer_fio,
-                customer_phone,
-                customer_email,
-                performer_fio,
-                performer_phone,
-                performer_email,
-                mOrder_car.getText().toString(),
-                mOrder_carnumber.getText().toString()
-                );
+//                order curr = new order(
+////                currentDateTime.getText().toString(),
+////                calendar.getTime(),
+//                time.toDate(),
+//                mOrder_from.getText().toString(),
+//                mOrder_to.getText().toString(),
+//                mOrder_purpose.getText().toString(),
+//                mOrder_comment.getText().toString(),
+//                customer_fio,
+//                customer_phone,
+//                customer_email,
+//                performer_fio,
+//                performer_phone,
+//                performer_email,
+//                mOrder_car.getText().toString(),
+//                mOrder_carnumber.getText().toString()
+//                );
 
-        if(curr.from.length() == 0
-            || curr.to.length() == 0
-            || curr.purpose.length() == 0){
+        if (curr.from.length() == 0
+                || curr.to.length() == 0
+                || curr.purpose.length() == 0) {
             showToast("Заявка заполнена не полностью", Toast.LENGTH_LONG);
             return;
         }
 
         mProgress_circular.setVisibility(View.VISIBLE);
-        orderViewModel.sendOrder(curr);
+        orderViewModel.sendOrder();
         orderViewModel.orderSendCompleteCalback = new OrderViewModel.orderSendComplete() {
             @Override
             public void callback(boolean pass) {
-                if(pass){
-                     showToast("Заявка успешно зарегистрирована", Toast.LENGTH_LONG);
-                     finish();
-                     //mProgress_circular.setVisibility(View.GONE);
+                if (pass) {
+                    showToast("Заявка успешно зарегистрирована", Toast.LENGTH_LONG);
+                    finish();
+                    //mProgress_circular.setVisibility(View.GONE);
                 }
             }
         };
@@ -338,7 +341,7 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                firestoreHelper.setUserBusy(performer_email, false);
+                firestoreHelper.setUserBusy(orderViewModel.getCurrentOrder().performer_email, false);
                 finish();
                 actionBar.setDisplayHomeAsUpEnabled(false);
                 //Toast.makeText(getApplicationContext(),"Back button clicked", Toast.LENGTH_SHORT).show();
@@ -356,7 +359,7 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
 
     @Override
     public void onBackPressed() {
-        firestoreHelper.setUserBusy(performer_email, false);
+        firestoreHelper.setUserBusy(orderViewModel.getCurrentOrder().performer_email, false);
         super.onBackPressed();
     }
 

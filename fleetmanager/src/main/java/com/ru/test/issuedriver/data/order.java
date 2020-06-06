@@ -1,7 +1,9 @@
 package com.ru.test.issuedriver.data;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.Exclude;
+import com.google.firebase.firestore.GeoPoint;
 
 import org.joda.time.DateTime;
 
@@ -47,6 +49,9 @@ public class order {
     public int state;
     public String cancel_reason;
 
+    public GeoPoint from_position;
+    public GeoPoint to_position;
+
     public order() {}
 
     public order(Date time, String from, String to, String purpose, String comment, String customer_fio, String customer_phone, String customer_email, String performer_fio, String performer_phone, String performer_email, String car, String car_number) {
@@ -70,9 +75,27 @@ public class order {
         this.state = 0;
         this.cancel_reason = "";
 
-        org.joda.time.DateTime jtime = new DateTime(time);
+        setOrderActiveTime();
+    }
+
+    private void setOrderActiveTime() {
+        DateTime jtime = new DateTime(this.order_timestamp);
         jtime = jtime.minusMinutes(30);
         this.order_active_timestamp = new Timestamp(jtime.toDate());
+    }
+
+    public void setTime(Date toDate) {
+        this.order_timestamp = new Timestamp(toDate);
+        setOrderActiveTime();
+    }
+
+    public void setFrom_position(String name, LatLng location) {
+        this.from = name;
+        this.from_position = new GeoPoint(location.latitude, location.longitude);
+    }
+    public void setTo_position(String name, LatLng location) {
+        this.to = name;
+        this.to_position = new GeoPoint(location.latitude, location.longitude);
     }
 
 //    public order(String data, String from, String to, String purpose, String comment,

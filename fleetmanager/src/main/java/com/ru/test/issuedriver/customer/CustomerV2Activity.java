@@ -24,6 +24,7 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.ru.test.issuedriver.MainViewModel;
 import com.ru.test.issuedriver.customer.ui.mapsUtils;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 import com.ru.test.issuedriver.ui.history.HistoryActivity;
@@ -65,6 +66,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
     ImageView mImgLocationPinUp;
 
     private MapViewModel mapViewModel;
+    private MainViewModel mainViewModel;
     private OrdersListViewModel ordersListViewModel;
 
     private static final String TAG = "myLogs";
@@ -245,6 +247,9 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
     }
 
     private void initViewModels() {
+        mainViewModel = ViewModelProviders.of(CustomerV2Activity.this).get(MainViewModel.class);
+        mainViewModel.Init(CurrentUser);
+
         mapViewModel =
                 ViewModelProviders.of(CustomerV2Activity.this).get(MapViewModel.class);
 

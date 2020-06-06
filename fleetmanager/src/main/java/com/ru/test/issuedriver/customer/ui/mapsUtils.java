@@ -205,42 +205,7 @@ public class mapsUtils {
                     if (item.position == null)
                         continue;
 
-                    if (markerMap.containsKey(item.email)) {
-                        if(zoomLevel <= dotZoomLevel){
-                            markerMap.get(item.email).marker.setVisible(false);
-                            markerMap.get(item.email).marker.remove();
-                            continue;
-                        }
-
-                        if (markerMap.get(item.email)._user.is_busy != item.is_busy) {
-                            markerMap.get(item.email).marker.setVisible(false);
-                            markerMap.get(item.email).marker.remove();
-
-//                            MarkerOptions markerBus = new MarkerOptions().position(
-//                                    new LatLng(item.position.getLatitude(), item.position.getLongitude()))
-//                                    .title(item.fio);
-
-                            BitmapDescriptor car = getBitmapDescriptor(item);
-
-                            markerMap.get(item.email).markerOption = new MarkerOptions().position(
-                                    new LatLng(item.position.getLatitude(), item.position.getLongitude()))
-                                    .title(item.fio);
-                            markerMap.get(item.email).markerOption.icon(car);
-
-                            Marker BusMarkerOK = googleMap.addMarker(markerMap.get(item.email).markerOption);
-                            markerMap.get(item.email).marker = BusMarkerOK;
-                            markerMap.get(item.email)._user = item;
-                        } else {
-                            if (item.position != null) {
-                                animateMarker(item, markerMap.get(item.email).marker,
-                                        new LatLng(item.position.getLatitude(), item.position.getLongitude()),
-                                        false,
-                                        mapViewModel.isOrderInActiveState(item.email), true); // order - активный
-                            }
-                        }
-                    } else {
-                        setPerformerPosition(item);
-                    }
+                    setUserMarker(item);
                 }
                 // проверяем актуальность Водителей
                 if(markerMap.size() != 0) {
@@ -265,6 +230,47 @@ public class mapsUtils {
                 }
             }
         });
+    }
+
+    // Визуализация маркеров машин
+    private static void setUserMarker(user item) {
+        if (markerMap.containsKey(item.email)) {
+            // если маркер пользователя есть на карте
+            if(zoomLevel <= dotZoomLevel){
+                // если карта слишком
+                markerMap.get(item.email).marker.setVisible(false);
+                markerMap.get(item.email).marker.remove();
+                return;
+            }
+
+            if (markerMap.get(item.email)._user.is_busy() != item.is_busy()) {
+                markerMap.get(item.email).marker.setVisible(false);
+                markerMap.get(item.email).marker.remove();
+
+                BitmapDescriptor car = getBitmapDescriptor(item);
+
+                markerMap.get(item.email).markerOption = new MarkerOptions().position(
+                        new LatLng(item.position.getLatitude(), item.position.getLongitude()))
+                        .title(item.fio);
+                markerMap.get(item.email).markerOption.icon(car);
+
+                Marker BusMarkerOK = googleMap.addMarker(markerMap.get(item.email).markerOption);
+                markerMap.get(item.email).marker = BusMarkerOK;
+                markerMap.get(item.email)._user = item;
+            } else {
+
+                if (item.position != null) {
+                    animateMarker(item, markerMap.get(item.email).marker,
+                            new LatLng(item.position.getLatitude(), item.position.getLongitude()),
+                            false,
+                            mapViewModel.isOrderInActiveState(item.email), true); // order - активный
+                }
+            }
+        }
+        else {
+            // создать новый маркер
+            setPerformerPosition(item);
+        }
     }
 
     public static View.OnClickListener clickZoom = new View.OnClickListener() {
@@ -350,8 +356,8 @@ public class mapsUtils {
         int size;
 
         if(zoomLevel >= carZoomLevel){
-            carId = item.is_busy ? R.drawable.car_red2 : R.drawable.car_yellow1;
-            size = 70;
+            carId = item.is_busy() ? R.drawable.car_red2 : R.drawable.car_yellow1;
+            size = 170;
         } else if(zoomLevel >= dotZoomLevel){
             carId = R.drawable.dot;
             size = 25;
@@ -453,7 +459,7 @@ public class mapsUtils {
     public static boolean onMarkerClick(Marker marker) {
         for (String item : markerMap.keySet()) {
             if (markerMap.get(item).marker.equals(marker)) {
-                if (markerMap.get(item)._user.is_busy)
+                if (markerMap.get(item)._user.is_busy())
                     return false;
 
                 firestoreHelper.setUserBusy(markerMap.get(item)._user.email, true);

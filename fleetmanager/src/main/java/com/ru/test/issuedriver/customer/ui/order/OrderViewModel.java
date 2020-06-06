@@ -25,52 +25,37 @@ import androidx.lifecycle.ViewModel;
 public class OrderViewModel extends ViewModel {
     FirebaseFirestore db;
 
-    public MutableLiveData<order> currentOrder;
+    private order currentOrder;
 
-    public OrderViewModel() {
-        currentOrder = new MutableLiveData<>();
-        db = FirebaseFirestore.getInstance();
-//        mText.setValue("This is home fragment");
-    }
-
-    public LiveData<order> getCurrentOrder() {
+    public order getCurrentOrder() {
         return currentOrder;
     }
-
-    public void getUserFromServer(String email) {
-        if (currentOrder.getValue() == null) {
-            db.collection("users")
-                    .whereEqualTo("email", email)
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                List<order> questionsList = new ArrayList<>();
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    order curr = document.toObject(order.class);
-                                    curr.id = document.getId();
-                                    questionsList.add(curr);
-                                    currentOrder.postValue(curr);
-                                    Log.d("TAG", document.getId() + " => " + document.getData());
-                                }
-                            } else {
-                                Log.w("TAG", "Error getting documents.", task.getException());
-                            }
-                        }
-                    });
-        }
+    public String customer_fio, customer_phone, customer_email, performer_fio,  performer_phone, performer_email, performer_car, performer_car_numbr;
+    public void setOrder() {
+        currentOrder.customer_fio = customer_fio;
+        currentOrder.customer_phone = customer_phone;
+        currentOrder.customer_email = customer_email;
+        currentOrder.performer_fio = performer_fio;
+        currentOrder.performer_phone = performer_phone;
+        currentOrder.performer_email = performer_email;
+        currentOrder.car = performer_car;
+        currentOrder.car_number = performer_car_numbr;
+    }
+    public OrderViewModel() {
+        db = FirebaseFirestore.getInstance();
+        currentOrder = new order();
     }
 
-    public void sendOrder(order curr){
-        db.collection("orders").document().set(curr)
+
+    public void sendOrder(){
+        db.collection("orders").document().set(currentOrder)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         //registrationViewModel.currentUser.postValue(current);
 //                        startMainActivity(current);
                         //Log.d("TAG", "DocumentSnapshot successfully written!");
-                        sender.send(curr.performer_email);
+                        sender.send(currentOrder.performer_email);
                         if(orderSendCompleteCalback!=null)
                             orderSendCompleteCalback.callback(true);
                     }
@@ -87,6 +72,7 @@ public class OrderViewModel extends ViewModel {
     }
 
     public static orderSendComplete orderSendCompleteCalback;
+
     public interface orderSendComplete{
         void callback(boolean pass);
     }

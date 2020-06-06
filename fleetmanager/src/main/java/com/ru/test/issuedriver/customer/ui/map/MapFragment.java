@@ -213,7 +213,8 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                              continue;
                          }
 
-                        if (markerMap.get(item.email)._user.is_busy != item.is_busy) {
+//                        if (markerMap.get(item.email)._user.is_busy != item.is_busy) {
+                          if (markerMap.get(item.email)._user.is_busy() != item.is_busy()) {
                             markerMap.get(item.email).marker.setVisible(false);
                             markerMap.get(item.email).marker.remove();
 
@@ -246,7 +247,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                     for (Object key :  markerMap.keySet().toArray()) {
                         boolean forDelete = true;
                         for (user item : users) {
-                            if (item.is_busy
+                            if (item.is_busy()
                                 && !mapViewModel.isOrderInActiveState(item.email)) {                                                // если машина занята
                                 forDelete = true;
                                 break;
@@ -276,7 +277,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
         int size;
 
         if(zoomLevel >= carZoomLevel){
-            carId = item.is_busy ? R.drawable.car_red2 : R.drawable.car_yellow1;
+            carId = item.is_busy() ? R.drawable.car_red2 : R.drawable.car_yellow1;
             size = 70;
         } else if(zoomLevel >= dotZoomLevel){
             carId = R.drawable.dot;
@@ -373,7 +374,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
     public boolean onMarkerClick(Marker marker) {
         for (String item : markerMap.keySet()) {
             if (markerMap.get(item).marker.equals(marker)) {
-                if (markerMap.get(item)._user.is_busy)
+                if (markerMap.get(item)._user.is_busy())
                     return false;
 
                 Intent intent = new Intent(getActivity(), OrderActivity.class);

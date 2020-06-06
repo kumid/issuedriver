@@ -153,7 +153,7 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
             mNotification_item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(mNotification_item_extra.getVisibility() == View.GONE) {
+                    if(mNotification_item_extra_btns.getVisibility() == View.GONE) {
                         mNotification_item_extra.setVisibility(View.VISIBLE);
                         mNotification_item_extra_btns.setVisibility(View.VISIBLE);
                     } else {

@@ -25,8 +25,10 @@ import com.google.firebase.firestore.GeoPoint;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.bottom_dialogs.UserStateBottonDialog;
+import com.ru.test.issuedriver.MainViewModel;
 import com.ru.test.issuedriver.customer.ui.orders_list.OrdersListViewModel;
 import com.ru.test.issuedriver.data.order;
+import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 import com.ru.test.issuedriver.performer.ui.feedback.FeedbackActivity;
 import com.ru.test.issuedriver.helpers.PerformerBackgroundService;
@@ -39,6 +41,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -57,8 +60,9 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
     }
 
 //    RegistrationViewModel registrationViewModel;
-    OrdersListViewModel ordersListViewModel;
-    HistoryViewModel historyViewModel;
+    private MainViewModel mainViewModel;
+    private OrdersListViewModel ordersListViewModel;
+    private HistoryViewModel historyViewModel;
 
 
     @Override
@@ -119,7 +123,16 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
     private void initViewModels() {
 //        registrationViewModel =
 //                ViewModelProviders.of(PerformerActivity.getInstance()).get(RegistrationViewModel.class);
-
+        mainViewModel = ViewModelProviders.of(PerformerActivity.this).get(MainViewModel.class);
+        mainViewModel.Init(CurrentUser);
+        mainViewModel.getCurrentUserLiveData().observe(this, new Observer<user>() {
+            @Override
+            public void onChanged(user user) {
+                MyActivity.CurrentUser = user;
+                if(onlineStateItem != null)
+                    setUserStateIcon();
+            }
+        });
 
         ordersListViewModel =
                 ViewModelProviders.of(PerformerActivity.this).get(OrdersListViewModel.class);
@@ -128,6 +141,13 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
         historyViewModel =
                 ViewModelProviders.of(PerformerActivity.this).get(HistoryViewModel.class);
         historyViewModel.initNotificationsHistoryLoad(CurrentUser);
+    }
+
+    private void setUserStateIcon() {
+        if(MyActivity.CurrentUser.state == 0)
+            onlineStateItem.setIcon(ContextCompat.getDrawable(PerformerActivity.this, R.drawable.online));
+        else
+            onlineStateItem.setIcon(ContextCompat.getDrawable(PerformerActivity.this, R.drawable.offline));
     }
 
 
@@ -279,10 +299,7 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.emetgency, menu);
         onlineStateItem = menu.findItem(R.id.action_state);
-        if(MyActivity.CurrentUser.state == 0)
-            onlineStateItem.setIcon(ContextCompat.getDrawable(this, R.drawable.online));
-        else
-            onlineStateItem.setIcon(ContextCompat.getDrawable(this, R.drawable.offline));
+        setUserStateIcon();
         return true;
 //        return super.onCreateOptionsMenu(menu);
     }

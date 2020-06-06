@@ -16,7 +16,7 @@ public class user {
     public String tel;
     public boolean accept;
     public GeoPoint position;
-    public boolean is_busy;
+//    public boolean is_busy;
     public boolean is_performer;
 
     public Timestamp last_geo_time;
@@ -24,7 +24,7 @@ public class user {
     public String UUID;
     /// 0 - свободен, 1 - занят, 2 - ремонт
     public int state;
-
+    public boolean is_busy() { return state != 0; }
     public user() {}
 
     public user(String fio, String staff, String email, String corp, String automodel, String autovin, String autonumber, String tel, boolean is_performer, boolean isAccepted) {
@@ -37,7 +37,7 @@ public class user {
         this.autonumber = autonumber;
         this.tel = tel;
         this.accept = false;
-        this.is_busy = false;
+        //this.is_busy = false;
         this.is_performer = is_performer;
         this.accept = isAccepted;
 
