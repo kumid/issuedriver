@@ -25,7 +25,9 @@ import com.google.android.libraries.places.widget.listener.PlaceSelectionListene
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.ru.test.issuedriver.MainViewModel;
+import com.ru.test.issuedriver.customer.ui.map.placesAdapter;
 import com.ru.test.issuedriver.customer.ui.mapsUtils;
+import com.ru.test.issuedriver.data.place;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 import com.ru.test.issuedriver.ui.history.HistoryActivity;
 import com.ru.test.issuedriver.MyActivity;
@@ -54,6 +56,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class CustomerV2Activity extends MyActivity implements NavigationView.OnNavigationItemSelectedListener, GoogleMap.OnMarkerClickListener {
 
@@ -156,9 +159,17 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         });
         checkPermission(this);
 
+        rv = findViewById(R.id.places_rv);
+        mainViewModel.getPlacesLiveData().observe(this, new Observer<List<place>>() {
+            @Override
+            public void onChanged(List<place> places) {
+                rv.setAdapter(new placesAdapter(places));
+            }
+        });
+
 //        test();
     }
-
+    RecyclerView rv;
 //    private void test() {
 //        Intent intent=new Intent(this, SplashScreen.class);
 //        String channel_id="fleet_channel";
