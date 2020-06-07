@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
+import com.ru.test.issuedriver.customer.ui.order.OrderViewModel;
 import com.ru.test.issuedriver.helpers.MyBroadcastReceiver;
 
 import java.util.ArrayList;
@@ -50,10 +51,9 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_performing);
 
-        initExtra();
-        initViews();
         initVM();
         initExtra();
+        initViews();
         setInitialDateTime();
 
         ActionBar actionBar = getSupportActionBar();
@@ -67,22 +67,24 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
         //startTest();
     }
 
-    String customer_fio, customer_phone, customer_email, performer_fio,  performer_phone, performer_email, performer_car, performer_car_numbr, order_from, order_to, purpose, comment, orderId;
     private void initExtra() {
-        customer_fio = getIntent().getStringExtra("customer_fio");
-        customer_phone = getIntent().getStringExtra("customer_phone");
-        customer_email = getIntent().getStringExtra("customer_email");
-        performer_fio = getIntent().getStringExtra("performer_fio");
-        performer_phone = getIntent().getStringExtra("performer_phone");
-        performer_email = getIntent().getStringExtra("performer_email");
-        performer_car = getIntent().getStringExtra("performer_car");
-        performer_car_numbr = getIntent().getStringExtra("performer_car_number");
+        orderViewModel.customer_uuid = getIntent().getStringExtra("customer_uuid");
+        orderViewModel.customer_fio = getIntent().getStringExtra("customer_fio");
+        orderViewModel.customer_phone = getIntent().getStringExtra("customer_phone");
+        orderViewModel.customer_email = getIntent().getStringExtra("customer_email");
+        orderViewModel.performer_fio = getIntent().getStringExtra("performer_fio");
+        orderViewModel.performer_phone = getIntent().getStringExtra("performer_phone");
+        orderViewModel.performer_email = getIntent().getStringExtra("performer_email");
+        orderViewModel.performer_car = getIntent().getStringExtra("performer_car");
+        orderViewModel.performer_car_numbr = getIntent().getStringExtra("performer_car_number");
 
-        order_from = getIntent().getStringExtra("from");
-        order_to = getIntent().getStringExtra("to");
-        purpose = getIntent().getStringExtra("purpose");
-        comment = getIntent().getStringExtra("comment");
-        orderId = getIntent().getStringExtra("order_id");
+        orderViewModel.order_from = getIntent().getStringExtra("from");
+        orderViewModel.order_to = getIntent().getStringExtra("to");
+        orderViewModel.purpose = getIntent().getStringExtra("purpose");
+        orderViewModel.comment = getIntent().getStringExtra("comment");
+        orderViewModel.orderId = getIntent().getStringExtra("order_id");
+
+        orderViewModel.setOrder();
     }
 
 
@@ -103,14 +105,14 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
         order_distance = findViewById(R.id.order_distance);
         order_log = findViewById(R.id.order_log);
 
-        mOrder_name.setText(performer_fio);
-        mOrder_car.setText(performer_car);
-        mOrder_carnumber.setText(performer_car_numbr);
+        mOrder_name.setText(orderViewModel.performer_fio);
+        mOrder_car.setText(orderViewModel.performer_car);
+        mOrder_carnumber.setText(orderViewModel.performer_car_numbr);
 
-        mOrder_from.setText(order_from);
-        mOrder_to.setText(order_to);
-        mOrder_purpose.setText(purpose);
-        mOrder_comment.setText(comment);
+        mOrder_from.setText(orderViewModel.order_from);
+        mOrder_to.setText(orderViewModel.order_to);
+        mOrder_purpose.setText(orderViewModel.purpose);
+        mOrder_comment.setText(orderViewModel.comment);
 
         mOrder_btn.setOnClickListener(this);
         //currentDateTime.setOnClickListener(this);
@@ -226,7 +228,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
             public void callback(Location position) {
                 if (lastLocation == null)
                     lastLocation = position;
-
+                orderViewModel.getCurrentOrder().curr_position = position;
                 float newDist = lastLocation.distanceTo(position);
                 order_log.setText(String.format("%.1f м", newDist));
                 Log.d(TAG, String.format("Form update: %.1f м", newDist));
@@ -260,7 +262,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
                     MyActivity.showToast("Ошибка передачи данных", Toast.LENGTH_SHORT);
             }
         };
-        orderViewModel.setOrderComleted(orderId, performer_email, time, dist, fuel);
+        orderViewModel.setOrderComleted(orderViewModel.orderId, orderViewModel.performer_email, time, dist, fuel);
 
         Log.d(TAG, "Close order");
     }

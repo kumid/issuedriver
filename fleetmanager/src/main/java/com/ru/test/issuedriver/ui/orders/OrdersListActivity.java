@@ -18,6 +18,7 @@ import com.ru.test.issuedriver.customer.ui.orders_list.OrdersListViewModel;
 import com.ru.test.issuedriver.customer.ui.orders_list.notificationsCustomerAdapter;
 import com.ru.test.issuedriver.customer.ui.orders_list.notificationsPerformerAdapter;
 import com.ru.test.issuedriver.data.order;
+import com.ru.test.issuedriver.helpers.callBacks;
 import com.ru.test.issuedriver.helpers.firestoreHelper;
 import com.ru.test.issuedriver.performer.ui.orderPerforming.OrderCancelBottonDialog;
 
@@ -56,11 +57,13 @@ public class OrdersListActivity extends AppCompatActivity implements OrderCancel
 
         RecyclerView.Adapter adapter;
 
+
+
         if(MyActivity.CurrentUser.is_performer) {
 //            adapterPerformer
             adapterPerformer = new notificationsPerformerAdapter(ordersListViewModel, new ArrayList<order>());
             adapter = adapterPerformer;
-            ordersListViewModel.callback4cancelOrder = new OrdersListViewModel.CancelOrderInterface() {
+            callBacks.callback4cancelOrder = new callBacks.CancelOrderInterface() {
                 @Override
                 public void callback(order order) {
                     OrderCancelBottonDialog dialog = new OrderCancelBottonDialog(order);
@@ -71,11 +74,18 @@ public class OrdersListActivity extends AppCompatActivity implements OrderCancel
 //            adapterCustomer
             adapterCustomer  =  new notificationsCustomerAdapter(ordersListViewModel, new ArrayList<order>());
             adapter = adapterCustomer;
-            ordersListViewModel.callback4cancelOrder = new OrdersListViewModel.CancelOrderInterface() {
+            callBacks.callback4cancelOrder = new callBacks.CancelOrderInterface() {
                 @Override
                 public void callback(order order) {
                     OrderCancelBottonDialog dialog = new OrderCancelBottonDialog(order);
                     dialog.show(getSupportFragmentManager(), null);
+                }
+            };
+            callBacks.callback4deleteOrder = new callBacks.DeleteOrderInterface() {
+                @Override
+                public void callback(boolean success) {
+                    if(success)
+                        OrdersListActivity.this.finish();
                 }
             };
         }
@@ -110,6 +120,7 @@ public class OrdersListActivity extends AppCompatActivity implements OrderCancel
     public void onButtonClicked(order item) {
         Log.e("myLogs", "");
         firestoreHelper.setOrderState(item, 1, item.cancel_reason);
+        firestoreHelper.setUserState(item.performer_email, 0);
         //ordersListViewModel.setOrderDelete(item);
     }
 }

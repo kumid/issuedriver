@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.customer.CustomerV2Activity;
 import com.ru.test.issuedriver.data.order;
+import com.ru.test.issuedriver.helpers.callBacks;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -93,8 +94,8 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
             @Override
             public void onClick(View v) {
                 if(item.accept) {
-                    if (viewModel.callback4cancelOrder != null)
-                        viewModel.callback4cancelOrder.callback(item);
+                    if (callBacks.callback4cancelOrder != null)
+                        callBacks.callback4cancelOrder.callback(item);
                 } else
                     viewModel.setOrderDelete(item);
             }

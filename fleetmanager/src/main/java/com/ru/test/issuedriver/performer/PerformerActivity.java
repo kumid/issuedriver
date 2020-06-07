@@ -272,9 +272,10 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
 
     public void startOrderPerforme(order item) {
         Intent intent = new Intent(PerformerActivity.this, OrderPerformingActivity.class);
-//        intent.putExtra("customer_fio", registrationViewModel.currentUser.getValue().fio);
-//        intent.putExtra("customer_phone", registrationViewModel.currentUser.getValue().tel);
-//        intent.putExtra("customer_email", registrationViewModel.currentUser.getValue().email);
+        intent.putExtra("customer_uuid", item.customer_uuid);
+        intent.putExtra("customer_fio", item.customer_fio);
+        intent.putExtra("customer_phone", item.customer_phone);
+        intent.putExtra("customer_email", item.customer_email);
         intent.putExtra("performer_fio", item.performer_fio);
         intent.putExtra("performer_phone", item.performer_phone);
         intent.putExtra("performer_email", item.performer_email);

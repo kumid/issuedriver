@@ -94,6 +94,7 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
     }
 
     private void initExtra() {
+        orderViewModel.customer_uuid = CurrentUser.UUID;
         orderViewModel.customer_fio = CurrentUser.fio;
         orderViewModel.customer_phone = CurrentUser.tel;
         orderViewModel.customer_email = CurrentUser.email;
@@ -108,7 +109,6 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
 
         orderViewModel.setOrder();
     }
-
 
     private void initViews() {
         mOrder_name = findViewById(R.id.order_name);
@@ -127,9 +127,14 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         mOrder_from_btn   = findViewById(R.id.order_from_btn);
         mOrder_to_btn   = findViewById(R.id.order_to_btn);
 
-        final Calendar c = Calendar.getInstance();
-        int mHour = c.get(Calendar.HOUR_OF_DAY);
-        int mMinute = c.get(Calendar.MINUTE);
+//        final Calendar c = Calendar.getInstance();
+//        int mHour = c.get(Calendar.HOUR_OF_DAY);
+//        int mMinute = c.get(Calendar.MINUTE);
+
+        DateTime jtime = DateTime.now();
+        jtime = jtime.plusMinutes(5);
+        int mHour = jtime.hourOfDay().get();
+        int mMinute = jtime.minuteOfHour().get();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             mOrderTime.setHour(mHour);
@@ -329,6 +334,7 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
             public void callback(boolean pass) {
                 if (pass) {
                     showToast("Заявка успешно зарегистрирована", Toast.LENGTH_LONG);
+                    firestoreHelper.setUserBusy(orderViewModel.performer_email, true);
                     finish();
                     //mProgress_circular.setVisibility(View.GONE);
                 }

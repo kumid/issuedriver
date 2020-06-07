@@ -12,7 +12,6 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ru.test.issuedriver.data.order;
-import com.ru.test.issuedriver.performer.ui.orderPerforming.OrderViewModel;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,7 +19,7 @@ import androidx.annotation.Nullable;
 public class firestoreHelper {
     private static FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    освободить машину при отмене ордера
+   //освободить машину при отмене ордера
 
     public static void setUserBusy(String performer, boolean isBusy) {
         setUserState(performer, isBusy ? 1: 0);
@@ -42,7 +41,6 @@ public class firestoreHelper {
 //                            OrderViewModel.orderCompletedCalback.callback(false);
 //                    }
 //                });
-
     }
 
     public static void setUserState(String performer, int state) {
