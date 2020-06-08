@@ -163,7 +163,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         mainViewModel.getPlacesLiveData().observe(this, new Observer<List<place>>() {
             @Override
             public void onChanged(List<place> places) {
-                rv.setAdapter(new placesAdapter(places));
+                rv.setAdapter(new placesAdapter(mainViewModel, places));
             }
         });
 
@@ -280,7 +280,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        return mapsUtils.onMarkerClick(marker);
+        return mapsUtils.onMarkerClick(marker, mainViewModel.currentPlace);
     }
 
     public static final int PERMISSIONS= 123;

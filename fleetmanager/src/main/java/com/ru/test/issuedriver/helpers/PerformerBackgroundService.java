@@ -9,7 +9,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.util.Log;
@@ -19,13 +21,17 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -35,7 +41,10 @@ import com.ru.test.issuedriver.data.user_position;
 import com.ru.test.issuedriver.helpers.mysettings;
 
 import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -44,7 +53,10 @@ import androidx.core.app.NotificationCompat;
 
 public class PerformerBackgroundService extends Service {
 
-    private static final String TAG = "myLogs";
+    private static final String TAG = "myLogsPBService";
+
+    FirebaseDatabase database;
+    MyTask mt;
 
     private FusedLocationProviderClient mFusedLocationClient;
     private final static long UPDATE_INTERVAL = 5 * 1000;  /* 30 secs */
@@ -63,6 +75,42 @@ public class PerformerBackgroundService extends Service {
         super.onCreate();
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        database = FirebaseDatabase.getInstance();
+        mysettings.Init(getApplicationContext());
+            user user = mysettings.GetUser();
+            if(user != null) {
+                DatabaseReference myRef = database.getReference();
+                myRef.child("users").child(user.UUID).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        String currentDate = dataSnapshot.getValue(String.class);
+
+                        if(callBacks.callback4exitTask!=null)
+                            callBacks.callback4exitTask.callback();
+
+                        SimpleDateFormat sfd = new SimpleDateFormat("yyyyMMddHHmm");
+                        Date d;
+                        try {
+                            d = sfd.parse(String.format("%s", currentDate));
+                            mt = new MyTask(user.UUID, user.email, d);
+                            mt.execute();
+                            Log.d(TAG, "OK");
+
+                        } catch (ParseException ex) {
+                            Log.d(TAG, "ERROR format");
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        if(callBacks.callback4exitTask!=null)
+                            callBacks.callback4exitTask.callback();
+                        Log.d(TAG, "ERROR");
+                    }
+                });
+            }
 
         if (Build.VERSION.SDK_INT >= 26) {
             String CHANNEL_ID = "performer_channel_01";
@@ -112,7 +160,7 @@ public class PerformerBackgroundService extends Service {
                     @Override
                     public void onLocationResult(LocationResult locationResult) {
 
-                        Log.d(TAG, "onLocationResult: got location result.");
+//                        Log.d(TAG, "onLocationResult: got location result.");
 
                         Location location = locationResult.getLastLocation();
 
@@ -120,7 +168,7 @@ public class PerformerBackgroundService extends Service {
                             GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
 
                             if(lastLocation == null) {
-                                Log.d(TAG, "onLocationResult: lastLocation == null");
+//                                Log.d(TAG, "onLocationResult: lastLocation == null");
                                 lastLocation = location;
                                 saveUserLocation(geoPoint);
                             } else {
@@ -161,7 +209,7 @@ public class PerformerBackgroundService extends Service {
 
 
         sendBroadcast(intent);
-        Log.d(TAG, "sendMyBroadcastMessage: sended");
+//        Log.d(TAG, "sendMyBroadcastMessage: sended");
     }
 
     private void saveUserLocation(final GeoPoint userLocation){
@@ -225,4 +273,67 @@ public class PerformerBackgroundService extends Service {
             sendMyBroadcastMessage(null, 0);
         }
     }
+
+
+
+
+    class MyTask extends AsyncTask<Void, Void, Void> {
+
+        Date exit;
+        boolean isCompleate = false;
+        String userUUID, userEmail;
+        public MyTask(String uuid, String email, Date dat) {
+            exit = dat;
+            userUUID = uuid;
+            userEmail = email;
+            callBacks.callback4exitTask = new callBacks.exitTaskInterface() {
+                @Override
+                public void callback() {
+                    isCompleate = true;
+                    Log.e(TAG, "isCompleate = true");
+                }
+            };
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+        }
+
+        int i ;
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                TimeUnit.SECONDS.sleep(3);
+                i = 0;
+                while (true){
+                    if(isCompleate) {
+                        Log.e(TAG, "isCompleate = true -> break");
+                        break;
+                    }
+
+                    if(exit.before(new Date())){
+                        firestoreHelper.setUserHalfBusy(userUUID, userEmail, false);
+                        Log.e(TAG, "setUserRemoveHalfBusy");
+                        break;
+                    }
+                    i++;
+                    Log.e(TAG, "Counter - " + i);
+                    TimeUnit.SECONDS.sleep(10);
+                }
+
+            } catch (InterruptedException e) {
+                 e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            super.onPostExecute(result);
+        }
+    }
+
 }

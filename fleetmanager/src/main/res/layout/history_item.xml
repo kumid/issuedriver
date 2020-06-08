@@ -32,6 +32,8 @@
                 android:id="@+id/history_item_accept_date"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="125dp"
+                android:layout_marginRight="125dp"
                 android:text="@string/history_accept_date"
                 android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
                 android:textColor="@color/colorPrimary" />
@@ -46,6 +48,8 @@
                 android:id="@+id/history_item_fio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="125dp"
+                android:layout_marginRight="125dp"
                 android:text="@string/registration_name"
                 android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
                 android:textColor="@color/colorPrimary" />
@@ -60,6 +64,8 @@
                 android:id="@+id/history_item_from"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="125dp"
+                android:layout_marginRight="125dp"
                 android:text="@string/order_from"
                 android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
                 android:textColor="@color/colorPrimary" />

@@ -32,16 +32,18 @@ import androidx.lifecycle.ViewModel;
 public class MainViewModel extends ViewModel {
 
     private static final String TAG = "myLogs";
+
     FirebaseFirestore db;
     FirebaseDatabase database;
 
     private MutableLiveData<user> currentUser;
-
     public LiveData<user> getCurrentUserLiveData(){
         return currentUser;
     }
-
     public user CurrentUser;
+
+    // используемое место - адрес пункта назначения
+    public place currentPlace;
 
     public MainViewModel(){}
 

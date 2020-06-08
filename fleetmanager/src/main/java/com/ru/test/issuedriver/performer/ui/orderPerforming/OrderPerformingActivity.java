@@ -84,6 +84,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
         orderViewModel.comment = getIntent().getStringExtra("comment");
         orderViewModel.orderId = getIntent().getStringExtra("order_id");
 
+        orderViewModel.currentPlace = getIntent().getParcelableExtra("place");
         orderViewModel.setOrder();
     }
 
@@ -278,8 +279,6 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
         }
     }
     private ArrayList<LL> poss;
-
-
     private void startTest() {
         //        https://megapolis-kulebaki.ru/api/lcab/SetGeoPosition/6/60/16.05.2020/53.597017508000135/34.33555598370731/0.87/bus/
         poss = new ArrayList<>();

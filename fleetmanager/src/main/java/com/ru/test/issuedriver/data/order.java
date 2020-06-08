@@ -21,6 +21,7 @@ public class order {
     public String customer_email;
     public String customer_fio;
     public String customer_phone;
+    public String performer_uuid;
     public String performer_email;
     public String performer_fio;
     public String performer_phone;
@@ -58,9 +59,13 @@ public class order {
     @Exclude
     public Location curr_position;
 
+
     public order() {}
 
-    public order(Date time, String from, String to, String purpose, String comment, String customer_uuid, String customer_fio, String customer_phone, String customer_email, String performer_fio, String performer_phone, String performer_email, String car, String car_number) {
+    public order(Date time, String from, String to, String purpose, String comment,
+                 String customer_uuid, String customer_fio, String customer_phone, String customer_email,
+                 String performer_uuid, String performer_fio, String performer_phone, String performer_email,
+                 String car, String car_number) {
         this.id = "";
         this.order_timestamp = new Timestamp(time);
         this.from = from;
@@ -71,6 +76,7 @@ public class order {
         this.customer_fio = customer_fio;
         this.customer_phone = customer_phone;
         this.customer_email = customer_email;
+        this.performer_uuid = performer_uuid;
         this.performer_fio = performer_fio;
         this.performer_phone = performer_phone;
         this.performer_email = performer_email;

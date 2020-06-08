@@ -31,6 +31,7 @@ import com.ru.test.issuedriver.customer.ui.map.MapViewModel;
 import com.ru.test.issuedriver.customer.ui.map.imHere;
 import com.ru.test.issuedriver.customer.ui.order.OrderActivity;
 import com.ru.test.issuedriver.customer.ui.orders_list.OrdersListViewModel;
+import com.ru.test.issuedriver.data.place;
 import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.helpers.firestoreHelper;
 
@@ -357,7 +358,7 @@ public class mapsUtils {
 
         if(zoomLevel >= carZoomLevel){
             carId = item.is_busy() ? R.drawable.car_red2 : R.drawable.car_yellow1;
-            size = 170;
+            size = 80;
         } else if(zoomLevel >= dotZoomLevel){
             carId = R.drawable.dot;
             size = 25;
@@ -456,24 +457,29 @@ public class mapsUtils {
     }
 
 
-    public static boolean onMarkerClick(Marker marker) {
+    public static boolean onMarkerClick(Marker marker, place currentPlace) {
         for (String item : markerMap.keySet()) {
             if (markerMap.get(item).marker.equals(marker)) {
                 if (markerMap.get(item)._user.is_busy())
                     return false;
 
-                firestoreHelper.setUserBusy(markerMap.get(item)._user.email, true);
+                //firestoreHelper.setUserBusy(markerMap.get(item)._user.email, true);
+                firestoreHelper.setUserHalfBusy(markerMap.get(item)._user.UUID, markerMap.get(item)._user.email, true);
 
                 Intent intent = new Intent(mapActivity, OrderActivity.class);
 //                intent.putExtra("customer_fio", registrationViewModel.currentUser.getValue().fio);
 //                intent.putExtra("customer_phone", registrationViewModel.currentUser.getValue().tel);
 //                intent.putExtra("customer_email", registrationViewModel.currentUser.getValue().email);
+                intent.putExtra("performer_uuid", markerMap.get(item)._user.UUID);
                 intent.putExtra("performer_fio", markerMap.get(item)._user.fio);
                 intent.putExtra("performer_phone", markerMap.get(item)._user.tel);
                 intent.putExtra("performer_email", markerMap.get(item)._user.email);
                 intent.putExtra("performer_car", markerMap.get(item)._user.automodel);
                 intent.putExtra("performer_car_number", markerMap.get(item)._user.autonumber);
+                if(currentPlace != null)
+                    intent.putExtra("place", currentPlace);
 
+                intent.putExtra("performer_car_number", markerMap.get(item)._user.autonumber);
                 mapActivity.startActivity(intent);
                 return false;
             }

@@ -101,11 +101,14 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
 //        customer_fio = getIntent().getStringExtra("customer_fio");
 //        customer_phone = getIntent().getStringExtra("customer_phone");
 //        customer_email = getIntent().getStringExtra("customer_email");
+        orderViewModel.performer_uuid = getIntent().getStringExtra("performer_uuid");
         orderViewModel.performer_fio = getIntent().getStringExtra("performer_fio");
         orderViewModel.performer_phone = getIntent().getStringExtra("performer_phone");
         orderViewModel.performer_email = getIntent().getStringExtra("performer_email");
         orderViewModel.performer_car = getIntent().getStringExtra("performer_car");
         orderViewModel.performer_car_numbr = getIntent().getStringExtra("performer_car_number");
+
+        orderViewModel.currentPlace = getIntent().getParcelableExtra("place");
 
         orderViewModel.setOrder();
     }
@@ -148,7 +151,9 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         mOrder_name.setText(orderViewModel.performer_fio);
         mOrder_car.setText(orderViewModel.performer_car);
         mOrder_carnumber.setText(orderViewModel.performer_car_numbr);
-
+        if(orderViewModel.currentPlace!=null){
+            mOrder_to.setText(orderViewModel.currentPlace.address);
+        }
         mOrder_btn.setOnClickListener(this);
         mOrder_from_btn.setOnClickListener(this);
         mOrder_to_btn.setOnClickListener(this);
@@ -195,7 +200,7 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
                 Place place = Autocomplete.getPlaceFromIntent(data);
                 Log.i(TAG, "Place: " + place.getName() + ", " + place.getId() + ", " + place.getAddress());
                 //Toast.makeText(AutocompleteFromIntentActivity.this, "ID: " + place.getId() + "address:" + place.getAddress() + "Name:" + place.getName() + " latlong: " + place.getLatLng(), Toast.LENGTH_LONG).show();
-                String address = place.getAddress();
+                String address = place.getName(); // place.getAddress();
                 if(requestCode == AUTOCOMPLETE_FROM_REQUEST_CODE) {
                     mOrder_from.setText(address);
                     orderViewModel.getCurrentOrder().setFrom_position(address, place.getLatLng());
@@ -335,6 +340,7 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
                 if (pass) {
                     showToast("Заявка успешно зарегистрирована", Toast.LENGTH_LONG);
                     firestoreHelper.setUserBusy(orderViewModel.performer_email, true);
+                    firestoreHelper.setUserRemoveHalfBusy(orderViewModel.performer_uuid);
                     finish();
                     //mProgress_circular.setVisibility(View.GONE);
                 }
@@ -347,7 +353,8 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                firestoreHelper.setUserBusy(orderViewModel.getCurrentOrder().performer_email, false);
+//                firestoreHelper.setUserBusy(orderViewModel.getCurrentOrder().performer_email, false);
+                firestoreHelper.setUserHalfBusy(orderViewModel.getCurrentOrder().performer_uuid, orderViewModel.getCurrentOrder().performer_email, false);
                 finish();
                 actionBar.setDisplayHomeAsUpEnabled(false);
                 //Toast.makeText(getApplicationContext(),"Back button clicked", Toast.LENGTH_SHORT).show();
@@ -365,8 +372,8 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
 
     @Override
     public void onBackPressed() {
-        firestoreHelper.setUserBusy(orderViewModel.getCurrentOrder().performer_email, false);
+//        firestoreHelper.setUserBusy(orderViewModel.getCurrentOrder().performer_email, false);
+        firestoreHelper.setUserHalfBusy(orderViewModel.getCurrentOrder().performer_uuid, orderViewModel.getCurrentOrder().performer_email, false);
         super.onBackPressed();
     }
-
 }

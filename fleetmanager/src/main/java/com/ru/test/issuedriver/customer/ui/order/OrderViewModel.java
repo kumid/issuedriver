@@ -1,5 +1,6 @@
 package com.ru.test.issuedriver.customer.ui.order;
 
+import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -10,17 +11,22 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 import com.ru.test.issuedriver.customer.CustomerV2Activity;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.data.place;
 import com.ru.test.issuedriver.helpers.firestoreHelper;
 import com.ru.test.issuedriver.helpers.fsm.sender;
 
+import java.util.UUID;
+
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 
 public class OrderViewModel extends ViewModel {
     private static final String TAG = "myLogs";
+    public place currentPlace;
+
     FirebaseFirestore db;
     FirebaseDatabase database;
 
@@ -29,12 +35,16 @@ public class OrderViewModel extends ViewModel {
     public order getCurrentOrder() {
         return currentOrder;
     }
-    public String customer_uuid, customer_fio, customer_phone, customer_email, performer_fio,  performer_phone, performer_email, performer_car, performer_car_numbr,  order_from, order_to, purpose, comment, orderId;
+    public String customer_uuid, customer_fio, customer_phone, customer_email,
+                  performer_uuid, performer_fio,  performer_phone, performer_email, performer_car, performer_car_numbr,
+                  order_from, order_to, purpose, comment, orderId;
+
     public void setOrder() {
         currentOrder.customer_uuid = customer_uuid;
         currentOrder.customer_fio = customer_fio;
         currentOrder.customer_phone = customer_phone;
         currentOrder.customer_email = customer_email;
+        currentOrder.performer_uuid = performer_uuid;
         currentOrder.performer_fio = performer_fio;
         currentOrder.performer_phone = performer_phone;
         currentOrder.performer_email = performer_email;
@@ -46,6 +56,11 @@ public class OrderViewModel extends ViewModel {
         currentOrder.purpose = purpose;
         currentOrder.comment = comment;
         currentOrder.id = orderId;
+
+        if(currentPlace != null) {
+            currentOrder.to = currentPlace.address;
+            currentOrder.to_position = new GeoPoint(currentPlace.latitude, currentPlace.longtitude);
+        }
     }
     public OrderViewModel() {
         db = FirebaseFirestore.getInstance();
@@ -131,7 +146,7 @@ public class OrderViewModel extends ViewModel {
             newPlace.longtitude = currentOrder.to_position.getLongitude();
         }
 
-        myRef.child("places").child(customer_uuid).child(currentOrder.to).setValue(newPlace)
+        myRef.child("places").child(customer_uuid).child(UUID.randomUUID().toString()).setValue(newPlace)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

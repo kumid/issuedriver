@@ -28,6 +28,7 @@ import com.ru.test.issuedriver.bottom_dialogs.UserStateBottonDialog;
 import com.ru.test.issuedriver.MainViewModel;
 import com.ru.test.issuedriver.customer.ui.orders_list.OrdersListViewModel;
 import com.ru.test.issuedriver.data.order;
+import com.ru.test.issuedriver.data.place;
 import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 import com.ru.test.issuedriver.performer.ui.feedback.FeedbackActivity;
@@ -180,7 +181,7 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
                     Location location = task.getResult();
                     if(location == null)
                         return;
-                    GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+//                    GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
 //                    mUserLocation.setGeo_point(geoPoint);
 //                    mUserLocation.setTimestamp(null);
 //                    saveUserLocation();
@@ -276,6 +277,7 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
         intent.putExtra("customer_fio", item.customer_fio);
         intent.putExtra("customer_phone", item.customer_phone);
         intent.putExtra("customer_email", item.customer_email);
+        intent.putExtra("performer_uuid", item.performer_uuid);
         intent.putExtra("performer_fio", item.performer_fio);
         intent.putExtra("performer_phone", item.performer_phone);
         intent.putExtra("performer_email", item.performer_email);
@@ -285,6 +287,10 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
 
         intent.putExtra("from", item.from);
         intent.putExtra("to", item.to);
+        if(item.to_position != null){
+            place curr = new place(item.to, item.to_position.getLatitude(), item.to_position.getLongitude());
+            intent.putExtra("place", curr);
+        }
         intent.putExtra("purpose", item.purpose);
         intent.putExtra("comment", item.comment);
         intent.putExtra("order_id", item.id);

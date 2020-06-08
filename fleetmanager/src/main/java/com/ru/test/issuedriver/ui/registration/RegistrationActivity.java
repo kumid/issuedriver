@@ -131,6 +131,8 @@ public class RegistrationActivity extends MyActivity {
                         mPerformer.isChecked(),
                         currentUser == null? false : currentUser.accept
                 );
+        if(currentUser != null)
+            current.UUID = currentUser.UUID;
 
         db.collection("users").document(mEmail.getText().toString()).set(current)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {

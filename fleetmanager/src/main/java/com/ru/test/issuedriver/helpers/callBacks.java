@@ -24,6 +24,11 @@ public class callBacks {
     public interface  DeleteOrderInterface {
         void callback(boolean success);
     }
+
+    public static exitTaskInterface callback4exitTask;
+    public interface  exitTaskInterface {
+        void callback();
+    }
 }
 
 

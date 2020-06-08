@@ -51,33 +51,4 @@ public class RegistrationViewModel extends ViewModel {
     public LiveData<user> getCurrentUser() {
         return currentUser;
     }
-
-    public void getUserFromServer(String email) {
-        if (currentUser.getValue() == null) {
-            db.collection("users")
-                    .whereEqualTo("email", email)
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                List<user> questionsList = new ArrayList<>();
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    notLiveUser = document.toObject(user.class);
-                                    questionsList.add(notLiveUser);
-                                    currentUser.postValue(notLiveUser);
-
-                                    Log.d("TAG", document.getId() + " => " + document.getData());
-                                }
-                            } else {
-                                Log.w("TAG", "Error getting documents.", task.getException());
-                            }
-                        }
-                    });
-        }
-    }
-//    public static getUserComplete getUserCompleteCalback;
-//    public interface getUserComplete{
-//        void callback(boolean pass, user current);
-
 }
