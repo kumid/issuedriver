@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -20,10 +22,12 @@ import com.ru.test.issuedriver.customer.ui.orders_list.notificationsPerformerAda
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.helpers.callBacks;
 import com.ru.test.issuedriver.helpers.firestoreHelper;
-import com.ru.test.issuedriver.performer.ui.orderPerforming.OrderCancelBottonDialog;
+import com.ru.test.issuedriver.bottom_dialogs.OrderCancelBottonDialog;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.ru.test.issuedriver.helpers.callBacks.callback4goToNavigate;
 
 public class OrdersListActivity extends AppCompatActivity implements OrderCancelBottonDialog.BottomSheetListener {
 
@@ -48,6 +52,21 @@ public class OrdersListActivity extends AppCompatActivity implements OrderCancel
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle("Заявки");
         }
+
+        callback4goToNavigate = new callBacks.goToNavigateInterface() {
+            @Override
+            public void callback(order currentOrder) {
+                if(currentOrder.from_position == null
+                    || currentOrder.to_position == null)
+                    return;
+
+                String uri = "http://maps.google.com/maps?saddr="+currentOrder.from_position.getLatitude() + "," +currentOrder.from_position.getLongitude() +
+                             "&daddr="+currentOrder.to_position.getLatitude() + "," +currentOrder.to_position.getLongitude();
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
+                intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                startActivity(intent);
+            }
+        };
     }
 
 
@@ -66,7 +85,7 @@ public class OrdersListActivity extends AppCompatActivity implements OrderCancel
             callBacks.callback4cancelOrder = new callBacks.CancelOrderInterface() {
                 @Override
                 public void callback(order order) {
-                    OrderCancelBottonDialog dialog = new OrderCancelBottonDialog(order);
+                    OrderCancelBottonDialog dialog = new OrderCancelBottonDialog(order, MyActivity.CurrentUser.is_performer);
                     dialog.show(getSupportFragmentManager(), null);
                 }
             };
@@ -77,7 +96,7 @@ public class OrdersListActivity extends AppCompatActivity implements OrderCancel
             callBacks.callback4cancelOrder = new callBacks.CancelOrderInterface() {
                 @Override
                 public void callback(order order) {
-                    OrderCancelBottonDialog dialog = new OrderCancelBottonDialog(order);
+                    OrderCancelBottonDialog dialog = new OrderCancelBottonDialog(order, MyActivity.CurrentUser.is_performer);
                     dialog.show(getSupportFragmentManager(), null);
                 }
             };

@@ -37,11 +37,10 @@ public class MapViewModel extends ViewModel {
         orders = new ArrayList<>();
     }
 
-
     private void initUsersData() {
         db.collection("users")
                 .whereEqualTo("is_performer", true) // водители
-                .whereEqualTo("accept", true)       // аккаунт активирован
+                //.whereEqualTo("accept", true)       // аккаунт активирован
                 .whereLessThanOrEqualTo("state", 1)       // состояние
                 .addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -76,7 +75,6 @@ public class MapViewModel extends ViewModel {
                 .whereEqualTo("accept", true)       // аккаунт активирован
                 .whereLessThanOrEqualTo("state", 1);       // состояние
 
-//                .whereEqualTo("is_busy", false);    // если машина занята
         collectionRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {

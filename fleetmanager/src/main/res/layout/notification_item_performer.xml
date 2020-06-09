@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
-    android:id="@+id/notification_item"
+    android:id="@+id/notification_item_performer_card"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -217,6 +217,17 @@
                         android:textSize="18sp"
                         android:textStyle="bold" />
 
+                <Button
+                    android:id="@+id/notification_item_performer_cancel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                    android:background="@drawable/rounded_red"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:text="Отменить"/>
+
                 <ImageView
                     android:id="@+id/notification_item_btn_accept"
                     android:layout_width="match_parent"
@@ -247,6 +258,13 @@
                     android:layout_margin="10dp"
                     android:layout_gravity="end"
                     android:src="@drawable/phone" />
+                <ImageView
+                    android:id="@+id/notification_item_navigate"
+                    android:layout_width="60dp"
+                    android:layout_height="50dp"
+                    android:layout_margin="10dp"
+                    android:layout_gravity="end"
+                    android:src="@drawable/navigate" />
             </LinearLayout>
         </LinearLayout>
 

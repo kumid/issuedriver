@@ -7,19 +7,14 @@ import androidx.lifecycle.ViewModelProviders;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -29,12 +24,8 @@ import android.widget.Toast;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.AutocompletePrediction;
-import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
-import com.google.android.libraries.places.api.model.LocationBias;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.RectangularBounds;
-import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
@@ -42,7 +33,6 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
-import com.ru.test.issuedriver.customer.CustomerV2Activity;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.helpers.firestoreHelper;
 
@@ -108,7 +98,8 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         orderViewModel.performer_car = getIntent().getStringExtra("performer_car");
         orderViewModel.performer_car_numbr = getIntent().getStringExtra("performer_car_number");
 
-        orderViewModel.currentPlace = getIntent().getParcelableExtra("place");
+        orderViewModel.fromPlace = getIntent().getParcelableExtra("from_place");
+        orderViewModel.toPlace = getIntent().getParcelableExtra("to_place");
 
         orderViewModel.setOrder();
     }
@@ -151,8 +142,13 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         mOrder_name.setText(orderViewModel.performer_fio);
         mOrder_car.setText(orderViewModel.performer_car);
         mOrder_carnumber.setText(orderViewModel.performer_car_numbr);
-        if(orderViewModel.currentPlace!=null){
-            mOrder_to.setText(orderViewModel.currentPlace.address);
+
+        if(orderViewModel.fromPlace != null){
+            mOrder_from.setText(orderViewModel.fromPlace.address);
+        }
+
+        if(orderViewModel.toPlace !=null){
+            mOrder_to.setText(orderViewModel.toPlace.address);
         }
         mOrder_btn.setOnClickListener(this);
         mOrder_from_btn.setOnClickListener(this);
@@ -174,19 +170,19 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         }
     }
 
-    public void onSearchCalled(int mode) {
+    public void onSearchCalled(int mode, String searchText) {
         // Set the fields to specify which types of place data to return.
         List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME, Place.Field.ADDRESS, Place.Field.ADDRESS_COMPONENTS, Place.Field.LAT_LNG);
 
         // Create a RectangularBounds object.
         RectangularBounds bounds = RectangularBounds.newInstance(
-                new LatLng(53.5663927,34.3128526),
-                new LatLng(53.617667, 34.346756));
+                new LatLng(43.211401, 36.542147),
+                new LatLng(46.926089, 41.431062));
         // Start the autocomplete intent.
         Intent intent = new Autocomplete.IntentBuilder(
                 AutocompleteActivityMode.OVERLAY, fields).setCountry("RU")
                 //.setLocationRestriction(bounds)
-//                .setInitialQuery("Дятьково")
+                .setInitialQuery(searchText)
                 .build(this);
         startActivityForResult(intent, mode == 1 ? AUTOCOMPLETE_FROM_REQUEST_CODE : AUTOCOMPLETE_TO_REQUEST_CODE);
     }
@@ -279,10 +275,10 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
             setDate(v);
             return;
         } else if (v.getId() == R.id.order_from_btn) {
-            onSearchCalled(1);
+            onSearchCalled(1, mOrder_from.getText().toString());
             return;
         } else if (v.getId() == R.id.order_to_btn) {
-            onSearchCalled(2);
+            onSearchCalled(2, mOrder_to.getText().toString());
             return;
         }
 

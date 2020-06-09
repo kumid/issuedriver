@@ -280,7 +280,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        return mapsUtils.onMarkerClick(marker, mainViewModel.currentPlace);
+        return mapsUtils.onMarkerClick(marker, imHere.getMyPlace(), mainViewModel.currentPlace);
     }
 
     public static final int PERMISSIONS= 123;

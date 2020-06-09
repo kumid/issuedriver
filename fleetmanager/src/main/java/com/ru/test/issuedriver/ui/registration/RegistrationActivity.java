@@ -72,8 +72,9 @@ public class RegistrationActivity extends MyActivity {
         mRegistration_performer_groupe = findViewById(R.id.registration_performer_groupe);
         mCustomer = findViewById(R.id.radio_customer);
         mPerformer = findViewById(R.id.radio_performer);
-        mCustomer.setEnabled(false);
-        mPerformer.setEnabled(false);
+
+        //mCustomer.setEnabled(false);
+        //mPerformer.setEnabled(false);
 
         db = FirebaseFirestore.getInstance();
 

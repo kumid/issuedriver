@@ -70,4 +70,6 @@
     <string name="user_state_sheet_2">Занят</string>
     <string name="user_state_sheet_3">Ремонт</string>
     <string name="order_cancel_reason">Причина отмены</string>
+    <string name="cancel_sheet_reason_performer1">Причина 1</string>
+    <string name="cancel_sheet_reason_performer2">Причина 2</string>
 </resources>

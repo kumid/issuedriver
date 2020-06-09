@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputEditText;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
+import com.ru.test.issuedriver.bottom_dialogs.OrderCloseBottonDialog;
 import com.ru.test.issuedriver.customer.ui.order.OrderViewModel;
 import com.ru.test.issuedriver.helpers.MyBroadcastReceiver;
 
@@ -84,7 +85,8 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
         orderViewModel.comment = getIntent().getStringExtra("comment");
         orderViewModel.orderId = getIntent().getStringExtra("order_id");
 
-        orderViewModel.currentPlace = getIntent().getParcelableExtra("place");
+        orderViewModel.fromPlace = getIntent().getParcelableExtra("from_place");
+        orderViewModel.toPlace = getIntent().getParcelableExtra("to_place");
         orderViewModel.setOrder();
     }
 

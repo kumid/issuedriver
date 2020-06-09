@@ -24,6 +24,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.firestore.GeoPoint;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
+import com.ru.test.issuedriver.bottom_dialogs.OrderCancelBottonDialog;
 import com.ru.test.issuedriver.bottom_dialogs.UserStateBottonDialog;
 import com.ru.test.issuedriver.MainViewModel;
 import com.ru.test.issuedriver.customer.ui.orders_list.OrdersListViewModel;
@@ -49,7 +50,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-public class PerformerActivity extends MyActivity implements UserStateBottonDialog.BottomSheetListener{
+public class PerformerActivity extends MyActivity implements UserStateBottonDialog.BottomSheetListener, OrderCancelBottonDialog.BottomSheetListener{
 
     private static final String TAG = "myLogs";
 
@@ -104,6 +105,14 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
 //            }
 //
 //        });
+
+        callBacks.callback4cancelOrder = new callBacks.CancelOrderInterface() {
+            @Override
+            public void callback(order order) {
+                OrderCancelBottonDialog dialog = new OrderCancelBottonDialog(order, MyActivity.CurrentUser.is_performer);
+                dialog.show(getSupportFragmentManager(), null);
+            }
+        };
     }
 
     private void setupNavigation() {
@@ -287,10 +296,17 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
 
         intent.putExtra("from", item.from);
         intent.putExtra("to", item.to);
+
+        if(item.from_position != null){
+            place fromPlace = new place(item.from, item.from_position.getLatitude(), item.from_position.getLongitude());
+            intent.putExtra("to_place", fromPlace);
+        }
+
         if(item.to_position != null){
             place curr = new place(item.to, item.to_position.getLatitude(), item.to_position.getLongitude());
-            intent.putExtra("place", curr);
+            intent.putExtra("to_place", curr);
         }
+
         intent.putExtra("purpose", item.purpose);
         intent.putExtra("comment", item.comment);
         intent.putExtra("order_id", item.id);
@@ -349,5 +365,13 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
             }
         };
         firestoreHelper.setUserState(MyActivity.CurrentUser.email, state);
+    }
+
+    @Override
+    public void onButtonClicked(order item) {
+        Log.e("myLogs", "");
+        firestoreHelper.setOrderState(item, 1, item.cancel_reason);
+        firestoreHelper.setUserState(item.performer_email, 0);
+        //ordersListViewModel.setOrderDelete(item);
     }
 }

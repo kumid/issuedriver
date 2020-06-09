@@ -213,7 +213,6 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
                              continue;
                          }
 
-//                        if (markerMap.get(item.email)._user.is_busy != item.is_busy) {
                           if (markerMap.get(item.email)._user.is_busy() != item.is_busy()) {
                             markerMap.get(item.email).marker.setVisible(false);
                             markerMap.get(item.email).marker.remove();

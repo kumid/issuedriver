@@ -29,6 +29,14 @@ public class callBacks {
     public interface  exitTaskInterface {
         void callback();
     }
+
+
+    /// переход на гугл карту с навигацией
+    public static goToNavigateInterface callback4goToNavigate;
+    public interface  goToNavigateInterface {
+        void callback(order currentOrder);
+    }
+
 }
 
 

@@ -1,6 +1,7 @@
 package com.ru.test.issuedriver.data;
 
 import com.google.firebase.Timestamp;
+import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.UUID;
@@ -16,7 +17,6 @@ public class user {
     public String tel;
     public boolean accept;
     public GeoPoint position;
-//    public boolean is_busy;
     public boolean is_performer;
 
     public Timestamp last_geo_time;
@@ -24,6 +24,7 @@ public class user {
     public String UUID;
     /// 0 - свободен, 1 - занят, 2 - ремонт
     public int state;
+    @Exclude
     public boolean is_busy() { return state != 0; }
     public user() {}
 
@@ -37,7 +38,6 @@ public class user {
         this.autonumber = autonumber;
         this.tel = tel;
         this.accept = false;
-        //this.is_busy = false;
         this.is_performer = is_performer;
         this.accept = isAccepted;
 

@@ -1,5 +1,7 @@
 package com.ru.test.issuedriver.customer.ui.orders_list;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,7 +9,9 @@ import android.view.ViewGroup;
 
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
+import com.ru.test.issuedriver.bottom_dialogs.OrderCancelBottonDialog;
 import com.ru.test.issuedriver.data.order;
+import com.ru.test.issuedriver.helpers.callBacks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +22,8 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import static com.ru.test.issuedriver.helpers.callBacks.callback4goToNavigate;
 
 public class OrdersListFragment extends Fragment {
 
@@ -41,6 +47,21 @@ public class OrdersListFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_orders_list, container, false);
 
         initViews(root);
+
+        callback4goToNavigate = new callBacks.goToNavigateInterface() {
+            @Override
+            public void callback(order currentOrder) {
+                if(currentOrder.from_position == null
+                        || currentOrder.to_position == null)
+                    return;
+
+                String uri = "http://maps.google.com/maps?saddr="+currentOrder.from_position.getLatitude() + "," +currentOrder.from_position.getLongitude() +
+                        "&daddr="+currentOrder.to_position.getLatitude() + "," +currentOrder.to_position.getLongitude();
+                Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
+                intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                startActivity(intent);
+            }
+        };
 
         return root;
     }

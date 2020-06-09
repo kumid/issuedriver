@@ -113,11 +113,13 @@ public class mapsUtils {
                 googleMap.animateCamera(CameraUpdateFactory
                         .newCameraPosition(cameraPosition));
 
+                googleMap.getUiSettings().setCompassEnabled(false);
+
                 imHere.myPositionChanged = new imHere.OnMyPositionChanged() {
                     @Override
                     public void callBack(Location location) {
                         setMyPosition(location);
-                        googleMap.setMinZoomPreference(10f);
+                        googleMap.setMinZoomPreference(5f);
                         googleMap.setMyLocationEnabled(true);
                     }
                 };
@@ -457,7 +459,7 @@ public class mapsUtils {
     }
 
 
-    public static boolean onMarkerClick(Marker marker, place currentPlace) {
+    public static boolean onMarkerClick(Marker marker, place fromPlace, place toPlace) {
         for (String item : markerMap.keySet()) {
             if (markerMap.get(item).marker.equals(marker)) {
                 if (markerMap.get(item)._user.is_busy())
@@ -476,8 +478,10 @@ public class mapsUtils {
                 intent.putExtra("performer_email", markerMap.get(item)._user.email);
                 intent.putExtra("performer_car", markerMap.get(item)._user.automodel);
                 intent.putExtra("performer_car_number", markerMap.get(item)._user.autonumber);
-                if(currentPlace != null)
-                    intent.putExtra("place", currentPlace);
+                if(fromPlace != null)
+                    intent.putExtra("from_place", fromPlace);
+                if(toPlace != null)
+                    intent.putExtra("to_place", toPlace);
 
                 intent.putExtra("performer_car_number", markerMap.get(item)._user.autonumber);
                 mapActivity.startActivity(intent);

@@ -1,6 +1,5 @@
 package com.ru.test.issuedriver.customer.ui.order;
 
-import android.os.Parcelable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -25,7 +24,7 @@ import androidx.lifecycle.ViewModel;
 
 public class OrderViewModel extends ViewModel {
     private static final String TAG = "myLogs";
-    public place currentPlace;
+    public place fromPlace, toPlace;
 
     FirebaseFirestore db;
     FirebaseDatabase database;
@@ -57,9 +56,14 @@ public class OrderViewModel extends ViewModel {
         currentOrder.comment = comment;
         currentOrder.id = orderId;
 
-        if(currentPlace != null) {
-            currentOrder.to = currentPlace.address;
-            currentOrder.to_position = new GeoPoint(currentPlace.latitude, currentPlace.longtitude);
+        if(fromPlace != null) {
+            currentOrder.from = fromPlace.address;
+            currentOrder.from_position = new GeoPoint(fromPlace.latitude, fromPlace.longtitude);
+        }
+
+        if(toPlace != null) {
+            currentOrder.to = toPlace.address;
+            currentOrder.to_position = new GeoPoint(toPlace.latitude, toPlace.longtitude);
         }
     }
     public OrderViewModel() {
