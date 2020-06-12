@@ -12,6 +12,7 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.ru.test.issuedriver.taxi.data.place;
 
 import androidx.core.app.ActivityCompat;
 
@@ -36,6 +37,11 @@ public class imHere {
     }
 
     private static Location lastLocation;
+    public static place getMyPlace(){
+        if(lastLocation == null)
+            return null;
+        return new place("мое местоположение", lastLocation.getLatitude(), lastLocation.getLongitude());
+    }
 
     public static double getLat() {
         return  lastLocation.getLatitude();

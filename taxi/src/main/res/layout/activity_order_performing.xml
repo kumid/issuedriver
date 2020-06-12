@@ -36,7 +36,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:helperText="@string/order_data">
+                app:helperText="@string/order_performong_data">
 
                 <TextView
                     android:id="@+id/order_data"

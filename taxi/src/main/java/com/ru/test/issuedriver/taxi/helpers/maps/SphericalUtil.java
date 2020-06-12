@@ -4,6 +4,7 @@ import com.google.android.gms.maps.model.LatLng;
 
 import java.util.List;
 
+import static com.ru.test.issuedriver.taxi.helpers.maps.MathUtil.*;
 import static com.ru.test.issuedriver.taxi.helpers.maps.MathUtil.EARTH_RADIUS;
 import static com.ru.test.issuedriver.taxi.helpers.maps.MathUtil.arcHav;
 import static com.ru.test.issuedriver.taxi.helpers.maps.MathUtil.havDistance;

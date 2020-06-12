@@ -38,7 +38,8 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
     @Override
     public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View view = inflater.inflate(R.layout.notification_item_customer, parent, false);
+//        View view = inflater.inflate(R.layout.notification_item_customer, parent, false);
+        View view = inflater.inflate(R.layout.notification_item_performer, parent, false);
         VH viewHolder = new VH(view);
 
         return viewHolder;
@@ -65,32 +66,33 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
             if (item.completed) {
                 if (item.state == 0) {
                     holder.mNotification_item_btn_status_completed.setVisibility(View.VISIBLE);
-                    holder.mNotification_item_btn_status_canceled.setVisibility(View.GONE);
+//                    holder.mNotification_item_btn_status_canceled.setVisibility(View.GONE);
                 } else {
                     holder.mNotification_item_btn_status_completed.setVisibility(View.GONE);
-                    holder.mNotification_item_btn_status_canceled.setVisibility(View.VISIBLE);
+//                    holder.mNotification_item_btn_status_canceled.setVisibility(View.VISIBLE);
                 }
 
                 holder.mNotification_item_btn_status_in_process.setVisibility(View.GONE);
-                holder.mNotification_item_navigate.setVisibility(View.GONE);
+//                holder.mNotification_item_navigate.setVisibility(View.GONE);
                 holder.mNotification_item_btn_status_wait.setVisibility(View.GONE);
 //                holder.mNotification_item_btn_cancel.setVisibility(View.GONE);
             } else {
                 holder.mNotification_item_btn_status_in_process.setVisibility(View.VISIBLE);
-                holder.mNotification_item_navigate.setVisibility(View.VISIBLE);
+//                holder.mNotification_item_navigate.setVisibility(View.VISIBLE);
                 holder.mNotification_item_btn_status_wait.setVisibility(View.GONE);
 //                holder.mNotification_item_btn_cancel.setVisibility(View.GONE);
                 holder.mNotification_item_btn_status_completed.setVisibility(View.GONE);
-                holder.mNotification_item_btn_status_canceled.setVisibility(View.GONE);
+//                holder.mNotification_item_btn_status_canceled.setVisibility(View.GONE);
 
             }
         } else {
             holder.mNotification_item_btn_status_wait.setVisibility(View.VISIBLE);
+            holder.mNotification_item_btn_status_wait.setText("В ожидании");
 //            holder.mNotification_item_btn_cancel.setVisibility(View.VISIBLE);
             holder.mNotification_item_btn_status_in_process.setVisibility(View.GONE);
-            holder.mNotification_item_navigate.setVisibility(View.GONE);
+//            holder.mNotification_item_navigate.setVisibility(View.GONE);
             holder.mNotification_item_btn_status_completed.setVisibility(View.GONE);
-            holder.mNotification_item_btn_status_canceled.setVisibility(View.GONE);
+//            holder.mNotification_item_btn_status_canceled.setVisibility(View.GONE);
         }
         setBtnsOnClick(holder, item);
     }
@@ -143,19 +145,22 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
     class VH extends RecyclerView.ViewHolder{
         TextView mNotification_item_fio, mNotification_item_purpose, mNotification_item_from, mNotification_item_to, mNotification_item_comment, mNotification_item_data;
         View mNotification_item_extra, mNotification_item_btn_accept, mNotification_item_call, mNotification_item_btn_accept_ok, mNotification_item_extra_btns, mNotification_item_navigate;
-        Button mNotification_item_btn_status_wait, mNotification_item_btn_status_in_process, mNotification_item_btn_status_completed, mNotification_item_btn_cancel, mNotification_item_btn_status_canceled;
+        Button mNotification_item_btn_status_wait, mNotification_item_btn_status_in_process, mNotification_item_btn_status_completed, mNotification_item_btn_cancel, mNotification_item_btn_start;
+//                , mNotification_item_btn_status_canceled;
         CardView mNotification_item;
         public VH(@NonNull View itemView) {
             super(itemView);
 
-            mNotification_item  = itemView.findViewById(R.id.notification_item_customer_card);
+//            mNotification_item  = itemView.findViewById(R.id.notification_item_customer_card);
+            mNotification_item  = itemView.findViewById(R.id.notification_item_performer_card);
             mNotification_item_extra = itemView.findViewById(R.id.notification_item_extra);
             mNotification_item_extra_btns = itemView.findViewById(R.id.notification_item_extra_btns);
             mNotification_item_btn_status_wait = itemView.findViewById(R.id.notification_item_btn_status_wait);
             mNotification_item_btn_status_in_process = itemView.findViewById(R.id.notification_item_btn_status_in_process);
             mNotification_item_btn_status_completed = itemView.findViewById(R.id.notification_item_btn_status_completed);
-            mNotification_item_btn_status_canceled = itemView.findViewById(R.id.notification_item_btn_status_canceled);
-            mNotification_item_btn_cancel  = itemView.findViewById(R.id.notification_item_customer_cancel);
+//            mNotification_item_btn_status_canceled = itemView.findViewById(R.id.notification_item_btn_status_canceled);
+//            mNotification_item_btn_cancel  = itemView.findViewById(R.id.notification_item_customer_cancel);
+            mNotification_item_btn_cancel  = itemView.findViewById(R.id.notification_item_performer_cancel);
             mNotification_item_btn_accept  = itemView.findViewById(R.id.notification_item_btn_accept);
             mNotification_item_btn_accept_ok  = itemView.findViewById(R.id.notification_item_btn_accept_ok);
             mNotification_item_call  = itemView.findViewById(R.id.notification_item_call);
@@ -165,7 +170,10 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
             mNotification_item_from  = itemView.findViewById(R.id.notification_item_from);
             mNotification_item_to  = itemView.findViewById(R.id.notification_item_to);
             mNotification_item_comment = itemView.findViewById(R.id.notification_item_comment);
+            mNotification_item_btn_start = itemView.findViewById(R.id.notification_item_btn_start);
             mNotification_item_navigate = itemView.findViewById(R.id.notification_item_navigate);
+
+            mNotification_item_btn_start.setVisibility(View.GONE);
             mNotification_item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

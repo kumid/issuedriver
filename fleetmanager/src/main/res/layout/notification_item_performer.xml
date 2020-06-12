@@ -26,93 +26,101 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/registration_name"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
-
-            <TextView
-                android:id="@+id/notification_item_fio"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/registration_name"
-                android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
-                android:textColor="@color/colorPrimary" />
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/data_name"
-                android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
-
-            <TextView
-                android:id="@+id/notification_item_data"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/data_name"
-                android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
-                android:textColor="@color/colorPrimary" />
-
-
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="10dp"
-                android:layout_margin="5dp"
-                app:cardElevation="2dp">
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
-                    <LinearLayout
+
+                    <TextView
+                        android:layout_width="20dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:textColor="@color/colorPrimary"
+                        android:textAppearance="@style/TextAppearance.Compat.Notification"  />
+
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="10dp"
+                        android:src="@drawable/blue_circle"
+                        android:alpha="0.7"/>
+                    <ImageView
+                        android:layout_width="15dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center"
+                        android:layout_marginHorizontal="10dp"
+                        android:src="@drawable/red_circle"
+                        android:alpha="0.7"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/data_name"
+                        android:visibility="gone"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+                    <TextView
+                        android:id="@+id/notification_item_data"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="3dp"
-                        android:orientation="horizontal">
-                        <ImageView
-                            android:layout_width="15dp"
-                            android:layout_height="15dp"
-                            android:layout_gravity="center"
-                            android:layout_marginHorizontal="5dp"
-                            android:src="@drawable/blue_circle"/>
-                        <TextView
-                            android:id="@+id/notification_item_from"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_gravity="center_vertical"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/order_from"/>
+                        android:gravity="center_vertical"
+                        android:text="@string/data_name"
+                        android:textColor="@color/colorPrimary"
+                        android:textAppearance="@style/TextAppearance.Compat.Notification"  />
 
-
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginVertical="3dp"
-                        android:orientation="horizontal">
-                        <ImageView
-                            android:layout_width="15dp"
-                            android:layout_height="15dp"
-                            android:layout_gravity="center"
-                            android:layout_margin="5dp"
-                            android:src="@drawable/red_circle"/>
+                        android:text="@string/order_from"
+                        android:visibility="gone"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-                        <TextView
-                            android:id="@+id/notification_item_to"
-                            android:layout_width="0dp"
-                            android:layout_weight="1"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/order_to"  />
+                    <TextView
+                        android:id="@+id/notification_item_from"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="@string/order_from"
+                        android:textColor="@color/colorPrimary"
+                        android:textAppearance="@style/TextAppearance.Compat.Notification" />
 
-                    </LinearLayout>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/order_to"
+                        android:visibility="gone"
+                        android:textAppearance="@style/TextAppearance.Compat.Notification" />
+
+                    <TextView
+                        android:id="@+id/notification_item_to"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="@string/order_to"
+                        android:textColor="@color/colorPrimary"
+                        android:textAppearance="@style/TextAppearance.Compat.Notification" />
+
 
 
                 </LinearLayout>
-            </androidx.cardview.widget.CardView>
 
-
+            </LinearLayout>
 
 
 
@@ -122,42 +130,6 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-            <LinearLayout
-                android:id="@+id/notification_item_extra"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/order_purpose"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
-
-                <TextView
-                    android:id="@+id/notification_item_purpose"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/order_purpose"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
-                    android:textColor="@color/colorPrimary" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/order_comment"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
-
-                <TextView
-                    android:id="@+id/notification_item_comment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/order_comment"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
-                    android:textColor="@color/colorPrimary" />
-
-            </LinearLayout>
 
             </LinearLayout>
 
@@ -171,27 +143,103 @@
                 app:layout_constraintTop_toTopOf="parent">
 
 
+
+
+                <LinearLayout
+                    android:id="@+id/notification_item_extra"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/registration_name"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+                    <TextView
+                        android:id="@+id/notification_item_fio"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/registration_name"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+                        android:textColor="@color/colorPrimary" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/order_purpose"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+                    <TextView
+                        android:id="@+id/notification_item_purpose"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/order_purpose"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+                        android:textColor="@color/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/order_comment"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+
+                    <TextView
+                        android:id="@+id/notification_item_comment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/order_comment"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+                        android:textColor="@color/colorPrimary" />
+
+                </LinearLayout>
+
                 <Button
                     android:id="@+id/notification_item_btn_status_wait"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/rounded_red"
+                    android:background="@drawable/rounded_green"
                     android:text="Принять"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                     android:textColor="@android:color/white"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
-                <Button
-                    android:id="@+id/notification_item_btn_status_in_process"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/rounded_blue"
-                    android:text="В работе"
-                    android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-                    android:textColor="@android:color/white"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:gravity="end"
+                    android:layout_marginVertical="10dp"
+                    android:orientation="horizontal">
+                    <Button
+                        android:id="@+id/notification_item_btn_start"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/rounded_green"
+                        android:layout_marginEnd="10dp"
+                        android:layout_marginRight="10dp"
+                        android:text="Выполнение"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                    <Button
+                        android:id="@+id/notification_item_btn_status_in_process"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingHorizontal="25dp"
+                        android:layout_gravity="end"
+                        android:layout_marginVertical="10dp"
+                        android:background="@drawable/rounded_blue"
+                        android:text="В работе"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
 
                 <Button
                     android:id="@+id/notification_item_btn_status_completed"
@@ -205,22 +253,13 @@
                     android:textStyle="bold" />
 
 
-                <Button
-                        android:id="@+id/notification_item_btn_start"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/rounded_green"
-                        android:layout_marginVertical="10dp"
-                        android:text="Выполнение"
-                        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-                        android:textColor="@android:color/white"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
+
 
                 <Button
                     android:id="@+id/notification_item_performer_cancel"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginVertical="15dp"
                     android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                     android:background="@drawable/rounded_red"
                     android:textColor="@android:color/white"
@@ -251,20 +290,36 @@
                     android:text=""
                     android:visibility="invisible" />
 
-                <ImageView
-                    android:id="@+id/notification_item_call"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:layout_margin="10dp"
-                    android:layout_gravity="end"
-                    android:src="@drawable/phone" />
-                <ImageView
-                    android:id="@+id/notification_item_navigate"
-                    android:layout_width="60dp"
-                    android:layout_height="50dp"
-                    android:layout_margin="10dp"
-                    android:layout_gravity="end"
-                    android:src="@drawable/navigate" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/notification_item_navigate"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="60dp"
+                        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                        android:background="@drawable/rounded_blue"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        android:text="Построить маршрут"/>
+
+                    <ImageView
+                        android:id="@+id/notification_item_call"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_margin="10dp"
+                        android:layout_gravity="end"
+                        android:src="@drawable/phone" />
+
+                </LinearLayout>
+
+
+
+
             </LinearLayout>
         </LinearLayout>
 

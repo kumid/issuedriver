@@ -34,10 +34,43 @@ public class MapViewModel extends ViewModel {
     }
 
     private void initUsersData() {
+        db.collection("users")
+                .whereEqualTo("is_performer", true) // водители
+                //.whereEqualTo("accept", true)       // аккаунт активирован
+                .whereLessThanOrEqualTo("state", 1)       // состояние
+                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e)
+            {
+                if (e != null) {
+                    Log.w("TAG", "Listen failed.", e);
+                    return;
+                }
+
+                List<user> questionsList = new ArrayList<>();
+                for (DocumentSnapshot snapshot :
+                        queryDocumentSnapshots.getDocuments()) {
+                    if (snapshot != null && snapshot.exists()) {
+                        user curr = snapshot.toObject(user.class);
+                        //curr.id = snapshot.getId();
+                        questionsList.add(curr);
+                        Log.d("TAG", "Current data: " + snapshot.getData());
+                    } else {
+                        Log.d("TAG", "Current data: null");
+                    }
+                }
+                userList.postValue(questionsList);
+            }
+        });
+    }
+
+
+    private void initUsersDataOld() {
         final Query collectionRef = db.collection("users")
                 .whereEqualTo("is_performer", true) // водители
-                .whereEqualTo("accept", true);       // аккаунт активирован
-//                .whereEqualTo("is_busy", false);    // если машина занята
+                .whereEqualTo("accept", true)       // аккаунт активирован
+                .whereLessThanOrEqualTo("state", 1);       // состояние
+
         collectionRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {

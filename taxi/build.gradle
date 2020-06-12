@@ -29,10 +29,14 @@ android {
         debug {
             buildConfigField("String", "FCM_BASE_URL", "\"https://fcm.googleapis.com/\"")
             buildConfigField("String", "FCM_SERVER_KEY", "\"AAAA2uPvDwo:APA91bFmR4slk5t9fn0-f-R6RtQ0CY0tT379S0FjtiAs_0zKpGqYzwce2p0DAxOi4ktf6gLlQdlHDqDkRoGEkpFbw_YQUAgMlfxh5xnI0wSNwICyDVBrTyZeWv7l5Dt-GONjftOVvke5\"")
+            buildConfigField("String", "PLACES_KEY", "\"AIzaSyDctEjmf61XdHP_va6oB5fDTpc83mFYf5g\"")
+            buildConfigField("String", "OAUTH_KEY", "\"940126965514-dkc88i94nvlu33vr4omeqfsshobfar5r.apps.googleusercontent.com\"")
         }
         release {
             buildConfigField("String", "FCM_BASE_URL", "\"https://fcm.googleapis.com/\"")
             buildConfigField("String", "FCM_SERVER_KEY", "\"AAAA2uPvDwo:APA91bFmR4slk5t9fn0-f-R6RtQ0CY0tT379S0FjtiAs_0zKpGqYzwce2p0DAxOi4ktf6gLlQdlHDqDkRoGEkpFbw_YQUAgMlfxh5xnI0wSNwICyDVBrTyZeWv7l5Dt-GONjftOVvke5\"")
+            buildConfigField("String", "PLACES_KEY", "\"AIzaSyDctEjmf61XdHP_va6oB5fDTpc83mFYf5g\"")
+            buildConfigField("String", "OAUTH_KEY", "\"940126965514-dkc88i94nvlu33vr4omeqfsshobfar5r.apps.googleusercontent.com\"")
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -56,11 +60,13 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:21.4.3'
     implementation 'com.google.firebase:firebase-auth:19.3.1'
     implementation 'com.google.firebase:firebase-crashlytics:17.0.0'
+    implementation 'com.google.firebase:firebase-analytics:17.4.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.google.firebase:firebase-database:19.3.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    implementation 'com.google.firebase:firebase-messaging:20.2.0'
+    implementation 'com.google.firebase:firebase-messaging:20.1.7'
 
 
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
@@ -69,8 +75,10 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
 
     // Recommended: Add the Firebase SDK for Google Analytics.
-    implementation 'com.google.firebase:firebase-analytics:17.4.2'
- 
+    implementation 'com.google.firebase:firebase-analytics:17.4.1'
+
+    // Add the Firebase Crashlytics SDK.
+    implementation 'com.google.firebase:firebase-crashlytics:17.0.0'
 
     //  Add these line in your project
     implementation 'com.squareup.retrofit2:retrofit:2.7.1'

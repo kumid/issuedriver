@@ -14,8 +14,9 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ru.test.issuedriver.taxi.data.order;
 import com.ru.test.issuedriver.taxi.data.user;
+import com.ru.test.issuedriver.taxi.helpers.callBacks;
+import com.ru.test.issuedriver.taxi.helpers.firestoreHelper;
 import com.ru.test.issuedriver.taxi.helpers.fsm.sender;
-import com.ru.test.issuedriver.taxi.performer.helpers.firestoreHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,8 +101,9 @@ public class OrdersListViewModel extends ViewModel {
     private void observe2notification(user user) {
         String email = user.is_performer? "performer_email" : "customer_email";
         final Query collectionRef = db.collection("orders")
+                .orderBy("order_timestamp")
                 .whereEqualTo(email, user.email)
-                .whereEqualTo("completed", false);; //.document("SF");
+                .whereEqualTo("completed", false); //.document("SF");
         collectionRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
@@ -171,21 +173,22 @@ private void notifycateIt(order curr, DocumentSnapshot snapshot) {
                     @Override
                     public void onSuccess(Void aVoid) {
                         Log.d("TAG", "DocumentSnapshot successfully deleted!");
-
+                        firestoreHelper.setUserBusy(item.performer_email, false);
+                        if(callBacks.callback4deleteOrder != null)
+                            callBacks.callback4deleteOrder.callback(true);
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         Log.w("TAG", "Error delating document", e);
+                        if(callBacks.callback4deleteOrder != null)
+                            callBacks.callback4deleteOrder.callback(false);
                     }
                 });
     }
 
 
 
-    public static CancelOrderInterface callback4cancelOrder;
-    public interface  CancelOrderInterface {
-        void callback(order order);
-    }
+
 }

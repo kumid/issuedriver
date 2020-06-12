@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.ru.test.issuedriver.taxi.data.user;
 import com.ru.test.issuedriver.taxi.helpers.googleAuthManager;
 import com.ru.test.issuedriver.taxi.helpers.mysettings;

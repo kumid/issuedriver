@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.ru.test.issuedriver.ui.history.HistoryFragment"
+        android:name="com.ru.test.issuedriver.taxi.ui.history.HistoryFragment"
         android:label="@string/title_history"
         tools:layout="@layout/fragment_history" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="com.ru.test.issuedriver.performer.ui.orders_list.OrdersListFragment"
+        android:name="com.ru.test.issuedriver.taxi.customer.ui.orders_list.OrdersListFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_orders_list"/>
 
     <fragment
         android:id="@+id/navigation_registration"
-        android:name="com.ru.test.issuedriver.ui.registration.RegistrationFragment"
+        android:name="com.ru.test.issuedriver.taxi.ui.registration.RegistrationFragment"
         android:label="@string/title_user"
         tools:layout="@layout/activity_registration" />
 </navigation>

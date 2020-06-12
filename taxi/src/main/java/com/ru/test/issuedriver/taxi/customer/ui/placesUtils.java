@@ -1,7 +1,6 @@
 package com.ru.test.issuedriver.taxi.customer.ui;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.location.Address;
 import android.location.Geocoder;
@@ -32,7 +31,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class placesUtils {
     private static final String TAG = "myLogs";
-    private static Context mapActivity;
+    private static Activity mapActivity;
     // Create a new Places client instance
     private static PlacesClient mPlacesClient;
     private static GoogleMap mMap;
@@ -47,7 +46,7 @@ public class placesUtils {
 
 
 
-    public static void Init(Context _mapActivity, GoogleMap map, boolean _locationPermissionGranted){
+    public static void Init(AppCompatActivity _mapActivity, GoogleMap map, boolean _locationPermissionGranted){
         mapActivity = _mapActivity;
         mMap = map;
 //        // Initialize the SDK
@@ -181,33 +180,33 @@ public class placesUtils {
     }
     public static String getAddressFromLocation(double latitude, double longitude) {
 
-            Geocoder geocoder = new Geocoder(mapActivity, Locale.forLanguageTag("RU"));
+        Geocoder geocoder = new Geocoder(mapActivity, Locale.forLanguageTag("RU"));
 
-            try {
-                List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
 
-                if (addresses.size() > 0) {
-                    Address fetchedAddress = addresses.get(0);
-                    StringBuilder strAddress = new StringBuilder();
-                    if(fetchedAddress.getMaxAddressLineIndex() == 0)
-                        return fetchedAddress.getAddressLine(0);
-                    for (int i = 0; i < fetchedAddress.getMaxAddressLineIndex(); i++) {
-                        strAddress.append(fetchedAddress.getAddressLine(i)).append(" ");
-                    }
-
-                    return strAddress.toString();
-                    //txtLocationAddress.setText(strAddress.toString());
-
-                } else {
-                    return "Searching Current Address";
-                    //txtLocationAddress.setText("Searching Current Address");
+            if (addresses.size() > 0) {
+                Address fetchedAddress = addresses.get(0);
+                StringBuilder strAddress = new StringBuilder();
+                if(fetchedAddress.getMaxAddressLineIndex() == 0)
+                    return fetchedAddress.getAddressLine(0);
+                for (int i = 0; i < fetchedAddress.getMaxAddressLineIndex(); i++) {
+                    strAddress.append(fetchedAddress.getAddressLine(i)).append(" ");
                 }
 
-            } catch (IOException e) {
-                e.printStackTrace();
-                return "Could not get address..!";
-                //printToast("Could not get address..!");
+                return strAddress.toString();
+                //txtLocationAddress.setText(strAddress.toString());
+
+            } else {
+                return "Searching Current Address";
+                //txtLocationAddress.setText("Searching Current Address");
             }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "Could not get address..!";
+            //printToast("Could not get address..!");
         }
+    }
 
 }

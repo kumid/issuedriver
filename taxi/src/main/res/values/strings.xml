@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Allo taxi</string>
+    <string name="app_name">TAXI</string>
     <string name="title_map">Найти авто</string>
     <string name="title_history">История</string>
     <string name="title_notifications">Заявки</string>
@@ -17,6 +17,7 @@
     <string name="registration_tel">Телефон</string>
     <string name="title_user">Кабинет</string>
     <string name="order_data">Выберите дату и время поездки</string>
+    <string name="order_performong_data">Дату и время поездки</string>
     <string name="order_from">Откуда</string>
     <string name="order_to">Куда</string>
     <string name="order_purpose">Цель поездки</string>
@@ -64,4 +65,11 @@
     <string name="cancel_sheet_reason_other_title">Причина отмены заказа</string>
     <string name="cancel_sheet_reason_other">Отменить</string>
     <string name="saveprofile">Сохранить</string>
+    <string name="user_state_bottom_sheet_title">Внимание! Состояние будет изменено</string>
+    <string name="user_state_sheet_1">Свободен</string>
+    <string name="user_state_sheet_2">Занят</string>
+    <string name="user_state_sheet_3">Ремонт</string>
+    <string name="order_cancel_reason">Причина отмены</string>
+    <string name="cancel_sheet_reason_performer1">Причина 1</string>
+    <string name="cancel_sheet_reason_performer2">Причина 2</string>
 </resources>

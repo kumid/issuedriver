@@ -15,6 +15,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.ru.test.issuedriver.taxi.BuildConfig;
 import com.ru.test.issuedriver.taxi.R;
 
 import androidx.annotation.NonNull;
@@ -58,6 +59,7 @@ public class googleAuthManager {
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder()
                 .requestIdToken(activity.getString(R.string.default_web_client_id))
+//                .requestIdToken(BuildConfig.OAUTH_KEY)
                 .requestEmail()
                 .build();
         // [END config_signin]

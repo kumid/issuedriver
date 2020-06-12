@@ -63,12 +63,12 @@ public class notificationsPerformerAdapter extends RecyclerView.Adapter<notifica
             if (item.completed) {
                 holder.mNotification_item_btn_status_completed.setVisibility(View.VISIBLE);
                 holder.mNotification_item_btn_status_in_process.setVisibility(View.GONE);
-                holder.mNotification_item_navigate.setVisibility(View.GONE);
+//                holder.mNotification_item_navigate.setVisibility(View.GONE);
                 holder.mNotification_item_btn_status_wait.setVisibility(View.GONE);
                 holder.mNotification_item_btn_start.setVisibility(View.GONE);
             } else {
                 holder.mNotification_item_btn_status_in_process.setVisibility(View.VISIBLE);
-                holder.mNotification_item_navigate.setVisibility(View.VISIBLE);
+//                holder.mNotification_item_navigate.setVisibility(View.VISIBLE);
                 holder.mNotification_item_btn_status_wait.setVisibility(View.GONE);
                 holder.mNotification_item_btn_start.setVisibility(View.VISIBLE);
                 holder.mNotification_item_btn_status_completed.setVisibility(View.GONE);
@@ -79,7 +79,7 @@ public class notificationsPerformerAdapter extends RecyclerView.Adapter<notifica
             holder.mNotification_item_btn_status_wait.setVisibility(View.VISIBLE);
             holder.mNotification_item_btn_start.setVisibility(View.GONE);
             holder.mNotification_item_btn_status_in_process.setVisibility(View.GONE);
-            holder.mNotification_item_navigate.setVisibility(View.GONE);
+//            holder.mNotification_item_navigate.setVisibility(View.GONE);
             holder.mNotification_item_btn_status_completed.setVisibility(View.GONE);
 
 //            holder.mNotification_item_btn_accept_ok.setVisibility(View.GONE);

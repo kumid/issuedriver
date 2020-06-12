@@ -1,6 +1,5 @@
 package com.ru.test.issuedriver.taxi.customer.ui;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -32,7 +31,9 @@ import com.ru.test.issuedriver.taxi.customer.ui.map.MapViewModel;
 import com.ru.test.issuedriver.taxi.customer.ui.map.imHere;
 import com.ru.test.issuedriver.taxi.customer.ui.order.OrderActivity;
 import com.ru.test.issuedriver.taxi.customer.ui.orders_list.OrdersListViewModel;
+import com.ru.test.issuedriver.taxi.data.place;
 import com.ru.test.issuedriver.taxi.data.user;
+import com.ru.test.issuedriver.taxi.helpers.firestoreHelper;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -112,11 +113,13 @@ public class mapsUtils {
                 googleMap.animateCamera(CameraUpdateFactory
                         .newCameraPosition(cameraPosition));
 
+                googleMap.getUiSettings().setCompassEnabled(false);
+
                 imHere.myPositionChanged = new imHere.OnMyPositionChanged() {
                     @Override
                     public void callBack(Location location) {
                         setMyPosition(location);
-                        googleMap.setMinZoomPreference(10f);
+                        googleMap.setMinZoomPreference(5f);
                         googleMap.setMyLocationEnabled(true);
                     }
                 };
@@ -205,42 +208,7 @@ public class mapsUtils {
                     if (item.position == null)
                         continue;
 
-                    if (markerMap.containsKey(item.email)) {
-                        if(zoomLevel <= dotZoomLevel){
-                            markerMap.get(item.email).marker.setVisible(false);
-                            markerMap.get(item.email).marker.remove();
-                            continue;
-                        }
-
-                        if (markerMap.get(item.email)._user.is_busy != item.is_busy) {
-                            markerMap.get(item.email).marker.setVisible(false);
-                            markerMap.get(item.email).marker.remove();
-
-//                            MarkerOptions markerBus = new MarkerOptions().position(
-//                                    new LatLng(item.position.getLatitude(), item.position.getLongitude()))
-//                                    .title(item.fio);
-
-                            BitmapDescriptor car = getBitmapDescriptor(item);
-
-                            markerMap.get(item.email).markerOption = new MarkerOptions().position(
-                                    new LatLng(item.position.getLatitude(), item.position.getLongitude()))
-                                    .title(item.fio);
-                            markerMap.get(item.email).markerOption.icon(car);
-
-                            Marker BusMarkerOK = googleMap.addMarker(markerMap.get(item.email).markerOption);
-                            markerMap.get(item.email).marker = BusMarkerOK;
-                            markerMap.get(item.email)._user = item;
-                        } else {
-                            if (item.position != null) {
-                                animateMarker(item, markerMap.get(item.email).marker,
-                                        new LatLng(item.position.getLatitude(), item.position.getLongitude()),
-                                        false,
-                                        mapViewModel.isOrderInActiveState(item.email), true); // order - активный
-                            }
-                        }
-                    } else {
-                        setPerformerPosition(item);
-                    }
+                    setUserMarker(item);
                 }
                 // проверяем актуальность Водителей
                 if(markerMap.size() != 0) {
@@ -265,6 +233,47 @@ public class mapsUtils {
                 }
             }
         });
+    }
+
+    // Визуализация маркеров машин
+    private static void setUserMarker(user item) {
+        if (markerMap.containsKey(item.email)) {
+            // если маркер пользователя есть на карте
+            if(zoomLevel <= dotZoomLevel){
+                // если карта слишком
+                markerMap.get(item.email).marker.setVisible(false);
+                markerMap.get(item.email).marker.remove();
+                return;
+            }
+
+            if (markerMap.get(item.email)._user.is_busy() != item.is_busy()) {
+                markerMap.get(item.email).marker.setVisible(false);
+                markerMap.get(item.email).marker.remove();
+
+                BitmapDescriptor car = getBitmapDescriptor(item);
+
+                markerMap.get(item.email).markerOption = new MarkerOptions().position(
+                        new LatLng(item.position.getLatitude(), item.position.getLongitude()))
+                        .title(item.fio);
+                markerMap.get(item.email).markerOption.icon(car);
+
+                Marker BusMarkerOK = googleMap.addMarker(markerMap.get(item.email).markerOption);
+                markerMap.get(item.email).marker = BusMarkerOK;
+                markerMap.get(item.email)._user = item;
+            } else {
+
+                if (item.position != null) {
+                    animateMarker(item, markerMap.get(item.email).marker,
+                            new LatLng(item.position.getLatitude(), item.position.getLongitude()),
+                            false,
+                            mapViewModel.isOrderInActiveState(item.email), true); // order - активный
+                }
+            }
+        }
+        else {
+            // создать новый маркер
+            setPerformerPosition(item);
+        }
     }
 
     public static View.OnClickListener clickZoom = new View.OnClickListener() {
@@ -350,8 +359,8 @@ public class mapsUtils {
         int size;
 
         if(zoomLevel >= carZoomLevel){
-            carId = item.is_busy ? R.drawable.car_red2 : R.drawable.car_yellow1;
-            size = 70;
+            carId = item.is_busy() ? R.drawable.car_red2 : R.drawable.car_yellow1;
+            size = 80;
         } else if(zoomLevel >= dotZoomLevel){
             carId = R.drawable.dot;
             size = 25;
@@ -399,7 +408,7 @@ public class mapsUtils {
         return BitmapDescriptorFactory.fromBitmap(smallMarker);
     }
 
-public static void animateMarker(user item, final Marker marker, final LatLng toPosition, final boolean hideMarker, boolean cameraMoved, boolean isRotation) {
+    public static void animateMarker(user item, final Marker marker, final LatLng toPosition, final boolean hideMarker, boolean cameraMoved, boolean isRotation) {
         final Handler handler = new Handler();
         final long start = SystemClock.uptimeMillis();
         Projection proj = googleMap.getProjection();
@@ -450,22 +459,31 @@ public static void animateMarker(user item, final Marker marker, final LatLng to
     }
 
 
-    public static boolean onMarkerClick(Marker marker) {
+    public static boolean onMarkerClick(Marker marker, place fromPlace, place toPlace) {
         for (String item : markerMap.keySet()) {
             if (markerMap.get(item).marker.equals(marker)) {
-                if (markerMap.get(item)._user.is_busy)
+                if (markerMap.get(item)._user.is_busy())
                     return false;
+
+                //firestoreHelper.setUserBusy(markerMap.get(item)._user.email, true);
+                firestoreHelper.setUserHalfBusy(markerMap.get(item)._user.UUID, markerMap.get(item)._user.email, true);
 
                 Intent intent = new Intent(mapActivity, OrderActivity.class);
 //                intent.putExtra("customer_fio", registrationViewModel.currentUser.getValue().fio);
 //                intent.putExtra("customer_phone", registrationViewModel.currentUser.getValue().tel);
 //                intent.putExtra("customer_email", registrationViewModel.currentUser.getValue().email);
+                intent.putExtra("performer_uuid", markerMap.get(item)._user.UUID);
                 intent.putExtra("performer_fio", markerMap.get(item)._user.fio);
                 intent.putExtra("performer_phone", markerMap.get(item)._user.tel);
                 intent.putExtra("performer_email", markerMap.get(item)._user.email);
                 intent.putExtra("performer_car", markerMap.get(item)._user.automodel);
                 intent.putExtra("performer_car_number", markerMap.get(item)._user.autonumber);
+                if(fromPlace != null)
+                    intent.putExtra("from_place", fromPlace);
+                if(toPlace != null)
+                    intent.putExtra("to_place", toPlace);
 
+                intent.putExtra("performer_car_number", markerMap.get(item)._user.autonumber);
                 mapActivity.startActivity(intent);
                 return false;
             }
@@ -473,7 +491,7 @@ public static void animateMarker(user item, final Marker marker, final LatLng to
         return false;
     }
 
-private static float getBearing(LatLng begin, LatLng end) {
+    private static float getBearing(LatLng begin, LatLng end) {
         double lat = Math.abs(begin.latitude - end.latitude);
         double lng = Math.abs(begin.longitude - end.longitude);
 

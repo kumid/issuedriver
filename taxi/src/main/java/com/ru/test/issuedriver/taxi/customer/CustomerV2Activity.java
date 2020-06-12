@@ -24,18 +24,20 @@ import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
+import com.ru.test.issuedriver.taxi.MainViewModel;
 import com.ru.test.issuedriver.taxi.MyActivity;
 import com.ru.test.issuedriver.taxi.R;
 import com.ru.test.issuedriver.taxi.customer.ui.map.MapViewModel;
 import com.ru.test.issuedriver.taxi.customer.ui.map.imHere;
+import com.ru.test.issuedriver.taxi.customer.ui.map.placesAdapter;
 import com.ru.test.issuedriver.taxi.customer.ui.mapsUtils;
 import com.ru.test.issuedriver.taxi.customer.ui.orders_list.OrdersListViewModel;
-import com.ru.test.issuedriver.taxi.customer.ui.placesUtils;
 import com.ru.test.issuedriver.taxi.data.order;
-import com.ru.test.issuedriver.taxi.history.HistoryActivity;
-import com.ru.test.issuedriver.taxi.orders.OrdersListActivity;
-import com.ru.test.issuedriver.taxi.registration.RegistrationActivity;
+import com.ru.test.issuedriver.taxi.data.place;
+import com.ru.test.issuedriver.taxi.helpers.googleAuthManager;
+import com.ru.test.issuedriver.taxi.ui.history.HistoryActivity;
+import com.ru.test.issuedriver.taxi.ui.orders.OrdersListActivity;
+import com.ru.test.issuedriver.taxi.ui.registration.RegistrationActivity;
 
 import java.util.Arrays;
 import java.util.List;
@@ -54,6 +56,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.RecyclerView;
 
 public class CustomerV2Activity extends MyActivity implements NavigationView.OnNavigationItemSelectedListener, GoogleMap.OnMarkerClickListener {
 
@@ -66,6 +69,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
     ImageView mImgLocationPinUp;
 
     private MapViewModel mapViewModel;
+    private MainViewModel mainViewModel;
     private OrdersListViewModel ordersListViewModel;
 
     private static final String TAG = "myLogs";
@@ -81,10 +85,12 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setVisibility(View.GONE);
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //String address = placesUtils.getAddressFromLocation(mapsUtils.getMarkerPinPosition());
+//String address = placesUtils.getAddressFromLocation(mapsUtils.getMarkerPinPosition());
 //                Snackbar.make(view, address, Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
             }
@@ -137,7 +143,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         mMap_minus.setOnClickListener(mapsUtils.clickZoom);
 
 
-        final AutocompleteSupportFragment autocompleteSupportFragment =
+            final AutocompleteSupportFragment autocompleteSupportFragment =
                 (AutocompleteSupportFragment)getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
         autocompleteSupportFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.LAT_LNG, Place.Field.NAME));
         autocompleteSupportFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -151,13 +157,19 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
                 Log.e(TAG, "onError");
             }
         });
-
-
         checkPermission(this);
+
+        rv = findViewById(R.id.places_rv);
+        mainViewModel.getPlacesLiveData().observe(this, new Observer<List<place>>() {
+            @Override
+            public void onChanged(List<place> places) {
+                rv.setAdapter(new placesAdapter(mainViewModel, places));
+            }
+        });
 
 //        test();
     }
-
+    RecyclerView rv;
 //    private void test() {
 //        Intent intent=new Intent(this, SplashScreen.class);
 //        String channel_id="fleet_channel";
@@ -223,6 +235,10 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
                 startActivity(intent);
 //                Toast.makeText(getApplicationContext(), "Вы выбрали slide show", Toast.LENGTH_SHORT).show();
                 break;
+
+            case R.id.nav_exit:
+                googleAuthManager.signOut();
+                break;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -242,6 +258,9 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
     }
 
     private void initViewModels() {
+        mainViewModel = ViewModelProviders.of(CustomerV2Activity.this).get(MainViewModel.class);
+        mainViewModel.Init(CurrentUser);
+
         mapViewModel =
                 ViewModelProviders.of(CustomerV2Activity.this).get(MapViewModel.class);
 
@@ -261,7 +280,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        return mapsUtils.onMarkerClick(marker);
+        return mapsUtils.onMarkerClick(marker, imHere.getMyPlace(), mainViewModel.currentPlace);
     }
 
     public static final int PERMISSIONS= 123;

@@ -6,9 +6,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-
 import com.ru.test.issuedriver.taxi.helpers.googleAuthManager;
-import com.ru.test.issuedriver.taxi.registration.RegistrationActivity;
+import com.ru.test.issuedriver.taxi.ui.registration.RegistrationActivity;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;

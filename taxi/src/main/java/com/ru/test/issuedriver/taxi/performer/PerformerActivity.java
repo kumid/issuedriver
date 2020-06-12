@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,25 +22,35 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.firestore.GeoPoint;
+import com.ru.test.issuedriver.taxi.MainViewModel;
 import com.ru.test.issuedriver.taxi.MyActivity;
 import com.ru.test.issuedriver.taxi.R;
+import com.ru.test.issuedriver.taxi.bottom_dialogs.OrderCancelBottonDialog;
+import com.ru.test.issuedriver.taxi.bottom_dialogs.UserStateBottonDialog;
+import com.ru.test.issuedriver.taxi.customer.ui.orders_list.OrdersListViewModel;
 import com.ru.test.issuedriver.taxi.data.order;
+import com.ru.test.issuedriver.taxi.data.place;
+import com.ru.test.issuedriver.taxi.data.user;
+import com.ru.test.issuedriver.taxi.helpers.PerformerBackgroundService;
+import com.ru.test.issuedriver.taxi.helpers.callBacks;
+import com.ru.test.issuedriver.taxi.helpers.firestoreHelper;
 import com.ru.test.issuedriver.taxi.helpers.googleAuthManager;
-import com.ru.test.issuedriver.taxi.performer.feedback.FeedbackActivity;
-import com.ru.test.issuedriver.taxi.performer.helpers.PerformerBackgroundService;
-import com.ru.test.issuedriver.taxi.performer.ui.order.OrderPerformingActivity;
+import com.ru.test.issuedriver.taxi.performer.ui.feedback.FeedbackActivity;
+import com.ru.test.issuedriver.taxi.performer.ui.orderPerforming.OrderPerformingActivity;
+import com.ru.test.issuedriver.taxi.ui.history.HistoryViewModel;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-public class PerformerActivity extends MyActivity {
+public class PerformerActivity extends MyActivity implements UserStateBottonDialog.BottomSheetListener, OrderCancelBottonDialog.BottomSheetListener{
 
     private static final String TAG = "myLogs";
 
@@ -51,8 +62,9 @@ public class PerformerActivity extends MyActivity {
     }
 
 //    RegistrationViewModel registrationViewModel;
-//    NotificationsViewModel notificationsViewModel;
-//    HistoryViewModel historyViewModel;
+    private MainViewModel mainViewModel;
+    private OrdersListViewModel ordersListViewModel;
+    private HistoryViewModel historyViewModel;
 
 
     @Override
@@ -67,6 +79,7 @@ public class PerformerActivity extends MyActivity {
         setupNavigation();
 
         initViewModels();
+       // setDefaultUserState();
 
 //        if(getIntent().hasExtra("object")){
 //            String obj = getIntent().getStringExtra("object");
@@ -92,6 +105,14 @@ public class PerformerActivity extends MyActivity {
 //            }
 //
 //        });
+
+        callBacks.callback4cancelOrder = new callBacks.CancelOrderInterface() {
+            @Override
+            public void callback(order order) {
+                OrderCancelBottonDialog dialog = new OrderCancelBottonDialog(order, MyActivity.CurrentUser.is_performer);
+                dialog.show(getSupportFragmentManager(), null);
+            }
+        };
     }
 
     private void setupNavigation() {
@@ -112,12 +133,31 @@ public class PerformerActivity extends MyActivity {
     private void initViewModels() {
 //        registrationViewModel =
 //                ViewModelProviders.of(PerformerActivity.getInstance()).get(RegistrationViewModel.class);
-//        notificationsViewModel =
-//                ViewModelProviders.of(PerformerActivity.getInstance()).get(NotificationsViewModel.class);
-//        notificationsViewModel.initNotificationLoad(PerformerActivity.getInstance(), registrationViewModel.currentUser);
-//        historyViewModel =
-//                ViewModelProviders.of(PerformerActivity.getInstance()).get(HistoryViewModel.class);
-//        historyViewModel.initNotificationLoad(PerformerActivity.getInstance(), registrationViewModel.currentUser);
+        mainViewModel = ViewModelProviders.of(PerformerActivity.this).get(MainViewModel.class);
+        mainViewModel.Init(CurrentUser);
+        mainViewModel.getCurrentUserLiveData().observe(this, new Observer<user>() {
+            @Override
+            public void onChanged(user user) {
+                MyActivity.CurrentUser = user;
+                if(onlineStateItem != null)
+                    setUserStateIcon();
+            }
+        });
+
+        ordersListViewModel =
+                ViewModelProviders.of(PerformerActivity.this).get(OrdersListViewModel.class);
+        ordersListViewModel.initNotificationLoad(MyActivity.CurrentUser);
+
+        historyViewModel =
+                ViewModelProviders.of(PerformerActivity.this).get(HistoryViewModel.class);
+        historyViewModel.initNotificationsHistoryLoad(CurrentUser);
+    }
+
+    private void setUserStateIcon() {
+        if(MyActivity.CurrentUser.state == 0)
+            onlineStateItem.setIcon(ContextCompat.getDrawable(PerformerActivity.this, R.drawable.online));
+        else
+            onlineStateItem.setIcon(ContextCompat.getDrawable(PerformerActivity.this, R.drawable.offline));
     }
 
 
@@ -150,12 +190,15 @@ public class PerformerActivity extends MyActivity {
                     Location location = task.getResult();
                     if(location == null)
                         return;
-                    GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
+//                    GeoPoint geoPoint = new GeoPoint(location.getLatitude(), location.getLongitude());
 //                    mUserLocation.setGeo_point(geoPoint);
 //                    mUserLocation.setTimestamp(null);
 //                    saveUserLocation();
                     startLocationService();
+                } else {
+                    Log.d("TAG", "getLastKnownLocation: called.");
                 }
+
             }
         });
 
@@ -239,9 +282,11 @@ public class PerformerActivity extends MyActivity {
 
     public void startOrderPerforme(order item) {
         Intent intent = new Intent(PerformerActivity.this, OrderPerformingActivity.class);
-//        intent.putExtra("customer_fio", registrationViewModel.currentUser.getValue().fio);
-//        intent.putExtra("customer_phone", registrationViewModel.currentUser.getValue().tel);
-//        intent.putExtra("customer_email", registrationViewModel.currentUser.getValue().email);
+        intent.putExtra("customer_uuid", item.customer_uuid);
+        intent.putExtra("customer_fio", item.customer_fio);
+        intent.putExtra("customer_phone", item.customer_phone);
+        intent.putExtra("customer_email", item.customer_email);
+        intent.putExtra("performer_uuid", item.performer_uuid);
         intent.putExtra("performer_fio", item.performer_fio);
         intent.putExtra("performer_phone", item.performer_phone);
         intent.putExtra("performer_email", item.performer_email);
@@ -251,6 +296,17 @@ public class PerformerActivity extends MyActivity {
 
         intent.putExtra("from", item.from);
         intent.putExtra("to", item.to);
+
+        if(item.from_position != null){
+            place fromPlace = new place(item.from, item.from_position.getLatitude(), item.from_position.getLongitude());
+            intent.putExtra("to_place", fromPlace);
+        }
+
+        if(item.to_position != null){
+            place curr = new place(item.to, item.to_position.getLatitude(), item.to_position.getLongitude());
+            intent.putExtra("to_place", curr);
+        }
+
         intent.putExtra("purpose", item.purpose);
         intent.putExtra("comment", item.comment);
         intent.putExtra("order_id", item.id);
@@ -259,10 +315,14 @@ public class PerformerActivity extends MyActivity {
         Log.e(TAG, "");
     }
 
+    MenuItem onlineStateItem;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.emetgency, menu);
+        onlineStateItem = menu.findItem(R.id.action_state);
+        setUserStateIcon();
         return true;
 //        return super.onCreateOptionsMenu(menu);
     }
@@ -271,15 +331,46 @@ public class PerformerActivity extends MyActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_send:
-                        Intent intent = new Intent(PerformerActivity.this, FeedbackActivity.class);
-                        intent.putExtra("phone", CurrentUser.tel);
-                        startActivity(intent);
+                Intent intent = new Intent(PerformerActivity.this, FeedbackActivity.class);
+                intent.putExtra("phone", CurrentUser.tel);
+                startActivity(intent);
+                return true;
+            case R.id.action_state:
+                UserStateBottonDialog dialog = new UserStateBottonDialog();
+                dialog.show(getSupportFragmentManager(), null);
                 return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
-
         }
-     }
+    }
+
+    @Override
+    public void onButtonClicked(int state) {
+        callBacks.userStateChangedCalback = new callBacks.userStateChanged() {
+            @Override
+            public void callback(int callback_state) {
+                if (callback_state == 99)
+                    Log.e(TAG, "userStateChangedCalback -> ERROR");
+                else {
+                    Log.e(TAG, "userStateChangedCalback -> OK");
+                    MyActivity.CurrentUser.state = state;
+                    if(state == 0)
+                        onlineStateItem.setIcon(ContextCompat.getDrawable(PerformerActivity.this, R.drawable.online));
+                    else
+                        onlineStateItem.setIcon(ContextCompat.getDrawable(PerformerActivity.this, R.drawable.offline));
+                }
+            }
+        };
+        firestoreHelper.setUserState(MyActivity.CurrentUser.email, state);
+    }
+
+    @Override
+    public void onButtonClicked(order item) {
+        Log.e("myLogs", "");
+        firestoreHelper.setOrderState(item, 1, item.cancel_reason);
+        firestoreHelper.setUserState(item.performer_email, 0);
+        //ordersListViewModel.setOrderDelete(item);
+    }
 }
