@@ -27,6 +27,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.ru.test.issuedriver.taxi.MainViewModel;
 import com.ru.test.issuedriver.taxi.MyActivity;
 import com.ru.test.issuedriver.taxi.R;
+import com.ru.test.issuedriver.taxi.bottom_dialogs.SelectDirectionBottonDialog;
 import com.ru.test.issuedriver.taxi.customer.ui.map.MapViewModel;
 import com.ru.test.issuedriver.taxi.customer.ui.map.imHere;
 import com.ru.test.issuedriver.taxi.customer.ui.map.placesAdapter;
@@ -58,10 +59,11 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class CustomerV2Activity extends MyActivity implements NavigationView.OnNavigationItemSelectedListener, GoogleMap.OnMarkerClickListener {
+public class CustomerActivity extends MyActivity implements NavigationView.OnNavigationItemSelectedListener, GoogleMap.OnMarkerClickListener,
+                                                             SelectDirectionBottonDialog.BottomSheetListener {
 
-    private static CustomerV2Activity instance;
-    public static CustomerV2Activity getInstance() {
+    private static CustomerActivity instance;
+    public static CustomerActivity getInstance() {
         return instance;
     }
 
@@ -81,16 +83,20 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         instance = this;
-        setContentView(R.layout.activity_customer_v2);
+        setContentView(R.layout.activity_customer);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setVisibility(View.GONE);
+//        fab.setVisibility(View.GONE);
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//String address = placesUtils.getAddressFromLocation(mapsUtils.getMarkerPinPosition());
+
+                SelectDirectionBottonDialog dialog = new SelectDirectionBottonDialog();
+                dialog.show(getSupportFragmentManager(), null);
+
+                //String address = placesUtils.getAddressFromLocation(mapsUtils.getMarkerPinPosition());
 //                Snackbar.make(view, address, Snackbar.LENGTH_LONG)
 //                        .setAction("Action", null).show();
             }
@@ -201,7 +207,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.customer_v2, menu);
+        getMenuInflater().inflate(R.menu.customer_settings_menu, menu);
         return true;
     }
 
@@ -220,17 +226,17 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         Intent intent;
         switch (id){
             case R.id.nav_orders:
-                intent = new Intent(CustomerV2Activity.this, OrdersListActivity.class);
+                intent = new Intent(CustomerActivity.this, OrdersListActivity.class);
                 startActivity(intent);
 //                Toast.makeText(getApplicationContext(), "Вы выбрали home", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_history:
-                intent = new Intent(CustomerV2Activity.this, HistoryActivity.class);
+                intent = new Intent(CustomerActivity.this, HistoryActivity.class);
                 startActivity(intent);
 //                Toast.makeText(getApplicationContext(), "Вы выбрали galery", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_cabinet:
-                intent = new Intent(CustomerV2Activity.this, RegistrationActivity.class);
+                intent = new Intent(CustomerActivity.this, RegistrationActivity.class);
                 intent.putExtra("user", CurrentUser.email);
                 startActivity(intent);
 //                Toast.makeText(getApplicationContext(), "Вы выбрали slide show", Toast.LENGTH_SHORT).show();
@@ -258,17 +264,17 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
     }
 
     private void initViewModels() {
-        mainViewModel = ViewModelProviders.of(CustomerV2Activity.this).get(MainViewModel.class);
+        mainViewModel = ViewModelProviders.of(CustomerActivity.this).get(MainViewModel.class);
         mainViewModel.Init(CurrentUser);
 
         mapViewModel =
-                ViewModelProviders.of(CustomerV2Activity.this).get(MapViewModel.class);
+                ViewModelProviders.of(CustomerActivity.this).get(MapViewModel.class);
 
         ordersListViewModel =
-                ViewModelProviders.of(CustomerV2Activity.this).get(OrdersListViewModel.class);
+                ViewModelProviders.of(CustomerActivity.this).get(OrdersListViewModel.class);
         ordersListViewModel.initNotificationLoad(MyActivity.CurrentUser);
 
-        ordersListViewModel.getNotifications().observe(CustomerV2Activity.this, new Observer<List<order>>() {
+        ordersListViewModel.getNotifications().observe(CustomerActivity.this, new Observer<List<order>>() {
             @Override
             public void onChanged(List<order> orders) {
                 mapViewModel.setOrders(orders);
@@ -328,11 +334,27 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // permission granted
-                     imHere.init(CustomerV2Activity.this);
+                     imHere.init(CustomerActivity.this);
                 } else {
                     // permission denied
                 }
                 return;
+        }
+    }
+
+    @Override
+    public void onButtonClicked(int id) {
+        switch (id){
+            case 0:
+
+                break;
+
+            case 1:
+
+                break;
+
+            default:
+                break;
         }
     }
 }

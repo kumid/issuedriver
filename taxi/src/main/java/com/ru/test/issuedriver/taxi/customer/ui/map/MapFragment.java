@@ -29,7 +29,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.ru.test.issuedriver.taxi.R;
-import com.ru.test.issuedriver.taxi.customer.CustomerV2Activity;
+import com.ru.test.issuedriver.taxi.customer.CustomerActivity;
 import com.ru.test.issuedriver.taxi.customer.ui.order.OrderActivity;
 import com.ru.test.issuedriver.taxi.customer.ui.orders_list.OrdersListViewModel;
 import com.ru.test.issuedriver.taxi.data.order;
@@ -135,7 +135,7 @@ public class MapFragment extends Fragment implements GoogleMap.OnMarkerClickList
 
     private void initViewModels() {
         mapViewModel =
-                ViewModelProviders.of(CustomerV2Activity.getInstance()).get(MapViewModel.class);
+                ViewModelProviders.of(CustomerActivity.getInstance()).get(MapViewModel.class);
 
         ordersListViewModel =
                 ViewModelProviders.of(getActivity()).get(OrdersListViewModel.class);

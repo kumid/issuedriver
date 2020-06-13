@@ -11,7 +11,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
-import com.ru.test.issuedriver.taxi.customer.CustomerV2Activity;
+import com.ru.test.issuedriver.taxi.customer.CustomerActivity;
 import com.ru.test.issuedriver.taxi.data.order;
 import com.ru.test.issuedriver.taxi.data.place;
 import com.ru.test.issuedriver.taxi.helpers.firestoreHelper;
@@ -90,7 +90,7 @@ public class OrderViewModel extends ViewModel {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        CustomerV2Activity.showToast("Ошибка сохранения данных", Toast.LENGTH_SHORT);
+                        CustomerActivity.showToast("Ошибка сохранения данных", Toast.LENGTH_SHORT);
 //                        Log.w("TAG", "Error writing document", e);
                         if(orderSendCompleteCalback!=null)
                             orderSendCompleteCalback.callback(false);

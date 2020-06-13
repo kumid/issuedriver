@@ -7,7 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.ru.test.issuedriver.taxi.R;
-import com.ru.test.issuedriver.taxi.customer.CustomerV2Activity;
+import com.ru.test.issuedriver.taxi.customer.CustomerActivity;
 import com.ru.test.issuedriver.taxi.data.order;
 import com.ru.test.issuedriver.taxi.helpers.callBacks;
 
@@ -123,7 +123,7 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
         holder.mNotification_item_call.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CustomerV2Activity.getInstance().callPhone(item.performer_phone);
+                CustomerActivity.getInstance().callPhone(item.performer_phone);
             }
         });
         holder.mNotification_item_navigate.setOnClickListener(new View.OnClickListener() {

@@ -23,7 +23,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
 import com.ru.test.issuedriver.taxi.MyActivity;
 import com.ru.test.issuedriver.taxi.R;
-import com.ru.test.issuedriver.taxi.customer.CustomerV2Activity;
+import com.ru.test.issuedriver.taxi.customer.CustomerActivity;
 import com.ru.test.issuedriver.taxi.data.user;
 import com.ru.test.issuedriver.taxi.helpers.MyBroadcastReceiver;
 import com.ru.test.issuedriver.taxi.helpers.googleAuthManager;
@@ -159,7 +159,7 @@ public class RegistrationActivity extends MyActivity {
         String obj = gson.toJson(current);
         Intent intent;
         if(current.accept || true) {  // true - в боевой версии убрать
-            intent = new Intent(RegistrationActivity.this, current.is_performer ? PerformerActivity.class : CustomerV2Activity.class);
+            intent = new Intent(RegistrationActivity.this, current.is_performer ? PerformerActivity.class : CustomerActivity.class);
             //intent.putExtra("object", obj);
             startActivity(intent);
             finish();

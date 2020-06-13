@@ -16,4 +16,7 @@
     <string name="order_performong_data">Дату и время поездки</string>
     <string name="cancel_sheet_reason_performer1">Причина 1</string>
     <string name="cancel_sheet_reason_performer2">Причина 2</string>
+    <string name="select_direction_bottom_sheet_title">Выбор направления</string>
+    <string name="select_direction_short">По городу</string>
+    <string name="select_direction_far">За город</string>
 </resources>

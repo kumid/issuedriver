@@ -26,7 +26,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.ru.test.issuedriver.taxi.R;
-import com.ru.test.issuedriver.taxi.customer.CustomerV2Activity;
+import com.ru.test.issuedriver.taxi.customer.CustomerActivity;
 import com.ru.test.issuedriver.taxi.customer.ui.map.MapViewModel;
 import com.ru.test.issuedriver.taxi.customer.ui.map.imHere;
 import com.ru.test.issuedriver.taxi.customer.ui.order.OrderActivity;
@@ -47,8 +47,11 @@ public class mapsUtils {
     // показывать маркер в центре экрана
     private static boolean isImgLocationPinUpOn = false;
 
+    //
+    private static boolean isDriversClickable = false;
+
     private static final String TAG = "myLogs";
-    private static CustomerV2Activity mapActivity;
+    private static CustomerActivity mapActivity;
     private static GoogleMap googleMap;
     private static ImageView mImgLocationPinUp;
     private static Marker markerPin;
@@ -82,7 +85,7 @@ public class mapsUtils {
 
     private static Map<String, markerPair> markerMap = new HashMap<>();
 
-    public static void Init(CustomerV2Activity activity, MapView mMapView, MapViewModel _mapViewModel, ImageView imgLocationPinUp){
+    public static void Init(CustomerActivity activity, MapView mMapView, MapViewModel _mapViewModel, ImageView imgLocationPinUp){
 
         mapActivity = activity;
         mapViewModel = _mapViewModel;
@@ -460,6 +463,9 @@ public class mapsUtils {
 
 
     public static boolean onMarkerClick(Marker marker, place fromPlace, place toPlace) {
+        if(!isDriversClickable)
+            return false;
+
         for (String item : markerMap.keySet()) {
             if (markerMap.get(item).marker.equals(marker)) {
                 if (markerMap.get(item)._user.is_busy())

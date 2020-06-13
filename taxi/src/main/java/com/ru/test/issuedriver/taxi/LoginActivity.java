@@ -19,7 +19,7 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         googleAuthManager.init(this);
-        Button mLogin_btn = findViewById(R.id.login_btn);
+        View mLogin_btn = findViewById(R.id.login_btn);
         mLogin_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

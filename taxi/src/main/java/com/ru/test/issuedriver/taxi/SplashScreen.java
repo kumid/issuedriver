@@ -3,7 +3,7 @@ package com.ru.test.issuedriver.taxi;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.ru.test.issuedriver.taxi.customer.CustomerV2Activity;
+import com.ru.test.issuedriver.taxi.customer.CustomerActivity;
 import com.ru.test.issuedriver.taxi.data.user;
 import com.ru.test.issuedriver.taxi.helpers.googleAuthManager;
 import com.ru.test.issuedriver.taxi.helpers.mysettings;
@@ -41,7 +41,7 @@ public class SplashScreen extends AppCompatActivity {
                 && curr != null) {
                 if (curr.accept || true) // true - в боевой версии убрать
                 {
-                    Intent intent = new Intent(instance, curr.is_performer ? PerformerActivity.class : CustomerV2Activity.class);
+                    Intent intent = new Intent(instance, curr.is_performer ? PerformerActivity.class : CustomerActivity.class);
                     startActivity(intent);
                     finish();
                 } else {

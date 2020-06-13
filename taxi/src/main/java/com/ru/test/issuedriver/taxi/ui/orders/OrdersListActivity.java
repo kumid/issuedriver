@@ -9,7 +9,7 @@ import android.view.MenuItem;
 import com.ru.test.issuedriver.taxi.MyActivity;
 import com.ru.test.issuedriver.taxi.R;
 import com.ru.test.issuedriver.taxi.bottom_dialogs.OrderCancelBottonDialog;
-import com.ru.test.issuedriver.taxi.customer.CustomerV2Activity;
+import com.ru.test.issuedriver.taxi.customer.CustomerActivity;
 import com.ru.test.issuedriver.taxi.customer.ui.orders_list.OrdersListViewModel;
 import com.ru.test.issuedriver.taxi.customer.ui.orders_list.notificationsCustomerAdapter;
 import com.ru.test.issuedriver.taxi.customer.ui.orders_list.notificationsPerformerAdapter;
@@ -43,7 +43,7 @@ public class OrdersListActivity extends AppCompatActivity implements OrderCancel
         setContentView(R.layout.activity_orders_list);
 
         ordersListViewModel =
-                ViewModelProviders.of(CustomerV2Activity.getInstance()).get(OrdersListViewModel.class);
+                ViewModelProviders.of(CustomerActivity.getInstance()).get(OrdersListViewModel.class);
 
         initViews();
 
