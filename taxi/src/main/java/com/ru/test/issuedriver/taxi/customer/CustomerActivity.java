@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,9 +17,16 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
@@ -33,8 +41,10 @@ import com.ru.test.issuedriver.taxi.customer.ui.map.imHere;
 import com.ru.test.issuedriver.taxi.customer.ui.map.placesAdapter;
 import com.ru.test.issuedriver.taxi.customer.ui.mapsUtils;
 import com.ru.test.issuedriver.taxi.customer.ui.orders_list.OrdersListViewModel;
+import com.ru.test.issuedriver.taxi.customer.ui.placesUtils;
 import com.ru.test.issuedriver.taxi.data.order;
 import com.ru.test.issuedriver.taxi.data.place;
+import com.ru.test.issuedriver.taxi.helpers.geofireHelper;
 import com.ru.test.issuedriver.taxi.helpers.googleAuthManager;
 import com.ru.test.issuedriver.taxi.ui.history.HistoryActivity;
 import com.ru.test.issuedriver.taxi.ui.orders.OrdersListActivity;
@@ -96,9 +106,6 @@ public class CustomerActivity extends MyActivity implements NavigationView.OnNav
                 SelectDirectionBottonDialog dialog = new SelectDirectionBottonDialog();
                 dialog.show(getSupportFragmentManager(), null);
 
-                //String address = placesUtils.getAddressFromLocation(mapsUtils.getMarkerPinPosition());
-//                Snackbar.make(view, address, Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
             }
         });
 
@@ -125,15 +132,6 @@ public class CustomerActivity extends MyActivity implements NavigationView.OnNav
             }
         });
 
-//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-//        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-//        NavigationUI.setupWithNavController(navigationView, navController);
-//        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
-//            @Override
-//            public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
-//                Log.d(TAG, "");
-//            }
-//        });
         initViewModels();
 
         mMapView = (MapView) findViewById(R.id.mapView);
@@ -141,7 +139,7 @@ public class CustomerActivity extends MyActivity implements NavigationView.OnNav
         mMapView.onResume(); // needed to get the map to display immediately
 
         mImgLocationPinUp = findViewById(R.id.imgLocationPinUp);
-        mapsUtils.Init(this, mMapView, mapViewModel, mImgLocationPinUp);
+//        mapsUtils.Init(this, mMapView, mapViewModel, mImgLocationPinUp);
 
         ImageView mMap_plus = findViewById(R.id.map_plus);
         ImageView mMap_minus = findViewById(R.id.map_minus);
@@ -173,36 +171,11 @@ public class CustomerActivity extends MyActivity implements NavigationView.OnNav
             }
         });
 
-//        test();
+        MapInit();
     }
+
+
     RecyclerView rv;
-//    private void test() {
-//        Intent intent=new Intent(this, SplashScreen.class);
-//        String channel_id="fleet_channel";
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        PendingIntent pendingIntent=PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_ONE_SHOT);
-//        Uri uri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-//        NotificationCompat.Builder builder=new NotificationCompat.Builder(getApplicationContext(),channel_id)
-//                .setSmallIcon(R.drawable.logo_small)
-//                .setSound(uri)
-//                .setAutoCancel(true)
-//                .setVibrate(new long[]{1000,1000,1000,1000,1000})
-//                .setOnlyAlertOnce(true)
-//                .setContentIntent(pendingIntent);
-//
-//             builder=builder.setContentTitle("title")
-//                    .setContentText("message")
-//                    .setSmallIcon(R.drawable.logo_small);
-//
-//        NotificationManager notificationManager= (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
-//            NotificationChannel notificationChannel = new NotificationChannel(channel_id,"fleet_app", NotificationManager.IMPORTANCE_HIGH);
-//            notificationChannel.setSound(uri,null);
-//            notificationManager.createNotificationChannel(notificationChannel);
-//        }
-//
-//        notificationManager.notify(100, builder.build());
-//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -252,7 +225,6 @@ public class CustomerActivity extends MyActivity implements NavigationView.OnNav
         return true;
     }
 
-
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -280,9 +252,8 @@ public class CustomerActivity extends MyActivity implements NavigationView.OnNav
                 mapViewModel.setOrders(orders);
             }
         });
+
     }
-
-
 
     @Override
     public boolean onMarkerClick(Marker marker) {
@@ -357,4 +328,39 @@ public class CustomerActivity extends MyActivity implements NavigationView.OnNav
                 break;
         }
     }
+
+    private static GoogleMap googleMap;
+    private void MapInit() {
+        MapsInitializer.initialize( this);
+
+        try {
+            MapsInitializer.initialize( CustomerActivity.this);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        mMapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap mMap) {
+                googleMap = mMap;
+                geofireHelper.init(googleMap);
+
+                //placesUtils.Init(CustomerActivity.this, googleMap, true);
+
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(53.597336, 34.336790)).zoom(14).build();
+                googleMap.animateCamera(CameraUpdateFactory
+                        .newCameraPosition(cameraPosition));
+
+                googleMap.getUiSettings().setCompassEnabled(false);
+
+                geofireHelper.getLocationsNew(53.597336, 34.336790, 3);
+             }
+        });
+
+
+    }
+
+
 }

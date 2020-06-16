@@ -14,9 +14,10 @@ public class user {
     public String autonumber;
     public String tel;
     public boolean accept;
+    @Exclude
     public GeoPoint position;
     public boolean is_performer;
-
+    @Exclude
     public Timestamp last_geo_time;
 
     public String UUID;

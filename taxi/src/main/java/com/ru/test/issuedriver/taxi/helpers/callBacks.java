@@ -1,5 +1,6 @@
 package com.ru.test.issuedriver.taxi.helpers;
 
+import com.firebase.geofire.GeoLocation;
 import com.ru.test.issuedriver.taxi.data.order;
 
 // изменение состояния водителя
@@ -35,6 +36,18 @@ public class callBacks {
     public static goToNavigateInterface callback4goToNavigate;
     public interface  goToNavigateInterface {
         void callback(order currentOrder);
+    }
+
+    // Получили геоданные по 1 машине в радиусе
+    public static geofireItemRecieveInterface callback4geofireItemRecieve;
+    public interface  geofireItemRecieveInterface {
+        void callback(String key, GeoLocation location);
+    }
+
+    // Получили новые геоданные по радиусу
+    public static geofireFinishRecieveInterface callback4geofireFinishRecieve;
+    public interface  geofireFinishRecieveInterface {
+        void callback();
     }
 
 }

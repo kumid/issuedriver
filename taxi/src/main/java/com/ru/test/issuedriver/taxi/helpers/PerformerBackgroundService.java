@@ -66,7 +66,7 @@ public class PerformerBackgroundService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
+        geofireHelper.init(null);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         database = FirebaseDatabase.getInstance();
@@ -213,31 +213,11 @@ public class PerformerBackgroundService extends Service {
 //        }
 //        counter = 1;
         try {
-
-//            mysettings.Init(getApplicationContext());
-//            user user = mysettings.GetUser();
-//            if(user == null)
-//                return;
-//
-//            user_position pos = new user_position(userLocation.getLatitude(), userLocation.getLongitude(), (new Date()).getTime());
-//            // Write a pos to the database
-//            FirebaseDatabase database = FirebaseDatabase.getInstance();
-//            DatabaseReference myRef = database.getReference();
-//            myRef.child("positions").child(user.UUID).setValue(pos)
-//                .addOnSuccessListener(new OnSuccessListener<Void>() {
-//                        @Override
-//                        public void onSuccess(Void aVoid) {
-//                            // Write was successful!
-//                            sendMyBroadcastMessage(null, 1);
-//                        }
-//                    })
-//                    .addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception e) {
-//                            // Write failed
-//                            Log.e(TAG, "Error");
-//                        }
-//                    });
+            mysettings.Init(getApplicationContext());
+            user user = mysettings.GetUser();
+            if(user != null){
+                //geofireHelper.setLocation(user.UUID, userLocation.getLatitude(), userLocation.getLongitude());
+            }
 
             DocumentReference locationRef = FirebaseFirestore.getInstance()
                     .collection("users")

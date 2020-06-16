@@ -11,6 +11,11 @@
     <item
         android:id="@+id/action_state"
         android:icon="@drawable/online"
-        android:title="@string/action_send"
+        android:title="@string/action_state"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_isonline"
+        android:icon="@drawable/online_no_server"
+        android:title="@string/action_isonline"
         app:showAsAction="always"/>
 </menu>

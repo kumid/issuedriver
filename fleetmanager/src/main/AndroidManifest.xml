@@ -9,6 +9,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <application
         android:allowBackup="true"
@@ -56,6 +57,7 @@
 
         <service
             android:name=".helpers.PerformerBackgroundService"
+            android:foregroundServiceType="location"
             android:stopWithTask="false" />
 
         <activity
@@ -63,13 +65,14 @@
             android:label="@string/app_name" />
         <activity android:name=".performer.ui.orderPerforming.OrderPerformingActivity" />
 
-        <receiver
-            android:name=".helpers.MyBroadcastReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.ru.test.issuedriver.performer.ui.order.MY_NOTIFICATION" />
-            </intent-filter>
-        </receiver>
+<!--        <receiver-->
+<!--            android:name=".helpers.MyBroadcastReceiver"-->
+<!--            android:exported="true">-->
+<!--            <intent-filter>-->
+<!--                <action android:name="com.ru.test.issuedriver.performer.ui.order.MY_NOTIFICATION" />-->
+<!--            </intent-filter>-->
+<!--        </receiver>-->
+
     </application>
 
 </manifest>

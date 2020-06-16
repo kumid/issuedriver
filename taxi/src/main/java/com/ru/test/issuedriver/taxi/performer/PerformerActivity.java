@@ -34,6 +34,7 @@ import com.ru.test.issuedriver.taxi.data.user;
 import com.ru.test.issuedriver.taxi.helpers.PerformerBackgroundService;
 import com.ru.test.issuedriver.taxi.helpers.callBacks;
 import com.ru.test.issuedriver.taxi.helpers.firestoreHelper;
+import com.ru.test.issuedriver.taxi.helpers.geofireHelper;
 import com.ru.test.issuedriver.taxi.helpers.googleAuthManager;
 import com.ru.test.issuedriver.taxi.performer.ui.feedback.FeedbackActivity;
 import com.ru.test.issuedriver.taxi.performer.ui.orderPerforming.OrderPerformingActivity;
@@ -79,6 +80,7 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
         setupNavigation();
 
         initViewModels();
+        geofireHelper.init(null);
        // setDefaultUserState();
 
 //        if(getIntent().hasExtra("object")){

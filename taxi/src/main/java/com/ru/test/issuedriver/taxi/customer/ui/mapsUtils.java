@@ -13,6 +13,7 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -25,6 +26,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.firestore.GeoPoint;
 import com.ru.test.issuedriver.taxi.R;
 import com.ru.test.issuedriver.taxi.customer.CustomerActivity;
 import com.ru.test.issuedriver.taxi.customer.ui.map.MapViewModel;
@@ -33,10 +35,13 @@ import com.ru.test.issuedriver.taxi.customer.ui.order.OrderActivity;
 import com.ru.test.issuedriver.taxi.customer.ui.orders_list.OrdersListViewModel;
 import com.ru.test.issuedriver.taxi.data.place;
 import com.ru.test.issuedriver.taxi.data.user;
+import com.ru.test.issuedriver.taxi.helpers.callBacks;
 import com.ru.test.issuedriver.taxi.helpers.firestoreHelper;
+import com.ru.test.issuedriver.taxi.helpers.geofireHelper;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,6 +109,7 @@ public class mapsUtils {
             @Override
             public void onMapReady(GoogleMap mMap) {
                 googleMap = mMap;
+                geofireHelper.init(googleMap);
 
                 placesUtils.Init(mapActivity, googleMap, true);
 
@@ -121,14 +127,15 @@ public class mapsUtils {
                 imHere.myPositionChanged = new imHere.OnMyPositionChanged() {
                     @Override
                     public void callBack(Location location) {
-                        setMyPosition(location);
                         googleMap.setMinZoomPreference(5f);
                         googleMap.setMyLocationEnabled(true);
+                        setMyPosition(location);
+                        mapViewModel.getCarAround(location);
                     }
                 };
                 imHere.init(mapActivity);
 
-                observe2performers();
+//                observe2performers();
 
 //                View locationButton = ((View) mMapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
 //                RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
@@ -201,8 +208,41 @@ public class mapsUtils {
         }
     }
 
+    private static Map<String, GeoLocation> mapGeohash = new HashMap<>();
 
     private static void observe2performers() {
+
+        callBacks.callback4geofireItemRecieve = new callBacks.geofireItemRecieveInterface() {
+            @Override
+            public void callback(String key, GeoLocation location) {
+                mapGeohash.put(key, location);
+//                for (user item : mapViewModel.getUsers().getValue()) {
+////                    item.position = new GeoPoint(location.latitude, location.longitude);
+//                    mapGeohash.put(key, location);
+//
+//                }
+            }
+        };
+
+
+        callBacks.callback4geofireFinishRecieve= new callBacks.geofireFinishRecieveInterface() {
+            @Override
+            public void callback() {
+                GeoLocation tmp;
+                for(user item: mapViewModel.getUsers().getValue()) {
+                    tmp = mapGeohash.get(item.UUID);
+                    if (mapGeohash.containsKey(item.UUID)) {
+                        item.position = new GeoPoint(tmp.latitude, tmp.longitude);
+                        setUserMarker(item, new GeoPoint(tmp.latitude, tmp.longitude));
+                    }
+                }
+             }
+        };
+
+
+        if(1==1)
+            return;
+
         mapViewModel.getUsers().observe(mapActivity, new Observer<List<user>>() {
             @Override
             public void onChanged(List<user> users) {
@@ -211,7 +251,7 @@ public class mapsUtils {
                     if (item.position == null)
                         continue;
 
-                    setUserMarker(item);
+                    setUserMarker(item, null);
                 }
                 // проверяем актуальность Водителей
                 if(markerMap.size() != 0) {
@@ -238,8 +278,9 @@ public class mapsUtils {
         });
     }
 
+
     // Визуализация маркеров машин
-    private static void setUserMarker(user item) {
+    private static void setUserMarker(user item, GeoPoint pos) {
         if (markerMap.containsKey(item.email)) {
             // если маркер пользователя есть на карте
             if(zoomLevel <= dotZoomLevel){
@@ -275,7 +316,7 @@ public class mapsUtils {
         }
         else {
             // создать новый маркер
-            setPerformerPosition(item);
+            setPerformerPosition(item, pos);
         }
     }
 
@@ -373,9 +414,9 @@ public class mapsUtils {
         return getBitmapDescriptor(carId, size, size);
     }
 
-    private static void setPerformerPosition(user item) {
-        if (googleMap == null
-                || item.position == null) {
+    private static void setPerformerPosition(user item, GeoPoint pos) {
+        if (googleMap == null){
+//                || item.position == null) {
             return;
         }
 
@@ -386,19 +427,11 @@ public class mapsUtils {
         BitmapDescriptor car = getBitmapDescriptor(item);
         markerBus.icon(car);
 
-        //        markerBus.icon(BitmapDescriptorFactory
-//                .fromResource(car)); //).defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
-
         // adding marker
         Marker BusMarker = googleMap.addMarker(markerBus);
 
         markerMap.put(item.email, new markerPair(markerBus, BusMarker, item));
 
-//        CameraPosition cameraPosition = new CameraPosition.Builder()
-//                .target(new LatLng(Double.parseDouble("45.058403"), Double.parseDouble("38.983933"))).zoom(15).build();
-////               .target(new LatLng(item.position.getLatitude(), item.position.getLongitude())).zoom(15).build();
-//        googleMap.animateCamera(CameraUpdateFactory
-//                .newCameraPosition(cameraPosition));
         Log.e("MapsLog", "googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));");
 
     }
@@ -460,7 +493,6 @@ public class mapsUtils {
             }
         });
     }
-
 
     public static boolean onMarkerClick(Marker marker, place fromPlace, place toPlace) {
         if(!isDriversClickable)

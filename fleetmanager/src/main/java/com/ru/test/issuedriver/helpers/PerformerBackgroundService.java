@@ -170,12 +170,13 @@ public class PerformerBackgroundService extends Service {
                             if(lastLocation == null) {
 //                                Log.d(TAG, "onLocationResult: lastLocation == null");
                                 lastLocation = location;
-                                saveUserLocation(geoPoint);
+                                saveUserLocation(geoPoint, location);
                             } else {
-                                sendMyBroadcastMessage(location, 2);
                                 if (lastLocation.distanceTo(location) > 50) {
-                                    saveUserLocation(geoPoint);
+                                    saveUserLocation(geoPoint, location);
                                     lastLocation = location;
+                                } else {
+                                    sendMyBroadcastMessage(null, 1);
                                 }
                             }
                             //                            User user = ((UserClient)(getApplicationContext())).getUser();
@@ -203,6 +204,7 @@ public class PerformerBackgroundService extends Service {
                     intent.putExtra("online", true);
                 break;
             default:
+                intent.putExtra("online", true);
                 intent.putExtra("data", location);
                 break;
         }
@@ -212,7 +214,7 @@ public class PerformerBackgroundService extends Service {
 //        Log.d(TAG, "sendMyBroadcastMessage: sended");
     }
 
-    private void saveUserLocation(final GeoPoint userLocation){
+    private void saveUserLocation(final GeoPoint userLocation, Location location){
 //        if(0 != counter%5)
 //        {
 //            counter++;
@@ -220,7 +222,7 @@ public class PerformerBackgroundService extends Service {
 //        }
 //        counter = 1;
         try {
-
+            sendMyBroadcastMessage(null, 1);
 //            mysettings.Init(getApplicationContext());
 //            user user = mysettings.GetUser();
 //            if(user == null)
@@ -258,7 +260,9 @@ public class PerformerBackgroundService extends Service {
                         Log.d(TAG, "onComplete: \ninserted user location into database." +
                                 "\n latitude: " + userLocation.getLatitude() +
                                 "\n longitude: " + userLocation.getLongitude());
-                        sendMyBroadcastMessage(null, 1);
+                        sendMyBroadcastMessage(location, 2);
+                    } else {
+
                     }
                 }
             });
