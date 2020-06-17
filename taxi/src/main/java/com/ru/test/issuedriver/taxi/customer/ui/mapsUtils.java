@@ -6,6 +6,7 @@ import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
@@ -135,7 +136,7 @@ public class mapsUtils {
                 };
                 imHere.init(mapActivity);
 
-//                observe2performers();
+                observe2performers();
 
 //                View locationButton = ((View) mMapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
 //                RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
@@ -215,29 +216,45 @@ public class mapsUtils {
         callBacks.callback4geofireItemRecieve = new callBacks.geofireItemRecieveInterface() {
             @Override
             public void callback(String key, GeoLocation location) {
-                mapGeohash.put(key, location);
+//                mapGeohash.put(key, location);
 //                for (user item : mapViewModel.getUsers().getValue()) {
 ////                    item.position = new GeoPoint(location.latitude, location.longitude);
 //                    mapGeohash.put(key, location);
 //
 //                }
+//                item.position = new GeoPoint(tmp.latitude, tmp.longitude);
+//                        setUserMarker(item, new GeoPoint(tmp.latitude, tmp.longitude));
+
+
+                for (user item: mapViewModel.getUsers().getValue()) {
+                    if(item.UUID.equals(key)){
+                        Handler mHandler = new Handler(Looper.getMainLooper());
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                setUserMarker(item, new GeoPoint(location.latitude, location.longitude));
+                            }
+                        });
+                    break;
+                    }
+                }
             }
         };
 
 
-        callBacks.callback4geofireFinishRecieve= new callBacks.geofireFinishRecieveInterface() {
-            @Override
-            public void callback() {
-                GeoLocation tmp;
-                for(user item: mapViewModel.getUsers().getValue()) {
-                    tmp = mapGeohash.get(item.UUID);
-                    if (mapGeohash.containsKey(item.UUID)) {
-                        item.position = new GeoPoint(tmp.latitude, tmp.longitude);
-                        setUserMarker(item, new GeoPoint(tmp.latitude, tmp.longitude));
-                    }
-                }
-             }
-        };
+//        callBacks.callback4geofireFinishRecieve= new callBacks.geofireFinishRecieveInterface() {
+//            @Override
+//            public void callback() {
+//                GeoLocation tmp;
+//                for(user item: mapViewModel.getUsers().getValue()) {
+//                    tmp = mapGeohash.get(item.UUID);
+//                    if (mapGeohash.containsKey(item.UUID)) {
+//                        item.position = new GeoPoint(tmp.latitude, tmp.longitude);
+//                        setUserMarker(item, new GeoPoint(tmp.latitude, tmp.longitude));
+//                    }
+//                }
+//             }
+//        };
 
 
         if(1==1)
@@ -306,9 +323,9 @@ public class mapsUtils {
                 markerMap.get(item.email)._user = item;
             } else {
 
-                if (item.position != null) {
+                if (pos != null) {
                     animateMarker(item, markerMap.get(item.email).marker,
-                            new LatLng(item.position.getLatitude(), item.position.getLongitude()),
+                            new LatLng(pos.getLatitude(), pos.getLongitude()),
                             false,
                             mapViewModel.isOrderInActiveState(item.email), true); // order - активный
                 }
@@ -421,7 +438,8 @@ public class mapsUtils {
         }
 
         MarkerOptions markerBus = new MarkerOptions().position(
-                new LatLng(item.position.getLatitude(), item.position.getLongitude()))
+                new LatLng(pos.getLatitude(), pos.getLongitude()))
+                .flat(true)
                 .title(item.fio);
 
         BitmapDescriptor car = getBitmapDescriptor(item);
@@ -451,8 +469,8 @@ public class mapsUtils {
 
         if(isRotation) {
             marker.setAnchor(0.5f, 0.5f);
-            float bearing = getBearing(marker.getPosition(), toPosition);
-            marker.setRotation(bearing);
+            double bearing = getBearing(marker.getPosition(), toPosition);
+            marker.setRotation((float) bearing);
         }
 
         Point startPoint = proj.toScreenLocation(marker.getPosition());
@@ -529,18 +547,24 @@ public class mapsUtils {
         return false;
     }
 
-    private static float getBearing(LatLng begin, LatLng end) {
-        double lat = Math.abs(begin.latitude - end.latitude);
-        double lng = Math.abs(begin.longitude - end.longitude);
+    private static double getBearing(LatLng begin, LatLng end) {
+        double PI = 3.14159;
+        double lat1 = begin.latitude * PI / 180;
+        double long1 = begin.longitude * PI / 180;
+        double lat2 = end.latitude * PI / 180;
+        double long2 = end.longitude * PI / 180;
 
-        if (begin.latitude < end.latitude && begin.longitude < end.longitude)
-            return (float) (Math.toDegrees(Math.atan(lng / lat)));
-        else if (begin.latitude >= end.latitude && begin.longitude < end.longitude)
-            return (float) ((90 - Math.toDegrees(Math.atan(lng / lat))) + 90);
-        else if (begin.latitude >= end.latitude && begin.longitude >= end.longitude)
-            return (float) (Math.toDegrees(Math.atan(lng / lat)) + 180);
-        else if (begin.latitude < end.latitude && begin.longitude >= end.longitude)
-            return (float) ((90 - Math.toDegrees(Math.atan(lng / lat))) + 270);
-        return -1;
+        double dLon = (long2 - long1);
+
+        double y = Math.sin(dLon) * Math.cos(lat2);
+        double x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1)
+                * Math.cos(lat2) * Math.cos(dLon);
+
+        double brng = Math.atan2(y, x);
+
+        brng = Math.toDegrees(brng);
+        brng = (brng + 360) % 360;
+
+        return brng;
     }
 }

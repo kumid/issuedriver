@@ -1,4 +1,4 @@
-<resources>
+﻿<resources>
     <string name="app_name">TAXI</string>
     <string name="title_map">Найти авто</string>
     <string name="title_history">История</string>
@@ -75,4 +75,9 @@
     <string name="select_direction_bottom_sheet_title">Выбор направления</string>
     <string name="select_direction_short">По городу</string>
     <string name="select_direction_far">За город</string>
+
+    <string name="action_state">Состояние</string>
+    <string name="action_isonline">Онлайн</string>
+    <string name="permission_title">Разрешения</string>
+    <string name="permission_describe">Определение геопозиции устройства ВАЖНО для работы приложения</string>
 </resources>

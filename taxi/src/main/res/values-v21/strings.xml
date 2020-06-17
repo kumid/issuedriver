@@ -19,4 +19,6 @@
     <string name="select_direction_bottom_sheet_title">Выбор направления</string>
     <string name="select_direction_short">По городу</string>
     <string name="select_direction_far">За город</string>
+    <string name="permission_title">Разрешения</string>
+    <string name="permission_describe">Определение геопозиции устройства ВАЖНО для работы приложения</string>
 </resources>

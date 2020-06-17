@@ -157,6 +157,7 @@ public class mapsUtils {
                         if (isImgLocationPinUpOn) {
                             mImgLocationPinUp.setVisibility(View.GONE);
                             MarkerOptions markerOptions = new MarkerOptions().position(googleMap.getCameraPosition().target)
+                                    .flat(true)
                                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.pin))
                                     .title("Я");
                             // adding marker
@@ -378,6 +379,7 @@ public class mapsUtils {
 
         MarkerOptions markerBus = new MarkerOptions().position(
                 new LatLng(item.position.getLatitude(), item.position.getLongitude()))
+                .flat(true)
                 .title(item.fio);
 
         BitmapDescriptor car = getBitmapDescriptor(item);
@@ -415,8 +417,10 @@ public class mapsUtils {
 
         if(isRotation) {
             marker.setAnchor(0.5f, 0.5f);
-            float bearing = getBearing(marker.getPosition(), toPosition);
-            marker.setRotation(bearing);
+            double bearing = getBearing(marker.getPosition(), toPosition) - 10;
+            Log.d("bearing", String.valueOf(bearing));
+
+            marker.setRotation((float) bearing);
         }
 
         Point startPoint = proj.toScreenLocation(marker.getPosition());
@@ -491,18 +495,39 @@ public class mapsUtils {
         return false;
     }
 
-    private static float getBearing(LatLng begin, LatLng end) {
-        double lat = Math.abs(begin.latitude - end.latitude);
-        double lng = Math.abs(begin.longitude - end.longitude);
+    private static double getBearing(LatLng begin, LatLng end) {
+//        double lat = Math.abs(begin.latitude - end.latitude);
+//        double lng = Math.abs(begin.longitude - end.longitude);
+//
+//        if (begin.latitude < end.latitude && begin.longitude < end.longitude)
+//            return (float) (Math.toDegrees(Math.atan(lng / lat)));
+//        else if (begin.latitude >= end.latitude && begin.longitude < end.longitude)
+//            return (float) ((90 - Math.toDegrees(Math.atan(lng / lat))) + 90);
+//        else if (begin.latitude >= end.latitude && begin.longitude >= end.longitude)
+//            return (float) (Math.toDegrees(Math.atan(lng / lat)) + 180);
+//        else if (begin.latitude < end.latitude && begin.longitude >= end.longitude)
+//            return (float) ((90 - Math.toDegrees(Math.atan(lng / lat))) + 270);
+//        return -1;
 
-        if (begin.latitude < end.latitude && begin.longitude < end.longitude)
-            return (float) (Math.toDegrees(Math.atan(lng / lat)));
-        else if (begin.latitude >= end.latitude && begin.longitude < end.longitude)
-            return (float) ((90 - Math.toDegrees(Math.atan(lng / lat))) + 90);
-        else if (begin.latitude >= end.latitude && begin.longitude >= end.longitude)
-            return (float) (Math.toDegrees(Math.atan(lng / lat)) + 180);
-        else if (begin.latitude < end.latitude && begin.longitude >= end.longitude)
-            return (float) ((90 - Math.toDegrees(Math.atan(lng / lat))) + 270);
-        return -1;
+        double PI = 3.14159;
+        double lat1 = begin.latitude * PI / 180;
+        double long1 = begin.longitude * PI / 180;
+        double lat2 = end.latitude * PI / 180;
+        double long2 = end.longitude * PI / 180;
+
+        double dLon = (long2 - long1);
+
+        double y = Math.sin(dLon) * Math.cos(lat2);
+        double x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1)
+                * Math.cos(lat2) * Math.cos(dLon);
+
+        double brng = Math.atan2(y, x);
+
+        brng = Math.toDegrees(brng);
+        brng = (brng + 360) % 360;
+
+        return brng;
+
+
     }
 }

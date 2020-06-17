@@ -7,10 +7,13 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.PowerManager;
 import android.util.Log;
 import android.view.Menu;
@@ -22,6 +25,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.ru.test.issuedriver.taxi.MainViewModel;
 import com.ru.test.issuedriver.taxi.MyActivity;
 import com.ru.test.issuedriver.taxi.R;
@@ -31,6 +36,7 @@ import com.ru.test.issuedriver.taxi.customer.ui.orders_list.OrdersListViewModel;
 import com.ru.test.issuedriver.taxi.data.order;
 import com.ru.test.issuedriver.taxi.data.place;
 import com.ru.test.issuedriver.taxi.data.user;
+import com.ru.test.issuedriver.taxi.helpers.MyBroadcastReceiver;
 import com.ru.test.issuedriver.taxi.helpers.PerformerBackgroundService;
 import com.ru.test.issuedriver.taxi.helpers.callBacks;
 import com.ru.test.issuedriver.taxi.helpers.firestoreHelper;
@@ -115,6 +121,7 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
                 dialog.show(getSupportFragmentManager(), null);
             }
         };
+        OnlineStateListen();
     }
 
     private void setupNavigation() {
@@ -208,7 +215,7 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
     private boolean isLocationServiceRunning() {
         ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)){
-            if("com.codingwithmitch.googledirectionstest.services.LocationService".equals(service.service.getClassName())) {
+            if("com.ru.test.issuedriver.helpers.PerformerBackgroundService".equals(service.service.getClassName())) {
                 Log.d("TAG", "isLocationServiceRunning: location service is already running.");
                 return true;
             }
@@ -216,7 +223,7 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
         Log.d("TAG", "isLocationServiceRunning: location service is not running.");
         return false;
     }
-    public static final int PERMISSIONS= 123;
+    public static final int PERMISSIONS= 123, PERMISSIONS10 = 12345;
     //check location permession for Android 5.0/+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public static boolean checkPermissionGeo(final Context context)
@@ -228,8 +235,8 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
                 if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.ACCESS_FINE_LOCATION) ) {
                     AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
                     alertBuilder.setCancelable(true);
-                    alertBuilder.setTitle("Permission necessary");
-                    alertBuilder.setMessage("External storage permission is necessary");
+                    alertBuilder.setTitle(getInstance().getResources().getString(R.string.permission_title));
+                    alertBuilder.setMessage(getInstance().getResources().getString(R.string.permission_describe));
                     alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
                         public void onClick(DialogInterface dialog, int which) {
@@ -242,6 +249,33 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
 
                 } else {
                     ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS);
+
+                }
+                return false;
+            }
+            else {
+                return true;
+            }
+ } else if(currentAPIVersion >= Build.VERSION_CODES.Q)
+        {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.ACCESS_FINE_LOCATION) ) {
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
+                    alertBuilder.setCancelable(true);
+                    alertBuilder.setTitle(getInstance().getResources().getString(R.string.permission_title));
+                    alertBuilder.setMessage(getInstance().getResources().getString(R.string.permission_describe));
+                    alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, PERMISSIONS10);
+
+                        }
+                    });
+                    AlertDialog alert = alertBuilder.create();
+                    alert.show();
+
+                } else {
+                    ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, PERMISSIONS10);
 
                 }
                 return false;
@@ -317,13 +351,14 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
         Log.e(TAG, "");
     }
 
-    MenuItem onlineStateItem;
+    MenuItem onlineStateItem, onlineServerItem;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.emetgency, menu);
         onlineStateItem = menu.findItem(R.id.action_state);
+        onlineServerItem = menu.findItem(R.id.action_isonline);
         setUserStateIcon();
         return true;
 //        return super.onCreateOptionsMenu(menu);
@@ -341,11 +376,31 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
                 UserStateBottonDialog dialog = new UserStateBottonDialog();
                 dialog.show(getSupportFragmentManager(), null);
                 return true;
+case R.id.action_isonline:
+                fixLocationListener();
+                return true;
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
         }
+     
+     }
+private void fixLocationListener() {
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference();
+
+        if(!isLocationServiceRunning()){
+
+        }
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            myRef.child("Errors").child(CurrentUser.UUID).setValue("ACCESS_FINE_LOCATION - DENIED");
+            checkPermissionGeo(this);
+            return;
+        }
+
+        getLastKnownLocation();
     }
 
     @Override
@@ -374,5 +429,85 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
         firestoreHelper.setOrderState(item, 1, item.cancel_reason);
         firestoreHelper.setUserState(item.performer_email, 0);
         //ordersListViewModel.setOrderDelete(item);
+    }
+
+
+
+    private void OnlineStateListen() {
+        registerReceiver();
+//        MyBroadcastReceiver.callback4onlineState = new MyBroadcastReceiver.onlineStateChange() {
+//            @Override
+//            public void callback(boolean state) {
+//                Log.d("TAG", "Online " + state);
+//                Handler handler = new Handler(Looper.getMainLooper());
+//                handler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        onlineServerItem.setIcon(ContextCompat.getDrawable(PerformerActivity.this, state ? R.drawable.server_online : R.drawable.server_offline));
+//                    }
+//                });
+//            }
+//        };
+
+        Runnable runnable = new Runnable() {
+            public void run() {
+                while (true) {
+                    synchronized (this) {
+                        try {
+                            wait(10000);
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    onlineServerItem.setIcon(ContextCompat.getDrawable(PerformerActivity.this,R.drawable.server_offline));
+                                }
+                            });
+
+                        } catch (Exception e) {
+                        }
+                    }
+                }
+            }
+        };
+        Thread thread = new Thread(runnable);
+        thread.start();
+    }
+
+    MyBroadcastReceiver broadcastReceiver;
+    private void registerReceiver() {
+        broadcastReceiver = new MyBroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d(TAG, "BroadcastReceiver: onReceive");
+                Object data = intent.getExtras().get("data");
+                boolean online = intent.getBooleanExtra("online", false);
+
+                onlineServerItem.setIcon(ContextCompat.getDrawable(PerformerActivity.this, online ? R.drawable.online_no_server:R.drawable.server_offline));
+
+                if (data != null) {
+                    Location pos = (Location) data;
+                    if (pos != null
+                            && callback4gpsposition != null) {
+                        Log.d(TAG, "BroadcastReceiver: callback4gpsposition.callback(pos)" + data);
+                        callback4gpsposition.callback(pos);
+                        onlineServerItem.setIcon(ContextCompat.getDrawable(PerformerActivity.this, R.drawable.server_online));
+                    }
+                }
+
+                if (callback4onlineState != null) {
+                    Log.d(TAG, "BroadcastReceiver: callback4onlineState.callback()" + online);
+                    callback4onlineState.callback(online);
+                }
+
+            }
+        };
+        registerReceiver(broadcastReceiver, new IntentFilter("com.ru.test.issuedriver.performer.ui.order.MY_NOTIFICATION"));
+    }
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (broadcastReceiver != null) {
+            unregisterReceiver(broadcastReceiver);
+        }
     }
 }

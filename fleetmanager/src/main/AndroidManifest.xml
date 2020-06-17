@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ru.test.issuedriver">
+<!--    94:7A:9F:BF:E7:BA:2F:D3:3D:A0:D3:6F:60:F4:46:40:36:D1:B4:EA-->
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CALL_PHONE" />

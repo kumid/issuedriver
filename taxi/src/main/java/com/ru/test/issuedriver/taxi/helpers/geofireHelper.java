@@ -1,6 +1,8 @@
 package com.ru.test.issuedriver.taxi.helpers;
 
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.firebase.geofire.GeoFire;
@@ -75,26 +77,26 @@ public class geofireHelper {
         if(!isInit)
             return;
 
-        switch (index){
-            case 1:
-                latitude = 53.597293;
-                longtitude = 34.336765;
-                break;
-            case 2:
-                latitude = 53.596889;
-                longtitude = 34.337670;
-                break;
-            case 3:
-                latitude = 53.595609;
-                longtitude = 34.338947;
-                break;
-            case 4:
-                latitude = 53.594864;
-                longtitude = 34.336404;
-                index = -1;
-                break;
-        }
-        index++;
+//        switch (index){
+//            case 1:
+//                latitude = 53.597293;
+//                longtitude = 34.336765;
+//                break;
+//            case 2:
+//                latitude = 53.596889;
+//                longtitude = 34.337670;
+//                break;
+//            case 3:
+//                latitude = 53.595609;
+//                longtitude = 34.338947;
+//                break;
+//            case 4:
+//                latitude = 53.594864;
+//                longtitude = 34.336404;
+//                index = -1;
+//                break;
+//        }
+//        index++;
 
         geoFire.setLocation(id, new GeoLocation(latitude, longtitude), new GeoFire.CompletionListener() {
             @Override
@@ -125,43 +127,6 @@ public class geofireHelper {
         });
     }
 
-    public static void getLocationsNew(double latitude, double longtitude, double radius){
-
-        geoQuery = geoFire.queryAtLocation(new GeoLocation(latitude, longtitude), radius);
-        geoQuery.removeAllListeners();
-
-        geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
-            @Override
-            public void onKeyEntered(String key, GeoLocation location) {
-                googleMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(latitude, longtitude))
-                            .flat(true)
-                            .title(key)
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.car_icon)));
-                Log.d(TAG, "onDataEntered");
-            }
-
-            @Override
-            public void onKeyExited(String key) {
-
-            }
-
-            @Override
-            public void onKeyMoved(String key, GeoLocation location) {
-
-            }
-
-            @Override
-            public void onGeoQueryReady() {
-                Log.d(TAG, "onDataEntered");
-            }
-
-            @Override
-            public void onGeoQueryError(DatabaseError error) {
-
-            }
-        });
-    }
     public static void getLocations(double latitude, double longtitude, double radius){
         if(!isInit)
             return;
@@ -170,10 +135,6 @@ public class geofireHelper {
 //            geoQuery.removeAllListeners();
 
         geoQuery = geoFire.queryAtLocation(new GeoLocation(latitude, longtitude), radius);
-        geoQuery.addGeoQueryEventListener(geoQueryEventListener);
-
-        if(true)
-            return;
 
         geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
             @Override
@@ -208,41 +169,41 @@ public class geofireHelper {
             }
         });
 
-        geoQuery.addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
-
-            @Override
-            public void onDataEntered(DataSnapshot dataSnapshot, GeoLocation location) {
-                Log.d(TAG, "onDataEntered");
-            }
-
-            @Override
-            public void onDataExited(DataSnapshot dataSnapshot) {
-                Log.d(TAG, "onDataExited");
-            }
-
-            @Override
-            public void onDataMoved(DataSnapshot dataSnapshot, GeoLocation location) {
-                Log.d(TAG, "onDataMoved");
-            }
-
-            @Override
-            public void onDataChanged(DataSnapshot dataSnapshot, GeoLocation location) {
-                Log.d(TAG, "onDataChanged");
-            }
-
-            @Override
-            public void onGeoQueryReady() {
-                Log.d(TAG, "onGeoQueryReady");
-                if(callBacks.callback4geofireFinishRecieve != null)
-                    callBacks.callback4geofireFinishRecieve.callback();
-            }
-
-            @Override
-            public void onGeoQueryError(DatabaseError error) {
-                Log.d(TAG, "onGeoQueryError");
-            }
-
-        });
+//        geoQuery.addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
+//
+//            @Override
+//            public void onDataEntered(DataSnapshot dataSnapshot, GeoLocation location) {
+//                Log.d(TAG, "onDataEntered");
+//            }
+//
+//            @Override
+//            public void onDataExited(DataSnapshot dataSnapshot) {
+//                Log.d(TAG, "onDataExited");
+//            }
+//
+//            @Override
+//            public void onDataMoved(DataSnapshot dataSnapshot, GeoLocation location) {
+//                Log.d(TAG, "onDataMoved");
+//            }
+//
+//            @Override
+//            public void onDataChanged(DataSnapshot dataSnapshot, GeoLocation location) {
+//                Log.d(TAG, "onDataChanged");
+//            }
+//
+//            @Override
+//            public void onGeoQueryReady() {
+//                Log.d(TAG, "onGeoQueryReady");
+//                if(callBacks.callback4geofireFinishRecieve != null)
+//                    callBacks.callback4geofireFinishRecieve.callback();
+//            }
+//
+//            @Override
+//            public void onGeoQueryError(DatabaseError error) {
+//                Log.d(TAG, "onGeoQueryError");
+//            }
+//
+//        });
     }
 
     static class MyTask extends AsyncTask<Void, Void, Void> {
@@ -281,57 +242,6 @@ public class geofireHelper {
             super.onPostExecute(result);
         }
     }
-
-
-
-
-
-    private static final GeoQueryEventListener geoQueryEventListener = new GeoQueryEventListener() {
-
-        @Override
-        public void onKeyEntered(String key, GeoLocation location) {
-            LatLng latLng = new LatLng(location.latitude, location.longitude);
-
-            Marker marker = addMarker(latLng, key);
-
-            //retrieve the user from the database with an async task
-
-
-            //update number of people connected
-//            incTotalUser();
-        }
-
-
-        @Override
-        public void onKeyExited(String key) {
-
-            Marker marker = stringMarkerMap.remove(key);
-            marker.remove();
-            //update number of people connected
-//            decTotalUser();
-        }
-
-
-        @Override
-        public void onKeyMoved(String key, GeoLocation location) {
-
-            Marker marker = stringMarkerMap.get(key);
-            LatLng position = new LatLng(location.latitude, location.longitude);
-            updateMarkerPosition(marker, position);
-//            drawCenteredCircle(position, key);
-        }
-
-        @Override
-        public void onGeoQueryReady() {
-            Log.d(TAG, "onGeoQueryReady: All initial data has been loaded and events have been fired!");
-        }
-
-        @Override
-        public void onGeoQueryError(DatabaseError error) {
-            Log.w(TAG, "onGeoQueryError: There was an error with this query: ", error.toException());
-        }
-    };
-
     private static void updateMarkerPosition(Marker marker, LatLng position) {
         marker.setPosition(position);
         marker.showInfoWindow();

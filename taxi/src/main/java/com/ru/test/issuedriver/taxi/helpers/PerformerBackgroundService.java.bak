@@ -208,7 +208,7 @@ public class PerformerBackgroundService extends Service {
 //        Log.d(TAG, "sendMyBroadcastMessage: sended");
     }
 
-    private void saveUserLocation(final GeoPoint userLocation, Location location){
+    private void saveUserLocation(final GeoPoint userLocation, Location pos){
 //        if(0 != counter%5)
 //        {
 //            counter++;

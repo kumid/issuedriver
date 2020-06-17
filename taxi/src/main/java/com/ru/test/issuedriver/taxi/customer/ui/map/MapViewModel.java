@@ -131,7 +131,7 @@ public class MapViewModel extends ViewModel {
 
     // Получить все машины в радиусе
     public void getCarAround(Location location){
-        geofireHelper.getLocations(location.getLatitude(), location.getLongitude(), 3000.5);
+       geofireHelper.getLocations(location.getLatitude(), location.getLongitude(), 3000.5);
     }
 
 }

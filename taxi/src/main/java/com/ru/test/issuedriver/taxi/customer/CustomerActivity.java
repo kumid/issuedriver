@@ -139,7 +139,7 @@ public class CustomerActivity extends MyActivity implements NavigationView.OnNav
         mMapView.onResume(); // needed to get the map to display immediately
 
         mImgLocationPinUp = findViewById(R.id.imgLocationPinUp);
-//        mapsUtils.Init(this, mMapView, mapViewModel, mImgLocationPinUp);
+        mapsUtils.Init(this, mMapView, mapViewModel, mImgLocationPinUp);
 
         ImageView mMap_plus = findViewById(R.id.map_plus);
         ImageView mMap_minus = findViewById(R.id.map_minus);
@@ -171,7 +171,6 @@ public class CustomerActivity extends MyActivity implements NavigationView.OnNav
             }
         });
 
-        MapInit();
     }
 
 
@@ -328,39 +327,4 @@ public class CustomerActivity extends MyActivity implements NavigationView.OnNav
                 break;
         }
     }
-
-    private static GoogleMap googleMap;
-    private void MapInit() {
-        MapsInitializer.initialize( this);
-
-        try {
-            MapsInitializer.initialize( CustomerActivity.this);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        mMapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap mMap) {
-                googleMap = mMap;
-                geofireHelper.init(googleMap);
-
-                //placesUtils.Init(CustomerActivity.this, googleMap, true);
-
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(53.597336, 34.336790)).zoom(14).build();
-                googleMap.animateCamera(CameraUpdateFactory
-                        .newCameraPosition(cameraPosition));
-
-                googleMap.getUiSettings().setCompassEnabled(false);
-
-                geofireHelper.getLocationsNew(53.597336, 34.336790, 3);
-             }
-        });
-
-
-    }
-
-
 }
