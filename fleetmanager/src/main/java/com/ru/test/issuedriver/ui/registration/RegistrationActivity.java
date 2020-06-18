@@ -1,6 +1,7 @@
 package com.ru.test.issuedriver.ui.registration;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -45,6 +47,7 @@ public class RegistrationActivity extends MyActivity {
     RadioButton mCustomer, mPerformer;
     View mRegistration_performer_groupe, mRegistration_radio_group;
     FirebaseFirestore db;
+    private ActionBar actionBar;
 
     private boolean isFromLogin = false;
 
@@ -87,6 +90,12 @@ public class RegistrationActivity extends MyActivity {
                 mRegistration_performer_groupe.setVisibility(isChecked?View.GONE:View.VISIBLE);
             }
         });
+
+        actionBar = getSupportActionBar();
+        if(actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle("Личный кабинет");
+        }
     }
 
     private void init() {
@@ -247,4 +256,16 @@ public class RegistrationActivity extends MyActivity {
         thread.start();
     }
 
+    /// ActionBar Back button clicked
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                //actionBar.setDisplayHomeAsUpEnabled(false);
+                //Toast.makeText(getApplicationContext(),"Back button clicked", Toast.LENGTH_SHORT).show();
+                break;
+        }
+        return true;
+    }
 }

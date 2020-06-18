@@ -337,7 +337,7 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
 
         if(item.from_position != null){
             place fromPlace = new place(item.from, item.from_position.getLatitude(), item.from_position.getLongitude());
-            intent.putExtra("to_place", fromPlace);
+            intent.putExtra("from_place", fromPlace);
         }
 
         if(item.to_position != null){
@@ -437,20 +437,7 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
 
 
     private void OnlineStateListen() {
-        registerReceiver();
-//        MyBroadcastReceiver.callback4onlineState = new MyBroadcastReceiver.onlineStateChange() {
-//            @Override
-//            public void callback(boolean state) {
-//                Log.d("TAG", "Online " + state);
-//                Handler handler = new Handler(Looper.getMainLooper());
-//                handler.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        onlineServerItem.setIcon(ContextCompat.getDrawable(PerformerActivity.this, state ? R.drawable.server_online : R.drawable.server_offline));
-//                    }
-//                });
-//            }
-//        };
+//        registerReceiver();
 
         Runnable runnable = new Runnable() {
             public void run() {
@@ -474,6 +461,13 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
         };
         Thread thread = new Thread(runnable);
         thread.start();
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver();
     }
 
     MyBroadcastReceiver broadcastReceiver;
@@ -509,8 +503,12 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
     @Override
     protected void onStop() {
         super.onStop();
-        if (broadcastReceiver != null) {
-            unregisterReceiver(broadcastReceiver);
+        try {
+            if (broadcastReceiver != null) {
+                unregisterReceiver(broadcastReceiver);
+            }
+        } catch (Exception ex) {
+            Log.d("TAG", "ERROR ");
         }
     }
 }

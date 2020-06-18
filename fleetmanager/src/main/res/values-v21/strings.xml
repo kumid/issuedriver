@@ -18,4 +18,6 @@
     <string name="cancel_sheet_reason_performer2">Причина 2</string>
     <string name="action_state">Состояние</string>
     <string name="action_isonline">Онлайн</string>
+    <string name="history_item_close_date">Заказ закрыт</string>
+    <string name="navigate">Построить маршрут</string>
 </resources>

@@ -27,6 +27,13 @@ public class SelectDirectionBottonDialog extends BottomSheetDialogFragment imple
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+//        setStyle(BottomSheetDialogFragment.STYLE_NORMAL, R.style.MyBottomSheetDialogTheme);
+    }
+
+    @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         Dialog dialog = super.onCreateDialog(savedInstanceState);

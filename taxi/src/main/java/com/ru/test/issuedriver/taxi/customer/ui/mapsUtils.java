@@ -51,7 +51,7 @@ import androidx.lifecycle.Observer;
 
 public class mapsUtils {
     // показывать маркер в центре экрана
-    private static boolean isImgLocationPinUpOn = false;
+    private static boolean isImgLocationPinUpOn = true;
 
     //
     private static boolean isDriversClickable = false;

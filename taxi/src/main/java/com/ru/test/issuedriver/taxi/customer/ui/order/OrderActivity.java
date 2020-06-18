@@ -30,6 +30,7 @@ import com.google.android.material.textview.MaterialTextView;
 import com.ru.test.issuedriver.taxi.BuildConfig;
 import com.ru.test.issuedriver.taxi.MyActivity;
 import com.ru.test.issuedriver.taxi.R;
+import com.ru.test.issuedriver.taxi.customer.ui.placesUtils;
 import com.ru.test.issuedriver.taxi.data.order;
 import com.ru.test.issuedriver.taxi.helpers.firestoreHelper;
 
@@ -100,6 +101,13 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         orderViewModel.fromPlace = getIntent().getParcelableExtra("from_place");
         orderViewModel.toPlace = getIntent().getParcelableExtra("to_place");
 
+if(orderViewModel.fromPlace != null){
+            try {
+                orderViewModel.fromPlace.address = placesUtils.getAddressFromLocation(orderViewModel.fromPlace.latitude, orderViewModel.fromPlace.longtitude);
+            } catch (Exception ex){
+
+            }
+        }
         orderViewModel.setOrder();
     }
 

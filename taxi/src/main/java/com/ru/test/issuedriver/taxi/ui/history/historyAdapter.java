@@ -43,9 +43,14 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
     @Override
     public void onBindViewHolder(@NonNull VH holder, int position) {
         order item = cards.get(position);
+ SimpleDateFormat sfd;
         if (item.accept_timestamp != null) {
-            SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
             holder.mHistory_item_accept_date.setText(sfd.format(item.accept_timestamp.toDate()));
+        }
+        if (item.end_timestamp != null) {
+            sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            holder.mHistory_item_close_date.setText(sfd.format(item.end_timestamp.toDate()));
         }
         holder.mHistory_item_fio.setText(item.performer_fio);
         holder.mHistory_item_purpose.setText(item.purpose);
@@ -78,7 +83,7 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
 
 
     class VH extends RecyclerView.ViewHolder{
-        TextView mHistory_item_fio, mHistory_item_purpose, mHistory_item_from, mHistory_item_to, mHistory_item_comment, mHistory_time, mHistory_distance, mHistory_fuel, mHistory_item_accept_date, mHistory_item_cancel_reason;
+        TextView mHistory_item_fio, mHistory_item_purpose, mHistory_item_from, mHistory_item_to, mHistory_item_comment, mHistory_time, mHistory_distance, mHistory_fuel, mHistory_item_accept_date, mHistory_item_cancel_reason, mHistory_item_close_date;
         View mHistory_item_extra, mHistory_item_call, mHistory_item_cancel_line, mHistory_item_distance_calc_group;
         Button mHistory_item_btn_status_completed;
         CardView mHistory_item;
@@ -91,6 +96,7 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
             mHistory_item_btn_status_completed = itemView.findViewById(R.id.history_item_btn_status_completed);
             mHistory_item_call  = itemView.findViewById(R.id.history_item_call);
             mHistory_item_accept_date = itemView.findViewById(R.id.history_item_accept_date);
+            mHistory_item_close_date = itemView.findViewById(R.id.history_item_close_date);
             mHistory_item_fio = itemView.findViewById(R.id.history_item_fio);
             mHistory_item_purpose = itemView.findViewById(R.id.history_item_purpose);
             mHistory_item_from  = itemView.findViewById(R.id.history_item_from);

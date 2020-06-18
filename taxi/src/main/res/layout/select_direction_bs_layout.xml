@@ -28,7 +28,6 @@
             android:layout_weight="0.5"
             android:layout_height="50dp"
             app:cardElevation="2dp"
-            app:cardBackgroundColor="@android:color/holo_green_light"
             android:layout_margin="10dp"
             app:cardCornerRadius="10dp"
             >
@@ -36,8 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Inverse"
-                android:textColor="@android:color/white"
+                android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
                 android:text="@string/select_direction_short"
                 android:layout_margin="5dp" />
         </androidx.cardview.widget.CardView>
@@ -48,7 +46,6 @@
             android:layout_weight="0.5"
             android:layout_height="50dp"
             app:cardElevation="2dp"
-            app:cardBackgroundColor="#FF0000"
             android:layout_marginVertical="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
@@ -58,8 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button.Inverse"
-                android:textColor="@android:color/white"
+                android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
                 android:text="@string/select_direction_far"/>
         </androidx.cardview.widget.CardView>
 

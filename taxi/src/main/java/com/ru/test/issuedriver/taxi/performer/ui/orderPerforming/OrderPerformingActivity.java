@@ -32,6 +32,8 @@ import java.util.Calendar;
 import androidx.appcompat.app.ActionBar;
 import androidx.lifecycle.ViewModelProviders;
 
+import static com.ru.test.issuedriver.taxi.helpers.callBacks.callback4goToNavigate;
+
 public class OrderPerformingActivity extends MyActivity implements View.OnClickListener, OrderCloseBottonDialog.BottomSheetListener {
 
     private static final String TAG = "myLogs";
@@ -39,7 +41,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
 
     TextInputEditText mOrder_name, mOrder_from, mOrder_to, mOrder_purpose, mOrder_comment, mOrder_car, mOrder_carnumber;
     TextView currentDateTime, order_distance, order_log;
-    Button mOrder_btn;
+    Button mOrder_btn, mOrder_navigation;
     ProgressBar mProgress_circular;
     Calendar dateAndTime=Calendar.getInstance();
     Chronometer mOrder_chronometr;
@@ -99,6 +101,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
         mOrder_purpose = findViewById(R.id.order_purpose);
         mOrder_comment = findViewById(R.id.order_comment);
         mOrder_btn = findViewById(R.id.order_btn);
+        mOrder_navigation = findViewById(R.id.order_navigation);
         mProgress_circular = findViewById(R.id.progress_circular);
         mOrder_car = findViewById(R.id.order_car);
         mOrder_carnumber = findViewById(R.id.order_carnumber);
@@ -118,6 +121,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
         mOrder_comment.setText(orderViewModel.comment);
 
         mOrder_btn.setOnClickListener(this);
+        mOrder_navigation.setOnClickListener(this);
         //currentDateTime.setOnClickListener(this);
 
         mOrder_chronometr.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
@@ -198,12 +202,18 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-//        if(v.getId() == R.id.order_data){
-//            setDate(v);
-//            return;
-//        }
-        OrderCloseBottonDialog dialog = new OrderCloseBottonDialog(mOrder_chronometr.getText().toString(), distanse);
-        dialog.show(getSupportFragmentManager(), null);
+    switch (v.getId()) {
+            case R.id.order_btn:
+                OrderCloseBottonDialog dialog = new OrderCloseBottonDialog(mOrder_chronometr.getText().toString(), distanse);
+                dialog.show(getSupportFragmentManager(), null);
+                break;
+
+            case R.id.order_navigation:
+                if(callback4goToNavigate != null)
+                    callback4goToNavigate.callback(orderViewModel.getCurrentOrder());
+                break;
+        }
+
     }
 
 

@@ -305,7 +305,7 @@
                         android:textColor="@android:color/white"
                         android:textSize="18sp"
                         android:textStyle="bold"
-                        android:text="Построить маршрут"/>
+                        android:text="@string/navigate"/>
 
                     <ImageView
                         android:id="@+id/notification_item_call"

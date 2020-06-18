@@ -78,6 +78,6 @@
 
     <string name="action_state">Состояние</string>
     <string name="action_isonline">Онлайн</string>
-    <string name="permission_title">Разрешения</string>
-    <string name="permission_describe">Определение геопозиции устройства ВАЖНО для работы приложения</string>
+  <string name="history_item_close_date">Заказ закрыт</string>
+    <string name="navigate">Построить маршрут</string>
 </resources>

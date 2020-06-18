@@ -335,7 +335,7 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
 
         if(item.from_position != null){
             place fromPlace = new place(item.from, item.from_position.getLatitude(), item.from_position.getLongitude());
-            intent.putExtra("to_place", fromPlace);
+            intent.putExtra("from_place", fromPlace);
         }
 
         if(item.to_position != null){
@@ -434,7 +434,7 @@ private void fixLocationListener() {
 
 
     private void OnlineStateListen() {
-        registerReceiver();
+//        registerReceiver();
 //        MyBroadcastReceiver.callback4onlineState = new MyBroadcastReceiver.onlineStateChange() {
 //            @Override
 //            public void callback(boolean state) {
@@ -473,6 +473,13 @@ private void fixLocationListener() {
         thread.start();
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerReceiver();
+    }
+
     MyBroadcastReceiver broadcastReceiver;
     private void registerReceiver() {
         broadcastReceiver = new MyBroadcastReceiver() {
@@ -506,8 +513,12 @@ private void fixLocationListener() {
     @Override
     protected void onStop() {
         super.onStop();
-        if (broadcastReceiver != null) {
-            unregisterReceiver(broadcastReceiver);
+    try {
+            if (broadcastReceiver != null) {
+                unregisterReceiver(broadcastReceiver);
+            }
+        } catch (Exception ex) {
+            Log.d("TAG", "ERROR ");
         }
     }
 }

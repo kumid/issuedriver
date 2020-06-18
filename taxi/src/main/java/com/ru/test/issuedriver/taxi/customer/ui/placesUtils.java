@@ -188,8 +188,9 @@ public class placesUtils {
             if (addresses.size() > 0) {
                 Address fetchedAddress = addresses.get(0);
                 StringBuilder strAddress = new StringBuilder();
-                if(fetchedAddress.getMaxAddressLineIndex() == 0)
-                    return fetchedAddress.getAddressLine(0);
+if(fetchedAddress.getMaxAddressLineIndex() == 0) {
+                    return String.format("%s, %s", fetchedAddress.getThoroughfare(), fetchedAddress.getFeatureName()); // fetchedAddress.getAddressLine(0);
+                }
                 for (int i = 0; i < fetchedAddress.getMaxAddressLineIndex(); i++) {
                     strAddress.append(fetchedAddress.getAddressLine(i)).append(" ");
                 }

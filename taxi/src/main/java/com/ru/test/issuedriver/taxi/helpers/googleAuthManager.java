@@ -148,6 +148,20 @@ public class googleAuthManager {
     // [END signin]
 
     public static void signOut() {
+if(mGoogleSignInClient != null) {
+            // Google sign out
+            mGoogleSignInClient.signOut().addOnCompleteListener(activity,
+                    new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            // Firebase sign out
+                            if (callback4signout != null)
+                                callback4signout.callback();
+//                        updateUI(null);
+                        }
+                    });
+        }
+
         if(mAuth == null) {
             if(callback4signout != null)
                 callback4signout.callback();
@@ -155,23 +169,12 @@ public class googleAuthManager {
         }
 
         mAuth.signOut();
-        // Google sign out
-        mGoogleSignInClient.signOut().addOnCompleteListener(activity,
-                new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        // Firebase sign out
-                        if(callback4signout != null)
-                            callback4signout.callback();
-//                        updateUI(null);
-                    }
-                });
+
     }
 
     public static void revokeAccess() {
         // Firebase sign out
         mAuth.signOut();
-
         // Google revoke access
         mGoogleSignInClient.revokeAccess().addOnCompleteListener(activity,
                 new OnCompleteListener<Void>() {
