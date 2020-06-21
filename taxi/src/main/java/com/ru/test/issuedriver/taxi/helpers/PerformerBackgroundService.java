@@ -234,7 +234,7 @@ public class PerformerBackgroundService extends Service {
                         Log.d(TAG, "onComplete: \ninserted user location into database." +
                                 "\n latitude: " + userLocation.getLatitude() +
                                 "\n longitude: " + userLocation.getLongitude());
-                        sendMyBroadcastMessage(null, 1);
+                        sendMyBroadcastMessage(location, 2);
                     }
                 }
             });

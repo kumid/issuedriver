@@ -129,6 +129,7 @@ public class RegistrationActivity extends MyActivity {
 
 
     private void addUser() {
+
         final user current =
                 new user(mFio.getText().toString(),
                         mStaff.getText().toString(),
@@ -143,6 +144,8 @@ public class RegistrationActivity extends MyActivity {
                 );
         if(currentUser != null)
             current.UUID = currentUser.UUID;
+
+        current.fcmToken = mysettings.GetFCMToken().getToken();
 
         db.collection("users").document(mEmail.getText().toString()).set(current)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {

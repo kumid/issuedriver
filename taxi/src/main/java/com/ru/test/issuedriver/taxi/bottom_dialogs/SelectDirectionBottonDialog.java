@@ -71,23 +71,29 @@ public class SelectDirectionBottonDialog extends BottomSheetDialogFragment imple
 
     @Override
     public void onClick(View v) {
-        int res =  0;
+        DirectionMode res =  DirectionMode.NONE;
         switch (v.getId()){
             case R.id.select_direction_short:
-                res = 0;
+                res = DirectionMode.SHORT;
                 break;
             case R.id.select_direction_far:
-                res = 1;
+                res =  DirectionMode.FAR;
                 break;
             default:
                 break;
         }
-         mListener.onButtonClicked(res);
+        mListener.onButtonClicked(res);
         dismiss();
     }
 
+    public static enum DirectionMode {
+        NONE,
+        SHORT,
+        FAR
+    }
+
     public interface BottomSheetListener{
-        void onButtonClicked(int id);
+        void onButtonClicked(DirectionMode id);
     }
 
     @Override

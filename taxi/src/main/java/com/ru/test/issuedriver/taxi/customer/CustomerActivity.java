@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,16 +16,10 @@ import android.view.View;
 import android.widget.ImageView;
 
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
@@ -41,11 +34,12 @@ import com.ru.test.issuedriver.taxi.customer.ui.map.imHere;
 import com.ru.test.issuedriver.taxi.customer.ui.map.placesAdapter;
 import com.ru.test.issuedriver.taxi.customer.ui.mapsUtils;
 import com.ru.test.issuedriver.taxi.customer.ui.orders_list.OrdersListViewModel;
-import com.ru.test.issuedriver.taxi.customer.ui.placesUtils;
+import com.ru.test.issuedriver.taxi.data.Pickup;
 import com.ru.test.issuedriver.taxi.data.order;
 import com.ru.test.issuedriver.taxi.data.place;
-import com.ru.test.issuedriver.taxi.helpers.geofireHelper;
 import com.ru.test.issuedriver.taxi.helpers.googleAuthManager;
+import com.ru.test.issuedriver.taxi.helpers.PickupHelper;
+import com.ru.test.issuedriver.taxi.helpers.mysettings;
 import com.ru.test.issuedriver.taxi.ui.history.HistoryActivity;
 import com.ru.test.issuedriver.taxi.ui.orders.OrdersListActivity;
 import com.ru.test.issuedriver.taxi.ui.registration.RegistrationActivity;
@@ -133,6 +127,7 @@ public class CustomerActivity extends MyActivity implements NavigationView.OnNav
         });
 
         initViewModels();
+        PickupHelper.init();
 
         mMapView = (MapView) findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
@@ -313,13 +308,21 @@ public class CustomerActivity extends MyActivity implements NavigationView.OnNav
     }
 
     @Override
-    public void onButtonClicked(int id) {
-        switch (id){
-            case 0:
+    public void onButtonClicked(SelectDirectionBottonDialog.DirectionMode mode) {
+        switch (mode){
+            case SHORT:
+                PickupHelper.init();
+                Pickup curr = new Pickup();
+                curr.setToken(mysettings.GetFCMToken());
+                curr.setLastLocation( new LatLng(imHere.getLat(), imHere.getLong()));
 
+//                if(mainViewModel.currentPlace != null) {
+//
+//                }
+                PickupHelper.sendRequest(curr, mapViewModel.getUsers().getValue());
                 break;
 
-            case 1:
+            case FAR:
 
                 break;
 

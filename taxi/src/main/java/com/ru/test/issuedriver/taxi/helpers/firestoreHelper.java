@@ -10,8 +10,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.ru.test.issuedriver.taxi.data.Pickup;
 import com.ru.test.issuedriver.taxi.data.order;
 
 import org.joda.time.DateTime;
@@ -159,4 +161,31 @@ public class firestoreHelper {
 
     }
 
+    public static void creteOrder(Pickup pickup) {
+        order currentOrder = new order();
+        currentOrder.accept = true;
+        currentOrder.from_position = new GeoPoint(pickup.getLastLocation().latitude, pickup.getLastLocation().longitude);
+        currentOrder.customer_uuid = mysettings.GetUUID();
+        currentOrder.customer_email = mysettings.GetEmail();
+        currentOrder.performer_uuid = pickup.getUUID();
+        currentOrder.performer_email = pickup.getEmail();
+
+        db.collection("orders").document().set(currentOrder)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.w("TAG", "OK");
+//                         if(orderSendCompleteCalback!=null)
+//                            orderSendCompleteCalback.callback(true);
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                         Log.w("TAG", "Error writing document", e);
+//                        if(orderSendCompleteCalback!=null)
+//                            orderSendCompleteCalback.callback(false);
+                    }
+                });
+    }
 }

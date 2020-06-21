@@ -213,7 +213,6 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
                     callback4goToNavigate.callback(orderViewModel.getCurrentOrder());
                 break;
         }
-
     }
 
 

@@ -43,4 +43,38 @@ public class sender {
         payload.add("data", data);
         return payload;
     }
+
+
+    public static void send(String reciever, String title, String body){
+        JsonObject payload = buildNotificationPayload(reciever, title, body);
+        // send notification to receiver ID
+        ApiClient.getApiService().sendNotification(payload).enqueue(
+                new Callback<JsonObject>() {
+                    @Override
+                    public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
+                        if (response.isSuccessful()) {
+//                            Toast.makeText(MainActivity.this, "Notification send successful",
+//                                    Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override public void onFailure(Call<JsonObject> call, Throwable t) {
+
+                    }
+                });
+    }
+
+    private static JsonObject buildNotificationPayload(String reciever, String title, String body) {
+        JsonObject payload = new JsonObject();
+
+        payload.addProperty("to", reciever);
+        // compose data payload here
+        JsonObject data = new JsonObject();
+        data.addProperty("title", title);
+        data.addProperty("message", body);
+        data.addProperty("0", "0");
+        // add data payload
+        payload.add("data", data);
+        return payload;
+    }
 }

@@ -17,6 +17,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.ru.test.issuedriver.taxi.BuildConfig;
 import com.ru.test.issuedriver.taxi.R;
+import com.ru.test.issuedriver.taxi.data.user;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

@@ -80,4 +80,5 @@
     <string name="action_isonline">Онлайн</string>
   <string name="history_item_close_date">Заказ закрыт</string>
     <string name="navigate">Построить маршрут</string>
+    <string name="order_cancel">Отменить</string>
 </resources>

@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.google.gson.Gson;
 import com.ru.test.issuedriver.taxi.data.user;
+import com.ru.test.issuedriver.taxi.rider.Token;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,6 +21,7 @@ public class mysettings {
     public static final String APP_PREFERENCES_PASS = "pass";
 
     public static  final String APP_PREFERENCES_USER = "user";
+    public static  final String APP_PREFERENCES_TOKEN = "token";
 
     public static final String APP_PREFERENCES_POSITION = "position";
 
@@ -93,6 +95,7 @@ public class mysettings {
     }
 
     public static void SetUser(user currnt) {
+        currnt.fcmToken = GetFCMToken().getToken();
         Gson gson = new Gson();
         String json = gson.toJson(currnt);
         SharedPreferences.Editor editor = instance.edit();
@@ -117,5 +120,38 @@ public class mysettings {
             }
         }
         return null;
+    }
+
+    public static void SetFCMToken(Token token) {
+        Gson gson = new Gson();
+        String json = gson.toJson(token);
+        SharedPreferences.Editor editor = instance.edit();
+        editor.putString(mysettings.APP_PREFERENCES_TOKEN, json);
+        editor.apply();
+    }
+    public static Token GetFCMToken() {
+        if(instance.contains(APP_PREFERENCES_TOKEN)){
+            String json = instance.getString(APP_PREFERENCES_TOKEN, "");
+            if(json.length() == 0)
+                return null;
+            Gson gson = new Gson();
+            try {
+                Token current = gson.fromJson(json, Token.class);
+                return current;
+            }
+            catch (Exception ex){
+                Log.e("myLogs", "Error settings - user convert");
+                return null;
+            }
+        }
+        return null;
+    }
+
+    public static String GetUUID() {
+        try{
+            return GetUser().UUID;
+        } catch (Exception ex){
+            return "";
+        }
     }
 }
