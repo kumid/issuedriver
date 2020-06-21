@@ -166,6 +166,35 @@ private void notifycateIt(order curr, DocumentSnapshot snapshot) {
                 });
 
     }
+
+    public void setOrderStartPerforming(final order item) {
+        if(item.start_timestamp != null){
+            if(callBacks.callback4StartOrderPerforming!=null)
+                callBacks.callback4StartOrderPerforming.callback(true);
+            return;
+        }
+
+        DocumentReference orderRef = db.collection("orders").document(item.id);
+        orderRef.update("start_timestamp", FieldValue.serverTimestamp())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        if(callBacks.callback4StartOrderPerforming!=null)
+                            callBacks.callback4StartOrderPerforming.callback(true);
+                        Log.d("TAG", "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        if(callBacks.callback4StartOrderPerforming!=null)
+                            callBacks.callback4StartOrderPerforming.callback(false);
+                        Log.w("TAG", "Error updating document", e);
+                    }
+                });
+
+    }
+
     public void setOrderDelete(order item) {
         DocumentReference orderRef = db.collection("orders").document(item.id);
         orderRef.delete()

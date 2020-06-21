@@ -85,23 +85,37 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
     }
 
     private void initExtra() {
-        orderViewModel.customer_uuid = CurrentUser.UUID;
-        orderViewModel.customer_fio = CurrentUser.fio;
-        orderViewModel.customer_phone = CurrentUser.tel;
-        orderViewModel.customer_email = CurrentUser.email;
-//        customer_fio = getIntent().getStringExtra("customer_fio");
-//        customer_phone = getIntent().getStringExtra("customer_phone");
-//        customer_email = getIntent().getStringExtra("customer_email");
-        orderViewModel.performer_uuid = getIntent().getStringExtra("performer_uuid");
-        orderViewModel.performer_fio = getIntent().getStringExtra("performer_fio");
-        orderViewModel.performer_phone = getIntent().getStringExtra("performer_phone");
-        orderViewModel.performer_email = getIntent().getStringExtra("performer_email");
-        orderViewModel.performer_car = getIntent().getStringExtra("performer_car");
-        orderViewModel.performer_car_numbr = getIntent().getStringExtra("performer_car_number");
+        order newOrder = new order();
+
+        newOrder.customer_uuid = CurrentUser.UUID;
+        newOrder.customer_fio = CurrentUser.fio;
+        newOrder.customer_phone = CurrentUser.tel;
+        newOrder.customer_email = CurrentUser.email;
+
+        newOrder.performer_uuid = getIntent().getStringExtra("performer_uuid");
+        newOrder.performer_fio = getIntent().getStringExtra("performer_fio");
+        newOrder.performer_phone = getIntent().getStringExtra("performer_phone");
+        newOrder.performer_email = getIntent().getStringExtra("performer_email");
+        newOrder.car = getIntent().getStringExtra("performer_car");
+        newOrder.car_number = getIntent().getStringExtra("performer_car_number");
 
         orderViewModel.fromPlace = getIntent().getParcelableExtra("from_place");
         orderViewModel.toPlace = getIntent().getParcelableExtra("to_place");
 
+//        orderViewModel.customer_uuid = CurrentUser.UUID;
+//        orderViewModel.customer_fio = CurrentUser.fio;
+//        orderViewModel.customer_phone = CurrentUser.tel;
+//        orderViewModel.customer_email = CurrentUser.email;
+//        orderViewModel.performer_uuid = getIntent().getStringExtra("performer_uuid");
+//        orderViewModel.performer_fio = getIntent().getStringExtra("performer_fio");
+//        orderViewModel.performer_phone = getIntent().getStringExtra("performer_phone");
+//        orderViewModel.performer_email = getIntent().getStringExtra("performer_email");
+//        orderViewModel.performer_car = getIntent().getStringExtra("performer_car");
+//        orderViewModel.performer_car_numbr = getIntent().getStringExtra("performer_car_number");
+//
+//        orderViewModel.fromPlace = getIntent().getParcelableExtra("from_place");
+//        orderViewModel.toPlace = getIntent().getParcelableExtra("to_place");
+//
         if(orderViewModel.fromPlace != null){
             try {
                 orderViewModel.fromPlace.address = placesUtils.getAddressFromLocation(orderViewModel.fromPlace.latitude, orderViewModel.fromPlace.longtitude);
@@ -109,8 +123,10 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
 
             }
         }
+//        orderViewModel.setOrder();
 
-        orderViewModel.setOrder();
+        orderViewModel.setOrder(newOrder);
+
     }
 
     private void initViews() {
@@ -148,9 +164,9 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         }
         mOrderTime.setIs24HourView(true);
 
-        mOrder_name.setText(orderViewModel.performer_fio);
-        mOrder_car.setText(orderViewModel.performer_car);
-        mOrder_carnumber.setText(orderViewModel.performer_car_numbr);
+        mOrder_name.setText(orderViewModel.getCurrentOrder().performer_fio);
+        mOrder_car.setText(orderViewModel.getCurrentOrder().car);
+        mOrder_carnumber.setText(orderViewModel.getCurrentOrder().car_number);
 
         if(orderViewModel.fromPlace != null){
             mOrder_from.setText(orderViewModel.fromPlace.address);
@@ -225,14 +241,6 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
             }
         }
     }
-
-
-
-
-
-
-
-
 
     // отображаем диалоговое окно для выбора даты
     public void setDate(View v) {
@@ -344,8 +352,8 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
             public void callback(boolean pass) {
                 if (pass) {
                     showToast("Заявка успешно зарегистрирована", Toast.LENGTH_LONG);
-                    firestoreHelper.setUserBusy(orderViewModel.performer_email, true);
-                    firestoreHelper.setUserRemoveHalfBusy(orderViewModel.performer_uuid);
+                    firestoreHelper.setUserBusy(orderViewModel.getCurrentOrder().performer_email, true);
+                    firestoreHelper.setUserRemoveHalfBusy(orderViewModel.getCurrentOrder().performer_uuid);
                     finish();
                     //mProgress_circular.setVisibility(View.GONE);
                 }

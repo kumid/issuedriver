@@ -20,6 +20,11 @@ public class callBacks {
         void callback(order order);
     }
 
+    public static StartOrderPerformingInterface callback4StartOrderPerforming;
+    public interface  StartOrderPerformingInterface {
+        void callback(boolean success);
+    }
+
     public static DeleteOrderInterface callback4deleteOrder;
     public interface  DeleteOrderInterface {
         void callback(boolean success);

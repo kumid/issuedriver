@@ -319,38 +319,49 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
     }
 
     public void startOrderPerforme(order item) {
-        Intent intent = new Intent(PerformerActivity.this, OrderPerformingActivity.class);
-        intent.putExtra("customer_uuid", item.customer_uuid);
-        intent.putExtra("customer_fio", item.customer_fio);
-        intent.putExtra("customer_phone", item.customer_phone);
-        intent.putExtra("customer_email", item.customer_email);
-        intent.putExtra("performer_uuid", item.performer_uuid);
-        intent.putExtra("performer_fio", item.performer_fio);
-        intent.putExtra("performer_phone", item.performer_phone);
-        intent.putExtra("performer_email", item.performer_email);
-        intent.putExtra("performer_car", item.car);
-        intent.putExtra("performer_car_number", item.car_number);
 
+        callBacks.callback4StartOrderPerforming = new callBacks.StartOrderPerformingInterface() {
+            @Override
+            public void callback(boolean success) {
+                if(!success)
+                    return;
 
-        intent.putExtra("from", item.from);
-        intent.putExtra("to", item.to);
+                Intent intent = new Intent(PerformerActivity.this, OrderPerformingActivity.class);
+                intent.putExtra("order", item);
+//                intent.putExtra("customer_uuid", item.customer_uuid);
+//                intent.putExtra("customer_fio", item.customer_fio);
+//                intent.putExtra("customer_phone", item.customer_phone);
+//                intent.putExtra("customer_email", item.customer_email);
+//                intent.putExtra("performer_uuid", item.performer_uuid);
+//                intent.putExtra("performer_fio", item.performer_fio);
+//                intent.putExtra("performer_phone", item.performer_phone);
+//                intent.putExtra("performer_email", item.performer_email);
+//                intent.putExtra("performer_car", item.car);
+//                intent.putExtra("performer_car_number", item.car_number);
+//                intent.putExtra("from", item.from);
+//                intent.putExtra("to", item.to);
 
-        if(item.from_position != null){
-            place fromPlace = new place(item.from, item.from_position.getLatitude(), item.from_position.getLongitude());
-            intent.putExtra("from_place", fromPlace);
-        }
+                if(item.from_position != null){
+                    place fromPlace = new place(item.from, item.from_position.getLatitude(), item.from_position.getLongitude());
+                    intent.putExtra("from_place", fromPlace);
+                }
 
-        if(item.to_position != null){
-            place curr = new place(item.to, item.to_position.getLatitude(), item.to_position.getLongitude());
-            intent.putExtra("to_place", curr);
-        }
+                if(item.to_position != null){
+                    place curr = new place(item.to, item.to_position.getLatitude(), item.to_position.getLongitude());
+                    intent.putExtra("to_place", curr);
+                }
 
-        intent.putExtra("purpose", item.purpose);
-        intent.putExtra("comment", item.comment);
-        intent.putExtra("order_id", item.id);
+//                intent.putExtra("purpose", item.purpose);
+//                intent.putExtra("comment", item.comment);
+//                intent.putExtra("order_id", item.id);
 
-        startActivity(intent);
-        Log.e(TAG, "");
+                startActivity(intent);
+                Log.e(TAG, "");
+            }
+        };
+
+        ordersListViewModel.setOrderStartPerforming(item);
+
     }
 
     MenuItem onlineStateItem, onlineServerItem;

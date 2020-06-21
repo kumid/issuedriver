@@ -34,45 +34,44 @@ public class OrderViewModel extends ViewModel {
     public order getCurrentOrder() {
         return currentOrder;
     }
-    public String customer_uuid, customer_fio, customer_phone, customer_email,
-                  performer_uuid, performer_fio,  performer_phone, performer_email, performer_car, performer_car_numbr,
-                  order_from, order_to, purpose, comment, orderId;
+//    public String customer_uuid, customer_fio, customer_phone, customer_email,
+//                  performer_uuid, performer_fio,  performer_phone, performer_email, performer_car, performer_car_numbr,
+//                  order_from, order_to, purpose, comment, orderId;
 
-    public void setOrder() {
-        currentOrder.customer_uuid = customer_uuid;
-        currentOrder.customer_fio = customer_fio;
-        currentOrder.customer_phone = customer_phone;
-        currentOrder.customer_email = customer_email;
-        currentOrder.performer_uuid = performer_uuid;
-        currentOrder.performer_fio = performer_fio;
-        currentOrder.performer_phone = performer_phone;
-        currentOrder.performer_email = performer_email;
-        currentOrder.car = performer_car;
-        currentOrder.car_number = performer_car_numbr;
-
-        currentOrder.from = order_from;
-        currentOrder.to = order_to;
-        currentOrder.purpose = purpose;
-        currentOrder.comment = comment;
-        currentOrder.id = orderId;
-
-        if(fromPlace != null) {
-            currentOrder.from = fromPlace.address;
-            currentOrder.from_position = new GeoPoint(fromPlace.latitude, fromPlace.longtitude);
-        }
-
-        if(toPlace != null) {
-            currentOrder.to = toPlace.address;
-            currentOrder.to_position = new GeoPoint(toPlace.latitude, toPlace.longtitude);
-        }
-    }
+//    public void setOrder() {
+//        currentOrder.customer_uuid = customer_uuid;
+//        currentOrder.customer_fio = customer_fio;
+//        currentOrder.customer_phone = customer_phone;
+//        currentOrder.customer_email = customer_email;
+//        currentOrder.performer_uuid = performer_uuid;
+//        currentOrder.performer_fio = performer_fio;
+//        currentOrder.performer_phone = performer_phone;
+//        currentOrder.performer_email = performer_email;
+//        currentOrder.car = performer_car;
+//        currentOrder.car_number = performer_car_numbr;
+//
+//        currentOrder.from = order_from;
+//        currentOrder.to = order_to;
+//        currentOrder.purpose = purpose;
+//        currentOrder.comment = comment;
+//        currentOrder.id = orderId;
+//
+//        if(fromPlace != null) {
+//            currentOrder.from = fromPlace.address;
+//            currentOrder.from_position = new GeoPoint(fromPlace.latitude, fromPlace.longtitude);
+//        }
+//
+//        if(toPlace != null) {
+//            currentOrder.to = toPlace.address;
+//            currentOrder.to_position = new GeoPoint(toPlace.latitude, toPlace.longtitude);
+//        }
+//    }
     public OrderViewModel() {
         db = FirebaseFirestore.getInstance();
         database = FirebaseDatabase.getInstance();
 
         currentOrder = new order();
     }
-
 
     public void sendOrder(){
         db.collection("orders").document().set(currentOrder)
@@ -98,14 +97,24 @@ public class OrderViewModel extends ViewModel {
                 });
     }
 
-
-
     public static orderSendComplete orderSendCompleteCalback;
+
+    public void setOrder(order extra) {
+        currentOrder = extra;
+        if(fromPlace != null) {
+            currentOrder.from = fromPlace.address;
+            currentOrder.from_position = new GeoPoint(fromPlace.latitude, fromPlace.longtitude);
+        }
+
+        if(toPlace != null) {
+            currentOrder.to = toPlace.address;
+            currentOrder.to_position = new GeoPoint(toPlace.latitude, toPlace.longtitude);
+        }
+    }
 
     public interface orderSendComplete{
         void callback(boolean pass);
     }
-
 
     public void setOrderComleted(String orderId, String performer_email, String time, String dist, String fuel) {
         DocumentReference orderRef = db.collection("orders").document(orderId);
@@ -150,7 +159,7 @@ public class OrderViewModel extends ViewModel {
             newPlace.longtitude = currentOrder.to_position.getLongitude();
         }
 
-        myRef.child("places").child(customer_uuid).child(UUID.randomUUID().toString()).setValue(newPlace)
+        myRef.child("places").child(currentOrder.customer_uuid).child(UUID.randomUUID().toString()).setValue(newPlace)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
