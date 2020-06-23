@@ -23,9 +23,11 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.bottom_dialogs.OrderCloseBottonDialog;
+import com.ru.test.issuedriver.customer.CustomerV2Activity;
 import com.ru.test.issuedriver.customer.ui.order.OrderViewModel;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.helpers.MyBroadcastReceiver;
+import com.ru.test.issuedriver.performer.PerformerActivity;
 
 import org.joda.time.DateTime;
 
@@ -46,6 +48,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
     TextInputEditText mOrder_name, mOrder_from, mOrder_to, mOrder_purpose, mOrder_comment, mOrder_car, mOrder_carnumber;
     TextView currentDateTime, order_distance, order_log;
     Button mOrder_btn, mOrder_navigation;
+    View mOrder_performing_call;
     ProgressBar mProgress_circular;
     Calendar dateAndTime=Calendar.getInstance();
     Chronometer mOrder_chronometr;
@@ -109,6 +112,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
         mOrder_comment = findViewById(R.id.order_comment);
         mOrder_btn = findViewById(R.id.order_btn);
         mOrder_navigation = findViewById(R.id.order_navigation);
+        mOrder_performing_call  = findViewById(R.id.order_performing_call);
         mProgress_circular = findViewById(R.id.progress_circular);
         mOrder_car = findViewById(R.id.order_car);
         mOrder_carnumber = findViewById(R.id.order_carnumber);
@@ -129,7 +133,8 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
 
         mOrder_btn.setOnClickListener(this);
         mOrder_navigation.setOnClickListener(this);
-        //currentDateTime.setOnClickListener(this);
+        mOrder_performing_call.setOnClickListener(this);
+         //currentDateTime.setOnClickListener(this);
 
         mOrder_chronometr.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
             @Override
@@ -152,9 +157,11 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
 //            isCountDown = true;
 //            mOrder_chronometr.setCountDown(true);
 //            mOrder_chronometr.setBase(SystemClock.elapsedRealtime() + TIMER_RESTART);
-            DateTime start = new DateTime(orderViewModel.getCurrentOrder().start_timestamp.toDate());
-            int delta = DateTime.now().getSecondOfDay() - start.getSecondOfDay();
-            mOrder_chronometr.setBase(SystemClock.elapsedRealtime() - (delta * 1000 + 0 * 1000));
+            if (orderViewModel.getCurrentOrder().start_timestamp != null) {
+                DateTime start = new DateTime(orderViewModel.getCurrentOrder().start_timestamp.toDate());
+                int delta = DateTime.now().getSecondOfDay() - start.getSecondOfDay();
+                mOrder_chronometr.setBase(SystemClock.elapsedRealtime() - (delta * 1000 + 0 * 1000));
+            }
         }
         else
             mOrder_chronometr.setBase(SystemClock.elapsedRealtime());
@@ -223,8 +230,10 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
                 if(callback4goToNavigate != null)
                     callback4goToNavigate.callback(orderViewModel.getCurrentOrder());
                 break;
+            case R.id.order_performing_call:
+                    PerformerActivity.getInstance().callPhone(orderViewModel.getCurrentOrder().performer_phone);
+                break;
         }
-
     }
 
 
@@ -233,8 +242,9 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                OrderCloseBottonDialog dialog = new OrderCloseBottonDialog(mOrder_chronometr.getText().toString(), distanse);
-                dialog.show(getSupportFragmentManager(), null);
+//                OrderCloseBottonDialog dialog = new OrderCloseBottonDialog(mOrder_chronometr.getText().toString(), distanse);
+//                dialog.show(getSupportFragmentManager(), null);
+                finish();
                 //Toast.makeText(getApplicationContext(),"Back button clicked", Toast.LENGTH_SHORT).show();
                 break;
         }
@@ -364,8 +374,8 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
 
     @Override
     public void onBackPressed() {
-        OrderCloseBottonDialog dialog = new OrderCloseBottonDialog(mOrder_chronometr.getText().toString(), distanse);
-        dialog.show(getSupportFragmentManager(), null);
-//        super.onBackPressed();
+//        OrderCloseBottonDialog dialog = new OrderCloseBottonDialog(mOrder_chronometr.getText().toString(), distanse);
+//        dialog.show(getSupportFragmentManager(), null);
+        super.onBackPressed();
     }
 }

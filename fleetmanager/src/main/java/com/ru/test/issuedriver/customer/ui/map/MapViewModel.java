@@ -129,4 +129,19 @@ public class MapViewModel extends ViewModel {
 
         return false;
     }
+
+    public boolean isPerformerVisibleToCurrentCustomer(user performer){
+        if(performer.state == 0)  // driver is free
+            return true;
+
+        if(performer.state == 2) // driver is in fix(remont)
+            return false;
+
+        if(orders.size() == 0)
+            return false;
+
+        order curr = orders.get(0);
+
+        return curr.performer_email.equals(performer.email);
+    }
 }

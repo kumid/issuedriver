@@ -37,6 +37,7 @@ import com.ru.test.issuedriver.helpers.firestoreHelper;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -205,12 +206,28 @@ public class mapsUtils {
             @Override
             public void onChanged(List<user> users) {
 //                googleMap.clear();
+
+                Map<String, String> cars = new HashMap<>();
+
+
                 for (user item : users) {
                     if (item.position == null)
                         continue;
 
-                    setUserMarker(item);
+                    if(mapViewModel.isPerformerVisibleToCurrentCustomer(item)) {
+                        setUserMarker(item);
+                        cars.put(item.email, "");
+                    }
                 }
+
+                /// remove not liquid cars from map
+                for (String car: markerMap.keySet()) {
+                    if(!cars.containsKey(car)){
+                        markerMap.get(car).marker.remove();
+                        markerMap.remove(car);
+                    }
+                }
+
                 // проверяем актуальность Водителей
                 if(markerMap.size() != 0) {
                     for (Object key :  markerMap.keySet().toArray()) {
@@ -361,7 +378,7 @@ public class mapsUtils {
 
         if(zoomLevel >= carZoomLevel){
             carId = item.is_busy() ? R.drawable.car_red2 : R.drawable.car_yellow1;
-            size = 80;
+            size = 100;
         } else if(zoomLevel >= dotZoomLevel){
             carId = R.drawable.dot;
             size = 25;
@@ -417,7 +434,7 @@ public class mapsUtils {
 
         if(isRotation) {
             marker.setAnchor(0.5f, 0.5f);
-            double bearing = getBearing(marker.getPosition(), toPosition) - 10;
+            double bearing = getBearing(marker.getPosition(), toPosition);
             Log.d("bearing", String.valueOf(bearing));
 
             marker.setRotation((float) bearing);

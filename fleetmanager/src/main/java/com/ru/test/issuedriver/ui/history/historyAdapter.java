@@ -1,9 +1,11 @@
 package com.ru.test.issuedriver.ui.history;
 
+import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ru.test.issuedriver.R;
@@ -13,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,10 +23,11 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
 
     List<order> cards;
     HistoryViewModel viewModel;
-
-    public historyAdapter(HistoryViewModel historyViewModel, List<order> lst){
+    Activity currentActivity ;
+    public historyAdapter(HistoryViewModel historyViewModel, List<order> lst, Activity activity){
         cards = lst;
         viewModel = historyViewModel;
+        currentActivity = activity;
     }
     public void setChangedData(List<order> lst) {
         cards = lst;
@@ -48,6 +52,7 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
         if (item.accept_timestamp != null) {
             sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
             holder.mHistory_item_accept_date.setText(sfd.format(item.accept_timestamp.toDate()));
+            holder.mHistory_item_close_date.setText("");
         }
         if (item.end_timestamp != null) {
             sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
@@ -66,15 +71,23 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
 
         holder.mHistory_item_extra.setVisibility(View.GONE);
 
+        holder.mHistory_item_btn_status_completed.setVisibility(View.GONE);
+
         if (item.state == 0) {
-            holder.mHistory_item_btn_status_completed.setText("Закрыта");
+            holder.mHistory_item_state.setImageDrawable(currentActivity.getResources().getDrawable(R.drawable.green_triangle));
+            holder.mHistory_item_close_state_title.setText(currentActivity.getResources().getString(R.string.history_item_close_date));
+            //            holder.mHistory_item_btn_status_completed.setText("Закрыта");
             holder.mHistory_item_distance_calc_group.setVisibility(View.VISIBLE);
-            holder.mHistory_item_cancel_reason.setVisibility(View.GONE);
-            holder.mHistory_item_cancel_reason.setText("");
+//            holder.mHistory_item_cancel_reason.setVisibility(View.GONE);
+//            holder.mHistory_item_cancel_reason.setText("");
+            holder.mHistory_item_cancel_line.setVisibility(View.GONE);
         } else {
-            holder.mHistory_item_btn_status_completed.setText("Отменена");
+            holder.mHistory_item_state.setImageDrawable(currentActivity.getResources().getDrawable(R.drawable.grey_triangle));
+            holder.mHistory_item_close_state_title.setText(currentActivity.getResources().getString(R.string.history_item_cancel_date));
+//            holder.mHistory_item_btn_status_completed.setText("Отменена");
             holder.mHistory_item_distance_calc_group.setVisibility(View.GONE);
-            holder.mHistory_item_cancel_reason.setVisibility(View.VISIBLE);
+            holder.mHistory_item_cancel_line.setVisibility(View.VISIBLE);
+//            holder.mHistory_item_cancel_reason.setVisibility(View.VISIBLE);
             holder.mHistory_item_cancel_reason.setText(item.cancel_reason);
         }
     }
@@ -85,8 +98,9 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
 
 
     class VH extends RecyclerView.ViewHolder{
-        TextView mHistory_item_fio, mHistory_item_purpose, mHistory_item_from, mHistory_item_to, mHistory_item_comment, mHistory_time, mHistory_distance, mHistory_fuel, mHistory_item_accept_date, mHistory_item_cancel_reason, mHistory_item_close_date;
+        TextView mHistory_item_fio, mHistory_item_purpose, mHistory_item_from, mHistory_item_to, mHistory_item_comment, mHistory_time, mHistory_distance, mHistory_fuel, mHistory_item_accept_date, mHistory_item_cancel_reason, mHistory_item_close_date, mHistory_item_close_state_title;
         View mHistory_item_extra, mHistory_item_call, mHistory_item_cancel_line, mHistory_item_distance_calc_group;
+        ImageView mHistory_item_state;
         Button mHistory_item_btn_status_completed;
         CardView mHistory_item;
 
@@ -99,6 +113,7 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
             mHistory_item_call  = itemView.findViewById(R.id.history_item_call);
             mHistory_item_accept_date = itemView.findViewById(R.id.history_item_accept_date);
             mHistory_item_close_date = itemView.findViewById(R.id.history_item_close_date);
+            mHistory_item_close_state_title = itemView.findViewById(R.id.history_item_close_state_title);
             mHistory_item_fio = itemView.findViewById(R.id.history_item_fio);
             mHistory_item_purpose = itemView.findViewById(R.id.history_item_purpose);
             mHistory_item_from  = itemView.findViewById(R.id.history_item_from);
@@ -113,11 +128,17 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
             mHistory_distance = itemView.findViewById(R.id.history_distance);
             mHistory_fuel = itemView.findViewById(R.id.history_fuel);
 
+            mHistory_item_state = itemView.findViewById(R.id.history_item_state);
 
             mHistory_item.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mHistory_item_extra.setVisibility(View.VISIBLE);
+                    if(mHistory_item_extra.getVisibility() == View.GONE) {
+                        mHistory_item_extra.setVisibility(View.VISIBLE);
+                    } else {
+                        mHistory_item_extra.setVisibility(View.GONE);
+                    }
+
                 }
             });
         }

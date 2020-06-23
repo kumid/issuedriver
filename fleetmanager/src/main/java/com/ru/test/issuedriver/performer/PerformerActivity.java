@@ -18,18 +18,14 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.GeoPoint;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.bottom_dialogs.OrderCancelBottonDialog;
@@ -440,7 +436,7 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
     @Override
     public void onButtonClicked(order item) {
         Log.e("myLogs", "");
-        firestoreHelper.setOrderState(item, 1, item.cancel_reason);
+        firestoreHelper.setOrderCancelState(item, 1, item.cancel_reason);
         firestoreHelper.setUserState(item.performer_email, 0);
         //ordersListViewModel.setOrderDelete(item);
     }

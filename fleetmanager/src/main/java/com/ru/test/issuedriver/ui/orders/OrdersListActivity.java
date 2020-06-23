@@ -114,8 +114,9 @@ public class OrdersListActivity extends AppCompatActivity implements OrderCancel
         ordersListViewModel.getNotifications().observe(OrdersListActivity.this, new Observer<List<order>>() {
             @Override
             public void onChanged(List<order> orders) {
-                if(MyActivity.CurrentUser.is_performer)
+                if(MyActivity.CurrentUser.is_performer) {
                     adapterPerformer.setChangedData(orders);
+                }
                 else
                     adapterCustomer.setChangedData(orders);
             }
@@ -138,7 +139,7 @@ public class OrdersListActivity extends AppCompatActivity implements OrderCancel
     @Override
     public void onButtonClicked(order item) {
         Log.e("myLogs", "");
-        firestoreHelper.setOrderState(item, 1, item.cancel_reason);
+        firestoreHelper.setOrderCancelState(item, 1, item.cancel_reason);
         firestoreHelper.setUserState(item.performer_email, 0);
         //ordersListViewModel.setOrderDelete(item);
     }

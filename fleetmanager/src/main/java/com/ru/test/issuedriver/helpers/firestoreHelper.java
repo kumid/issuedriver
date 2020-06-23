@@ -8,6 +8,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
@@ -86,9 +87,9 @@ public class firestoreHelper {
 
     }
 
-    public static void setOrderState(order _order, int state, String reason) {
+    public static void setOrderCancelState(order _order, int state, String reason) {
         DocumentReference userRef = db.collection("orders").document(_order.id);
-        userRef.update("state", state, "cancel_reason", reason, "completed", true)
+        userRef.update("state", state, "cancel_reason", reason, "completed", true, "end_timestamp", FieldValue.serverTimestamp())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

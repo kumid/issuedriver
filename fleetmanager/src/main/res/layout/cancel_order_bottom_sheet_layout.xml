@@ -10,7 +10,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@color/colorPrimary"
-            android:text="Внимание заказ будет отменен"
+            android:text="@string/order_will_cancel"
             android:textAppearance="@style/TextAppearance.AppCompat.Title.Inverse"
             android:textAlignment="gravity"
             android:gravity="center">
@@ -20,7 +20,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="50dp"
-         android:text="Выберите причину"
+         android:text="@string/order_cancel_reason"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:textAlignment="gravity"
         android:gravity="center">
@@ -127,7 +127,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="15dp"
-        android:text="Другое"/>
+        android:text="ДРУГОЕ"/>
 
     <LinearLayout
         android:id="@+id/cancel_action_other_group"

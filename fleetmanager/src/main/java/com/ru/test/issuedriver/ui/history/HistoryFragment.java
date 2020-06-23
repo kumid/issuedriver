@@ -39,7 +39,7 @@ public class HistoryFragment extends Fragment {
 
     private void initViews(View root) {
         history_rv = root.findViewById(R.id.history_rv);
-        adapter = new historyAdapter(historyViewModel, new ArrayList<order>());
+        adapter = new historyAdapter(historyViewModel, new ArrayList<order>(), getActivity());
         history_rv.setLayoutManager(new LinearLayoutManager(getContext()));
         history_rv.setAdapter(adapter);
 

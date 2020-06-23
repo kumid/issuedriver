@@ -3,6 +3,7 @@ package com.ru.test.issuedriver.customer.ui.orders_list;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,10 @@ import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.bottom_dialogs.OrderCancelBottonDialog;
 import com.ru.test.issuedriver.data.order;
+import com.ru.test.issuedriver.data.place;
 import com.ru.test.issuedriver.helpers.callBacks;
+import com.ru.test.issuedriver.performer.PerformerActivity;
+import com.ru.test.issuedriver.performer.ui.orderPerforming.OrderPerformingActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +32,7 @@ import static com.ru.test.issuedriver.helpers.callBacks.callback4goToNavigate;
 public class OrdersListFragment extends Fragment {
 
     RecyclerView notification_rv;
+    View mOrder_list_title;
     notificationsCustomerAdapter adapterCustomer;
     notificationsPerformerAdapter adapterPerformer;
 
@@ -68,6 +73,7 @@ public class OrdersListFragment extends Fragment {
 
     private void initViews(View root) {
         notification_rv = root.findViewById(R.id.notification_rv);
+        mOrder_list_title = root.findViewById(R.id.order_list_title);
         notification_rv.setLayoutManager(new LinearLayoutManager(getContext()));
         if(MyActivity.CurrentUser.is_performer) {
             adapterPerformer = new notificationsPerformerAdapter(ordersListViewModel, new ArrayList<order>());
@@ -81,10 +87,13 @@ public class OrdersListFragment extends Fragment {
         ordersListViewModel.getNotifications().observe(getViewLifecycleOwner(), new Observer<List<order>>() {
             @Override
             public void onChanged(List<order> orders) {
-                if(MyActivity.CurrentUser.is_performer)
+                if(MyActivity.CurrentUser.is_performer) {
                     adapterPerformer.setChangedData(orders);
+                }
                 else
                     adapterCustomer.setChangedData(orders);
+
+                mOrder_list_title.setVisibility(orders.size() == 0 ? View.GONE : View.VISIBLE);
             }
         });
     }

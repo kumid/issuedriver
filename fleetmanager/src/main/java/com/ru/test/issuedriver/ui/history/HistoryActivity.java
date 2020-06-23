@@ -43,7 +43,7 @@ public class HistoryActivity extends MyActivity {
 
     private void initViews() {
         history_rv = findViewById(R.id.history_rv);
-        adapter = new historyAdapter(historyViewModel, new ArrayList<order>());
+        adapter = new historyAdapter(historyViewModel, new ArrayList<order>(), this);
         history_rv.setLayoutManager(new LinearLayoutManager(HistoryActivity.this));
         history_rv.setAdapter(adapter);
 

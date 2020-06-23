@@ -144,6 +144,13 @@
                 android:layout_margin="10dp"
                 android:visibility="gone"/>
 
+        <ImageView
+            android:id="@+id/order_performing_call"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:layout_margin="10dp"
+            android:layout_gravity="end"
+            android:src="@drawable/phone" />
 
         <Button
             android:id="@+id/order_navigation"

@@ -106,7 +106,7 @@
             android:layout_height="wrap_content"
             android:text="Подача такси 5 минут"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/color4text"
             android:layout_margin="5dp"/>
 
         <TextView
@@ -114,7 +114,7 @@
             android:layout_height="wrap_content"
             android:text="Заказать"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Button"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/color4text"
             android:layout_margin="5dp"/>
 
     </LinearLayout>

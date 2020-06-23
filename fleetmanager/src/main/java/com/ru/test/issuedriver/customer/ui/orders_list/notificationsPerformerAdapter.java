@@ -62,12 +62,12 @@ public class notificationsPerformerAdapter extends RecyclerView.Adapter<notifica
         if(item.accept) {
             if (item.completed) {
                 holder.mNotification_item_btn_status_completed.setVisibility(View.VISIBLE);
-                holder.mNotification_item_btn_status_in_process.setVisibility(View.GONE);
+//                holder.mNotification_item_btn_status_in_process.setVisibility(View.GONE);
 //                holder.mNotification_item_navigate.setVisibility(View.GONE);
                 holder.mNotification_item_btn_status_wait.setVisibility(View.GONE);
                 holder.mNotification_item_btn_start.setVisibility(View.GONE);
             } else {
-                holder.mNotification_item_btn_status_in_process.setVisibility(View.VISIBLE);
+//                holder.mNotification_item_btn_status_in_process.setVisibility(View.VISIBLE);
 //                holder.mNotification_item_navigate.setVisibility(View.VISIBLE);
                 holder.mNotification_item_btn_status_wait.setVisibility(View.GONE);
                 holder.mNotification_item_btn_start.setVisibility(View.VISIBLE);
@@ -85,6 +85,8 @@ public class notificationsPerformerAdapter extends RecyclerView.Adapter<notifica
 //            holder.mNotification_item_btn_accept_ok.setVisibility(View.GONE);
 //            holder.mNotification_item_btn_accept.setVisibility(View.VISIBLE);
         }
+
+        holder.mNotification_item_btn_start.setText(item.start_timestamp == null? "НАЧАТЬ ВЫПОЛНЕНИЕ" : "ВЫПОЛНЕНИЕ");
 
         setBtnsOnClick(holder, item);
     }
@@ -166,6 +168,9 @@ public class notificationsPerformerAdapter extends RecyclerView.Adapter<notifica
             mNotification_item_from  = itemView.findViewById(R.id.notification_item_from);
             mNotification_item_to  = itemView.findViewById(R.id.notification_item_to);
             mNotification_item_comment = itemView.findViewById(R.id.notification_item_comment);
+
+            // требование клиента
+            mNotification_item_btn_status_in_process.setVisibility(View.GONE);
 
             mNotification_item_btn_start = itemView.findViewById(R.id.notification_item_btn_start);
             mNotification_item_navigate = itemView.findViewById(R.id.notification_item_navigate);

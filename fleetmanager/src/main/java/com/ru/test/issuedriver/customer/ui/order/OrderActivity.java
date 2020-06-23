@@ -305,12 +305,13 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
             time = time.plusDays(1); //calendar.add(Calendar.DAY_OF_MONTH, 1);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             time = time.withTime(mOrderTime.getHour(), mOrderTime.getMinute(), 0, 0);
-//            calendar.set(Calendar.HOUR, mOrderTime.getHour());
-//            calendar.set(Calendar.MINUTE, mOrderTime.getMinute());
-        } else {
+         } else {
             time = time.withTime(mOrderTime.getCurrentHour(), mOrderTime.getCurrentMinute(), 0, 0);
-            //            calendar.set(Calendar.HOUR, mOrderTime.getCurrentHour());
-//            calendar.set(Calendar.MINUTE, mOrderTime.getCurrentMinute());
+         }
+
+        if(time.isBeforeNow()){
+            showToast("Ошибка в выборе даты", Toast.LENGTH_SHORT);
+            return;
         }
 
         order curr = orderViewModel.getCurrentOrder();

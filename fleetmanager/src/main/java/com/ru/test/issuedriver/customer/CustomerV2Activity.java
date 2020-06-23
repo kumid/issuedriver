@@ -135,7 +135,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         mMapView.onResume(); // needed to get the map to display immediately
 
         mImgLocationPinUp = findViewById(R.id.imgLocationPinUp);
-        mapsUtils.Init(this, mMapView, mapViewModel, mImgLocationPinUp);
+
 
         ImageView mMap_plus = findViewById(R.id.map_plus);
         ImageView mMap_minus = findViewById(R.id.map_minus);
@@ -272,6 +272,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
             @Override
             public void onChanged(List<order> orders) {
                 mapViewModel.setOrders(orders);
+                mapsUtils.Init(CustomerV2Activity.this, mMapView, mapViewModel, mImgLocationPinUp);
             }
         });
     }

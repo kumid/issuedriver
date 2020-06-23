@@ -6,8 +6,19 @@
     android:layout_height="match_parent"
     tools:context=".customer.ui.orders_list.OrdersListFragment">
 
+    <TextView
+        android:id="@+id/order_list_title"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:text="ПОЕЗДКИ"
+        android:paddingStart="10dp"
+        android:background="@android:color/white"
+        android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notification_rv"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_marginTop="20dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

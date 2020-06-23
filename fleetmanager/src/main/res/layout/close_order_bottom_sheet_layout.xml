@@ -9,7 +9,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@color/colorPrimary"
-            android:text="Внимание поездка завершена"
+            android:text="@string/order_complete_request"
             android:textAppearance="@style/TextAppearance.AppCompat.Title.Inverse"
             android:textAlignment="gravity"
             android:gravity="center">
