@@ -16,14 +16,21 @@ import android.widget.RemoteViews;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.google.gson.Gson;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.SplashScreen;
+import com.ru.test.issuedriver.data.Token;
+import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.data.user;
+import com.ru.test.issuedriver.helpers.fsm.sender;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -32,8 +39,22 @@ import static com.ru.test.issuedriver.helpers.mysettings.APP_PREFERENCES;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static int counter = 0;
+    public static String token_tbl="Tokens";
     @Override
     public void onNewToken(String s) {
+
+        FirebaseDatabase db=FirebaseDatabase.getInstance();
+        DatabaseReference tokens=db.getReference(token_tbl);
+
+        Token token = new Token(s);
+        mysettings.Init(getApplicationContext());
+        mysettings.SetFCMToken(token);
+
+        user curr = mysettings.GetUser();
+
+        if (curr != null)
+            firestoreHelper.setUserToken(curr.UUID, mysettings.GetFCMToken().getToken(), true);
+
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
@@ -85,14 +106,74 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 //            };
 //        }
 
-
-        if(remoteMessage.getData().size() >0){
-            showNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("message"));
+        if(remoteMessage.getData().size() > 0) {
+            String title = remoteMessage.getData().get("title");
+            switch (title) {
+                case "new_order":
+                    showNotification4Order(remoteMessage.getData().get("message"), "Новая заявка", "Поступила новая заявка");
+                    break;
+                case "accepted_order":
+                    showNotification4Order(remoteMessage.getData().get("message"), "Статус заявки изменен", "Заявка принята водителем");
+                    break;
+                case "performing_order":
+                    showNotification4Order(remoteMessage.getData().get("message"), "Статус заявки изменен", "Поездка начата");
+                    break;
+                case "complete_order":
+                    showNotification4Order(remoteMessage.getData().get("message"), "Статус заявки изменен", "Поездка успешно завершена");
+                    break;
+                case "cancel_order_from_customer":
+                    showNotification4Order(remoteMessage.getData().get("message"), "Статус заявки изменен", "Поездка отменена заказчиком");
+                    break;
+                case "cancel_order_from_performer":
+                    showNotification4Order(remoteMessage.getData().get("message"), "Статус заявки изменен", "Поездка отменена водителем");
+                    break;
+                default:
+                    showNotification(title, remoteMessage.getData().get("message"));
+                    break;
+            }
         }
-
         if(remoteMessage.getNotification()!=null){
             showNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
         }
+    }
+
+    private void showNotification4Order(String message, String title, String body) {
+        Gson gson = new Gson();
+        order newOrder = gson.fromJson(message, order.class);
+
+        notify(title, body);
+    }
+
+    private void notify(String title, String message) {
+        Intent intent = new Intent(this, SplashScreen.class);
+        String channel_id = "fleet_channel";
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT); // .FLAG_ONE_SHOT);
+        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), channel_id)
+                .setSmallIcon(R.drawable.logo_small)
+                .setSound(uri)
+                .setAutoCancel(true)
+                .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                .setOnlyAlertOnce(true)
+                .setContentIntent(pendingIntent);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            builder = builder.setContent(getCustomDesign(title, message));
+        } else {
+            builder = builder.setContentTitle(title)
+                    .setContentText(message)
+                    .setSmallIcon(R.drawable.logo_small);
+        }
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = new NotificationChannel(channel_id, "fleet_app", NotificationManager.IMPORTANCE_HIGH);
+            notificationChannel.setSound(uri, null);
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+
+        notificationManager.notify(counter++, builder.build());
     }
 
     private RemoteViews getCustomDesign(String title,String message){
@@ -126,36 +207,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
         Log.e("Token","5");
 
-        Intent intent=new Intent(this, SplashScreen.class);
-        String channel_id="fleet_channel";
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingIntent=PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_UPDATE_CURRENT); // .FLAG_ONE_SHOT);
-        Uri uri= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder builder=new NotificationCompat.Builder(getApplicationContext(),channel_id)
-                .setSmallIcon(R.drawable.logo_small)
-                .setSound(uri)
-                .setAutoCancel(true)
-                .setVibrate(new long[]{1000,1000,1000,1000,1000})
-                .setOnlyAlertOnce(true)
-                .setContentIntent(pendingIntent);
-
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.JELLY_BEAN){
-            builder=builder.setContent(getCustomDesign(title,message));
-        }
-        else{
-            builder=builder.setContentTitle(title)
-                    .setContentText(message)
-                    .setSmallIcon(R.drawable.logo_small);
-        }
-
-        NotificationManager notificationManager= (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O){
-            NotificationChannel notificationChannel = new NotificationChannel(channel_id,"fleet_app", NotificationManager.IMPORTANCE_HIGH);
-            notificationChannel.setSound(uri,null);
-            notificationManager.createNotificationChannel(notificationChannel);
-        }
-
-        notificationManager.notify(counter++, builder.build());
+        notify(title, message);
         }
 
 }

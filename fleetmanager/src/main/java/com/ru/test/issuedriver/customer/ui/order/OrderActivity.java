@@ -44,6 +44,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import com.ru.test.issuedriver.BuildConfig;
+import com.ru.test.issuedriver.helpers.mysettings;
 
 public class OrderActivity extends MyActivity implements View.OnClickListener {
 
@@ -79,7 +80,6 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
 
         initViews();
 
-        initExtra();
         setInitialDateTime();
         initAutocomplete();
     }
@@ -91,11 +91,13 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         newOrder.customer_fio = CurrentUser.fio;
         newOrder.customer_phone = CurrentUser.tel;
         newOrder.customer_email = CurrentUser.email;
+        newOrder.customer_token = CurrentUser.fcmToken;
 
         newOrder.performer_uuid = getIntent().getStringExtra("performer_uuid");
         newOrder.performer_fio = getIntent().getStringExtra("performer_fio");
         newOrder.performer_phone = getIntent().getStringExtra("performer_phone");
         newOrder.performer_email = getIntent().getStringExtra("performer_email");
+        newOrder.performer_token = getIntent().getStringExtra("performer_token");
         newOrder.car = getIntent().getStringExtra("performer_car");
         newOrder.car_number = getIntent().getStringExtra("performer_car_number");
 

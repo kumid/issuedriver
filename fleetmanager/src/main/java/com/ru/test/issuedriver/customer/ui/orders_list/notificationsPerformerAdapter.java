@@ -50,7 +50,7 @@ public class notificationsPerformerAdapter extends RecyclerView.Adapter<notifica
         holder.mNotification_item_fio.setText(item.customer_fio);
         holder.mNotification_item_purpose.setText(item.purpose);
         if(item.order_timestamp != null) {
-            SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            SimpleDateFormat sfd = new SimpleDateFormat("Поездка: dd-MM-yyyy HH:mm:ss");
             holder.mNotification_item_data.setText(sfd.format(item.order_timestamp.toDate()));
         }
         holder.mNotification_item_from.setText(item.from);

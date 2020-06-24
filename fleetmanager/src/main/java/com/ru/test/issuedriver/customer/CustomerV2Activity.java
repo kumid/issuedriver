@@ -28,6 +28,7 @@ import com.ru.test.issuedriver.MainViewModel;
 import com.ru.test.issuedriver.customer.ui.map.placesAdapter;
 import com.ru.test.issuedriver.customer.ui.mapsUtils;
 import com.ru.test.issuedriver.data.place;
+import com.ru.test.issuedriver.helpers.callBacks;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 import com.ru.test.issuedriver.ui.history.HistoryActivity;
 import com.ru.test.issuedriver.MyActivity;
@@ -136,6 +137,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
 
         mImgLocationPinUp = findViewById(R.id.imgLocationPinUp);
 
+        mapsUtils.Init(CustomerV2Activity.this, mMapView, mapViewModel, mImgLocationPinUp);
 
         ImageView mMap_plus = findViewById(R.id.map_plus);
         ImageView mMap_minus = findViewById(R.id.map_minus);
@@ -272,9 +274,16 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
             @Override
             public void onChanged(List<order> orders) {
                 mapViewModel.setOrders(orders);
-                mapsUtils.Init(CustomerV2Activity.this, mMapView, mapViewModel, mImgLocationPinUp);
             }
         });
+
+        mapViewModel.setOrders(ordersListViewModel.getNotifications().getValue());
+        callBacks.callback4orderListChangedInterface = new callBacks.orderListChangedInterface() {
+            @Override
+            public void callback() {
+                mapsUtils.refreshCarsOnMap();
+            }
+        };
     }
 
 

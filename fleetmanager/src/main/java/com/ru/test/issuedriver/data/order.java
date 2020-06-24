@@ -23,10 +23,12 @@ public class order implements Parcelable {
     public String customer_email;
     public String customer_fio;
     public String customer_phone;
+    public String customer_token;
     public String performer_uuid;
     public String performer_email;
     public String performer_fio;
     public String performer_phone;
+    public String performer_token;
     public String car;
     public String car_number;
 
@@ -77,11 +79,13 @@ public class order implements Parcelable {
         this.customer_uuid = customer_uuid;
         this.customer_fio = customer_fio;
         this.customer_phone = customer_phone;
+        this.customer_token = "";
         this.customer_email = customer_email;
         this.performer_uuid = performer_uuid;
         this.performer_fio = performer_fio;
         this.performer_phone = performer_phone;
         this.performer_email = performer_email;
+        this.performer_token = "";
         this.accept = false;
         this.completed = false;
         this.is_notify = false;
@@ -103,10 +107,12 @@ public class order implements Parcelable {
         customer_email = in.readString();
         customer_fio = in.readString();
         customer_phone = in.readString();
+        customer_token = in.readString();
         performer_uuid = in.readString();
         performer_email = in.readString();
         performer_fio = in.readString();
         performer_phone = in.readString();
+        performer_token = in.readString();
         car = in.readString();
         car_number = in.readString();
         accept = in.readByte() != 0;
@@ -174,10 +180,12 @@ public class order implements Parcelable {
         dest.writeString(customer_email);
         dest.writeString(customer_fio);
         dest.writeString(customer_phone);
+        dest.writeString(customer_token);
         dest.writeString(performer_uuid);
         dest.writeString(performer_email);
         dest.writeString(performer_fio);
         dest.writeString(performer_phone);
+        dest.writeString(performer_token);
         dest.writeString(car);
         dest.writeString(car_number);
         dest.writeByte((byte) (accept ? 1 : 0));

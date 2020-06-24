@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
@@ -22,14 +23,19 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
+import com.redmadrobot.inputmask.MaskedTextChangedListener;
+import com.redmadrobot.inputmask.helper.AffinityCalculationStrategy;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.customer.CustomerV2Activity;
 import com.ru.test.issuedriver.data.user;
+import com.ru.test.issuedriver.helpers.firestoreHelper;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 import com.ru.test.issuedriver.helpers.mysettings;
 import com.ru.test.issuedriver.performer.PerformerActivity;
@@ -38,10 +44,13 @@ import com.ru.test.issuedriver.helpers.MyBroadcastReceiver;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.ru.test.issuedriver.helpers.MyFirebaseMessagingService.token_tbl;
+
 public class RegistrationActivity extends MyActivity {
 
     private RegistrationViewModel registrationViewModel;
-    TextInputEditText mFio, mStaff, mEmail, mCorp, mAutomodel, mAutovin, mAutonumber, mTel;
+    TextInputEditText mFio, mStaff, mEmail, mCorp, mAutomodel, mAutovin, mAutonumber;
+    EditText mTel;
     Button mRegistrationButton, mRegistration_btn_logout;
     ImageView mRegistration_online, mRegistration_offline;
     RadioButton mCustomer, mPerformer;
@@ -76,6 +85,7 @@ public class RegistrationActivity extends MyActivity {
         mCustomer = findViewById(R.id.radio_customer);
         mPerformer = findViewById(R.id.radio_performer);
 
+        setSpinerOptins();
         //mCustomer.setEnabled(false);
         //mPerformer.setEnabled(false);
 
@@ -144,12 +154,18 @@ public class RegistrationActivity extends MyActivity {
         if(currentUser != null)
             current.UUID = currentUser.UUID;
 
+        current.fcmToken = mysettings.GetFCMToken().getToken();
+
+        firestoreHelper.setUserToken(current.UUID, current.fcmToken, false);
+
+
         db.collection("users").document(mEmail.getText().toString()).set(current)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         //registrationViewModel.currentUser.postValue(current);
                         mysettings.SetUser(current);
+
                         startMainActivity(current);
                         //Log.d("TAG", "DocumentSnapshot successfully written!");
                     }
@@ -198,9 +214,15 @@ public class RegistrationActivity extends MyActivity {
                                     mAutomodel.setText(currentUser.automodel);
                                     mAutovin.setText(currentUser.autovin);
                                     mAutonumber.setText(currentUser.autonumber);
-                                    mTel.setText(currentUser.tel);
                                     mCustomer.setChecked(!currentUser.is_performer);
                                     mPerformer.setChecked(currentUser.is_performer);
+
+                                    try {
+                                        mTel.setText(currentUser.tel);
+                                    } catch (Exception ex){
+                                        mTel.setText("");
+                                    }
+
                                     Log.d("TAG", document.getId() + " => " + document.getData());
                                     registrationViewModel.currentUser.postValue(currentUser);
                                 }
@@ -267,5 +289,25 @@ public class RegistrationActivity extends MyActivity {
                 break;
         }
         return true;
+    }
+
+    private void setSpinerOptins() {
+        final List<String> affineFormats = new ArrayList<>();
+        affineFormats.add("+7 ([000]) [000]-[00]-[00]#[000]");
+
+        final MaskedTextChangedListener listener = MaskedTextChangedListener.Companion.installOn(
+                mTel,
+                "+7 ([000]) [000]-[00]-[00]",
+                affineFormats,
+                AffinityCalculationStrategy.WHOLE_STRING,
+                new MaskedTextChangedListener.ValueListener() {
+                    @Override
+                    public void onTextChanged(boolean maskFilled, @NonNull final String extractedValue, @NonNull String formattedText) {
+
+                    }
+                }
+        );
+
+        mTel.setHint(listener.placeholder());
     }
 }

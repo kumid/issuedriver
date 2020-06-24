@@ -36,6 +36,7 @@ import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.data.place;
 import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.helpers.MyBroadcastReceiver;
+import com.ru.test.issuedriver.helpers.fsm.sender;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 import com.ru.test.issuedriver.performer.ui.feedback.FeedbackActivity;
 import com.ru.test.issuedriver.helpers.PerformerBackgroundService;
@@ -55,7 +56,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-public class PerformerActivity extends MyActivity implements UserStateBottonDialog.BottomSheetListener, OrderCancelBottonDialog.BottomSheetListener{
+public class PerformerActivity extends MyActivity implements UserStateBottonDialog.BottomSheetListener, OrderCancelBottonDialog.CancelBottomSheetListener {
 
     private static final String TAG = "myLogs";
 
@@ -321,6 +322,7 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
             public void callback(boolean success) {
                 if(!success)
                     return;
+                sender.send(item, sender.orderStateType.performing_order);
 
                 Intent intent = new Intent(PerformerActivity.this, OrderPerformingActivity.class);
                 intent.putExtra("order", item);
@@ -434,14 +436,14 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
     }
 
     @Override
-    public void onButtonClicked(order item) {
+    public void onCancelButtonClicked(order item) {
         Log.e("myLogs", "");
         firestoreHelper.setOrderCancelState(item, 1, item.cancel_reason);
         firestoreHelper.setUserState(item.performer_email, 0);
         //ordersListViewModel.setOrderDelete(item);
+
+        sender.send(item, sender.orderStateType.cancel_order_from_performer);
     }
-
-
 
     private void OnlineStateListen() {
 //        registerReceiver();

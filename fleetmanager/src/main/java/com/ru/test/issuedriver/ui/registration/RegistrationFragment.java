@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.Toast;
@@ -22,6 +23,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.redmadrobot.inputmask.MaskedTextChangedListener;
+import com.redmadrobot.inputmask.helper.AffinityCalculationStrategy;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.data.user;
@@ -38,7 +41,8 @@ import androidx.lifecycle.ViewModelProviders;
 public class RegistrationFragment extends Fragment {
 
     private RegistrationViewModel registrationViewModel;
-    TextInputEditText mFio, mStaff, mEmail, mCorp, mAutomodel, mAutovin, mAutonumber, mTel;
+    TextInputEditText mFio, mStaff, mEmail, mCorp, mAutomodel, mAutovin, mAutonumber;
+    EditText mTel;
     Button mRegistrationButton, mRegistration_btn_logout;
     ImageView mRegistration_online, mRegistration_offline;
     RadioButton mCustomer, mPerformer;
@@ -93,6 +97,9 @@ public class RegistrationFragment extends Fragment {
                 mRegistration_performer_groupe.setVisibility(isChecked?View.GONE:View.VISIBLE);
             }
         });
+
+        setSpinerOptins();
+
         return root;
     }
 
@@ -254,5 +261,26 @@ private void OnlineStateListen() {
         mTel.setText(curr.tel);
         mRegistration_performer_groupe.setVisibility(curr.is_performer?View.VISIBLE:View.GONE);
         registrationViewModel.currentUser.postValue(curr);
+    }
+
+
+    private void setSpinerOptins() {
+        final List<String> affineFormats = new ArrayList<>();
+        affineFormats.add("+7 ([000]) [000]-[00]-[00]#[000]");
+
+        final MaskedTextChangedListener listener = MaskedTextChangedListener.Companion.installOn(
+                mTel,
+                "+7 ([000]) [000]-[00]-[00]",
+                affineFormats,
+                AffinityCalculationStrategy.WHOLE_STRING,
+                new MaskedTextChangedListener.ValueListener() {
+                    @Override
+                    public void onTextChanged(boolean maskFilled, @NonNull final String extractedValue, @NonNull String formattedText) {
+
+                    }
+                }
+        );
+
+        mTel.setHint(listener.placeholder());
     }
 }

@@ -32,7 +32,7 @@ import static com.ru.test.issuedriver.helpers.callBacks.callback4goToNavigate;
 public class OrdersListFragment extends Fragment {
 
     RecyclerView notification_rv;
-    View mOrder_list_title;
+//    View mOrder_list_title;
     notificationsCustomerAdapter adapterCustomer;
     notificationsPerformerAdapter adapterPerformer;
 
@@ -73,7 +73,7 @@ public class OrdersListFragment extends Fragment {
 
     private void initViews(View root) {
         notification_rv = root.findViewById(R.id.notification_rv);
-        mOrder_list_title = root.findViewById(R.id.order_list_title);
+//        mOrder_list_title = root.findViewById(R.id.order_list_title);
         notification_rv.setLayoutManager(new LinearLayoutManager(getContext()));
         if(MyActivity.CurrentUser.is_performer) {
             adapterPerformer = new notificationsPerformerAdapter(ordersListViewModel, new ArrayList<order>());
@@ -93,7 +93,7 @@ public class OrdersListFragment extends Fragment {
                 else
                     adapterCustomer.setChangedData(orders);
 
-                mOrder_list_title.setVisibility(orders.size() == 0 ? View.GONE : View.VISIBLE);
+                //mOrder_list_title.setVisibility(orders.size() == 0 ? View.GONE : View.VISIBLE);
             }
         });
     }

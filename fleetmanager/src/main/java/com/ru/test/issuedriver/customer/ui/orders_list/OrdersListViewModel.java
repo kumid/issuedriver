@@ -153,7 +153,8 @@ private void notifycateIt(order curr, DocumentSnapshot snapshot) {
                     @Override
                     public void onSuccess(Void aVoid) {
                     firestoreHelper.setUserBusy(item.performer_email, true);
-                    sender.send(item.customer_email);
+//                    sender.send(item.customer_email);
+                    sender.send(item, sender.orderStateType.accepted_order);
                         Log.d("TAG", "DocumentSnapshot successfully updated!");
                     }
                 })

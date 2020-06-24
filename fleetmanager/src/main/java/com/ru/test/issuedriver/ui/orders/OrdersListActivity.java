@@ -23,13 +23,14 @@ import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.helpers.callBacks;
 import com.ru.test.issuedriver.helpers.firestoreHelper;
 import com.ru.test.issuedriver.bottom_dialogs.OrderCancelBottonDialog;
+import com.ru.test.issuedriver.helpers.fsm.sender;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.ru.test.issuedriver.helpers.callBacks.callback4goToNavigate;
 
-public class OrdersListActivity extends AppCompatActivity implements OrderCancelBottonDialog.BottomSheetListener {
+public class OrdersListActivity extends AppCompatActivity implements OrderCancelBottonDialog.CancelBottomSheetListener {
 
     RecyclerView notification_rv;
     notificationsCustomerAdapter adapterCustomer;
@@ -137,10 +138,12 @@ public class OrdersListActivity extends AppCompatActivity implements OrderCancel
     }
 
     @Override
-    public void onButtonClicked(order item) {
+    public void onCancelButtonClicked(order item) {
         Log.e("myLogs", "");
         firestoreHelper.setOrderCancelState(item, 1, item.cancel_reason);
         firestoreHelper.setUserState(item.performer_email, 0);
         //ordersListViewModel.setOrderDelete(item);
+
+        sender.send(item, MyActivity.CurrentUser.is_performer ? sender.orderStateType.cancel_order_from_performer : sender.orderStateType.cancel_order_from_customer);
     }
 }

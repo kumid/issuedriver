@@ -50,7 +50,7 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
 
         SimpleDateFormat sfd;
         if (item.accept_timestamp != null) {
-            sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            sfd = new SimpleDateFormat("Поездка: dd-MM-yyyy HH:mm:ss");
             holder.mHistory_item_accept_date.setText(sfd.format(item.accept_timestamp.toDate()));
             holder.mHistory_item_close_date.setText("");
         }

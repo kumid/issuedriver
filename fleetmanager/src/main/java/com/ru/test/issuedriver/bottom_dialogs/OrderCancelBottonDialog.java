@@ -26,7 +26,7 @@ import androidx.annotation.Nullable;
 
 public class OrderCancelBottonDialog extends BottomSheetDialogFragment implements View.OnClickListener {
 
-    private BottomSheetListener mListener;
+    private CancelBottomSheetListener mListener;
     boolean isPerformer;
     TextView mOrder_distance_bottom, mOrder_fuel_bottom;
     View mCancel_action_standard_group, mCancel_action_other_group;
@@ -141,19 +141,19 @@ public class OrderCancelBottonDialog extends BottomSheetDialogFragment implement
         }
         item.state = 1;
         item.cancel_reason = reason;
-        mListener.onButtonClicked(item);
+        mListener.onCancelButtonClicked(item);
         dismiss();
     }
 
-    public interface BottomSheetListener{
-        void onButtonClicked(order item);
+    public interface CancelBottomSheetListener {
+        void onCancelButtonClicked(order item);
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            mListener = (BottomSheetListener) context;
+            mListener = (CancelBottomSheetListener) context;
         } catch (ClassCastException ex){
             throw new ClassCastException(context.toString()
                     + " must implement BottomSheetListener");

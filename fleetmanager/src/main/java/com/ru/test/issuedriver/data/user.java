@@ -24,6 +24,7 @@ public class user {
     public String UUID;
     /// 0 - свободен, 1 - занят, 2 - ремонт
     public int state;
+    public String fcmToken;
     @Exclude
     public boolean is_busy() { return state != 0; }
     public user() {}
@@ -43,5 +44,6 @@ public class user {
 
         UUID = java.util.UUID.randomUUID().toString();
         state = 0;
+        fcmToken = "";
     }
 }

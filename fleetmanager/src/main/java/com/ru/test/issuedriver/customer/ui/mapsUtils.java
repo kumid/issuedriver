@@ -31,6 +31,7 @@ import com.ru.test.issuedriver.customer.ui.map.MapViewModel;
 import com.ru.test.issuedriver.customer.ui.map.imHere;
 import com.ru.test.issuedriver.customer.ui.order.OrderActivity;
 import com.ru.test.issuedriver.customer.ui.orders_list.OrdersListViewModel;
+import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.data.place;
 import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.helpers.firestoreHelper;
@@ -64,6 +65,7 @@ public class mapsUtils {
 
     private static MarkerOptions markerOptionIm;
     private static Marker ImMarker;
+    private static List<user> actualUserList;
 
     public static LatLng getMarkerPinPosition() {
         return markerPin.getPosition();
@@ -207,50 +209,59 @@ public class mapsUtils {
             public void onChanged(List<user> users) {
 //                googleMap.clear();
 
-                Map<String, String> cars = new HashMap<>();
+                actualUserList = users;
 
-
-                for (user item : users) {
-                    if (item.position == null)
-                        continue;
-
-                    if(mapViewModel.isPerformerVisibleToCurrentCustomer(item)) {
-                        setUserMarker(item);
-                        cars.put(item.email, "");
-                    }
-                }
-
-                /// remove not liquid cars from map
-                for (String car: markerMap.keySet()) {
-                    if(!cars.containsKey(car)){
-                        markerMap.get(car).marker.remove();
-                        markerMap.remove(car);
-                    }
-                }
-
-                // проверяем актуальность Водителей
-                if(markerMap.size() != 0) {
-                    for (Object key :  markerMap.keySet().toArray()) {
-                        // получаем следующий маркер
-                        boolean forDelete = true;
-                        // проходим по списку пользователей (Водителей)
-                        for (user item : users) {
-                            if (item.email.equals(markerMap.get(key)._user.email)) {     // если водитель все еще в актуальном состоянии
-                                forDelete = false;
-                                break;
-                            }
-                        }
-
-                        if (forDelete) {
-//                        markerMap.get(key).markerOption.visible(false);
-//                        markerMap.get(key).marker.setVisible(false);
-                            markerMap.get(key).marker.remove();
-                            markerMap.remove(key);
-                        }
-                    }
-                }
+                refreshCarsOnMap();
             }
         });
+    }
+
+    public static void refreshCarsOnMap() {
+        if(actualUserList == null)
+            return;
+
+        Map<String, String> cars = new HashMap<>();
+
+
+        for (user item : actualUserList) {
+            if (item.position == null)
+                continue;
+
+            if(mapViewModel.isPerformerVisibleToCurrentCustomer(item)) {
+                setUserMarker(item);
+                cars.put(item.email, "");
+            }
+        }
+
+        /// remove not liquid cars from map
+        for (String car: markerMap.keySet()) {
+            if(!cars.containsKey(car)){
+                markerMap.get(car).marker.remove();
+                markerMap.remove(car);
+            }
+        }
+
+        // проверяем актуальность Водителей
+        if(markerMap.size() != 0) {
+            for (Object key :  markerMap.keySet().toArray()) {
+                // получаем следующий маркер
+                boolean forDelete = true;
+                // проходим по списку пользователей (Водителей)
+                for (user item : actualUserList) {
+                    if (item.email.equals(markerMap.get(key)._user.email)) {     // если водитель все еще в актуальном состоянии
+                        forDelete = false;
+                        break;
+                    }
+                }
+
+                if (forDelete) {
+//                        markerMap.get(key).markerOption.visible(false);
+//                        markerMap.get(key).marker.setVisible(false);
+                    markerMap.get(key).marker.remove();
+                    markerMap.remove(key);
+                }
+            }
+        }
     }
 
     // Визуализация маркеров машин
@@ -356,9 +367,9 @@ public class mapsUtils {
                 item.marker.setVisible(false);
                 item.marker.remove();
                 BitmapDescriptor car = getBitmapDescriptor(item._user);
-//                item.markerOption = new MarkerOptions().position(
-//                        new LatLng(item._user.position.getLatitude(), item._user.position.getLongitude()))
-//                        .title(item._user.fio);
+                item.markerOption = new MarkerOptions().position(
+                        new LatLng(item._user.position.getLatitude(), item._user.position.getLongitude()))
+                        .title(item._user.fio);
                 item.markerOption.icon(car);
 
                 Marker BusMarkerOK = googleMap.addMarker(item.markerOption);
@@ -497,6 +508,7 @@ public class mapsUtils {
                 intent.putExtra("performer_fio", markerMap.get(item)._user.fio);
                 intent.putExtra("performer_phone", markerMap.get(item)._user.tel);
                 intent.putExtra("performer_email", markerMap.get(item)._user.email);
+                intent.putExtra("performer_token", markerMap.get(item)._user.fcmToken);
                 intent.putExtra("performer_car", markerMap.get(item)._user.automodel);
                 intent.putExtra("performer_car_number", markerMap.get(item)._user.autonumber);
                 if(fromPlace != null)

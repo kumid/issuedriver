@@ -50,9 +50,10 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
         order item = cards.get(position);
         holder.mNotification_item_fio.setText(item.performer_fio);
         if(item.order_timestamp != null) {
-            SimpleDateFormat sfd = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+            SimpleDateFormat sfd = new SimpleDateFormat("Поездка принята: dd-MM-yyyy HH:mm:ss");
             holder.mNotification_item_data.setText(sfd.format(item.order_timestamp.toDate()));
         }
+
         holder.mNotification_item_purpose.setText(item.purpose);
         holder.mNotification_item_from.setText(item.from);
         holder.mNotification_item_to.setText(item.to);
@@ -87,7 +88,7 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
             }
         } else {
             holder.mNotification_item_btn_status_wait.setVisibility(View.VISIBLE);
-            holder.mNotification_item_btn_status_wait.setText("В ожидании");
+            holder.mNotification_item_btn_status_wait.setText("Ждет подтверждения");
 //            holder.mNotification_item_btn_cancel.setVisibility(View.VISIBLE);
             holder.mNotification_item_btn_status_in_process.setVisibility(View.GONE);
 //            holder.mNotification_item_navigate.setVisibility(View.GONE);

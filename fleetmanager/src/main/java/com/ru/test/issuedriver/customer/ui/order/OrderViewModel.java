@@ -5,13 +5,17 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.ru.test.issuedriver.customer.CustomerV2Activity;
+import com.ru.test.issuedriver.data.Token;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.data.place;
 import com.ru.test.issuedriver.helpers.firestoreHelper;
@@ -21,6 +25,8 @@ import java.util.UUID;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
+
+import static com.ru.test.issuedriver.helpers.MyFirebaseMessagingService.token_tbl;
 
 public class OrderViewModel extends ViewModel {
     private static final String TAG = "myLogs";
@@ -78,10 +84,9 @@ public class OrderViewModel extends ViewModel {
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        //registrationViewModel.currentUser.postValue(current);
-//                        startMainActivity(current);
-                        //Log.d("TAG", "DocumentSnapshot successfully written!");
-                        sender.send(currentOrder.performer_email);
+                         //Log.d("TAG", "DocumentSnapshot successfully written!");
+//                        sender.send(currentOrder.performer_email);
+                        sender.send(currentOrder, sender.orderStateType.new_order);
                         if(orderSendCompleteCalback!=null)
                             orderSendCompleteCalback.callback(true);
                     }
@@ -129,6 +134,7 @@ public class OrderViewModel extends ViewModel {
                         firestoreHelper.setUserBusy(performer_email, false);
                         if(orderCompletedCalback != null)
                             orderCompletedCalback.callback(true);
+                        sender.send(currentOrder, sender.orderStateType.complete_order);
                         addPlace2Collection();
                         Log.d("TAG", "DocumentSnapshot successfully updated!");
                     }

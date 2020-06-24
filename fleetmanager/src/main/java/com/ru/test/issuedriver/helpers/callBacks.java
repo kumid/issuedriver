@@ -42,6 +42,11 @@ public class callBacks {
         void callback(order currentOrder);
     }
 
+    // список заказов с изменениями загружен
+    public static orderListChangedInterface callback4orderListChangedInterface;
+    public interface  orderListChangedInterface {
+        void callback();
+    }
 }
 
 

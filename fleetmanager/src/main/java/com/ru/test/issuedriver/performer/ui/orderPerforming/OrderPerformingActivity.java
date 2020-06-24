@@ -231,7 +231,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
                     callback4goToNavigate.callback(orderViewModel.getCurrentOrder());
                 break;
             case R.id.order_performing_call:
-                    PerformerActivity.getInstance().callPhone(orderViewModel.getCurrentOrder().performer_phone);
+                    PerformerActivity.getInstance().callPhone(orderViewModel.getCurrentOrder().customer_phone);
                 break;
         }
     }

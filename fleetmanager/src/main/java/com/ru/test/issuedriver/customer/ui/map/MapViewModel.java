@@ -13,6 +13,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.data.user;
+import com.ru.test.issuedriver.helpers.callBacks;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -106,9 +107,12 @@ public class MapViewModel extends ViewModel {
 
     private List<order> orders;
     public void setOrders(List<order> _orders) {
+        if(_orders == null)
+            return;
+
         orders.clear();
         for (order item: _orders) {
-            if(!item.completed && item.accept) {
+            if(!item.completed ) {  //&& item.accept
                 if(item.order_active_timestamp != null)
                     item.order_active_time = item.order_active_timestamp.toDate();
                 else
@@ -117,6 +121,9 @@ public class MapViewModel extends ViewModel {
             }
         }
         isCameraOnPerformer = orders.size() > 0;
+
+        if(callBacks.callback4orderListChangedInterface != null)
+            callBacks.callback4orderListChangedInterface.callback();
     }
 
     public boolean isOrderInActiveState(String email){

@@ -40,10 +40,16 @@ public class FeedbackActivity extends AppCompatActivity {
                 sendFeedback(mFeedback_msg.getText().toString(), mFeedback_callme_phone.getText().toString());
             }
         });
-        //setupSuffixSample();
+        setupSuffixSample();
 
         String performer_phone = getIntent().getStringExtra("phone");
-        mFeedback_callme_phone.setText(performer_phone);
+
+        try {
+            mFeedback_callme_phone.setText(performer_phone);
+        } catch (Exception ex){
+            mFeedback_callme_phone.setText("");
+        }
+
 
         ActionBar actionBar = getSupportActionBar();
         if(actionBar != null) {
