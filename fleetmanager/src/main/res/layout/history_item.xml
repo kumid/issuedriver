@@ -156,7 +156,7 @@
                         android:layout_marginEnd="125dp"
                         android:layout_marginRight="125dp"
                         android:text="@string/history_item_close_date"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionMode.Subtitle"
                         android:textColor="@color/color4text" />
 
                     <TextView
@@ -172,7 +172,7 @@
                         android:layout_marginEnd="125dp"
                         android:layout_marginRight="125dp"
                         android:text="@string/registration_name"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionMode.Subtitle"
                         android:textColor="@color/color4text" />
 
                     <TextView
@@ -186,7 +186,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/order_purpose"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionMode.Subtitle"
                         android:textColor="@color/color4text" />
 
                     <TextView
@@ -200,7 +200,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/order_comment"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionMode.Subtitle"
                         android:textColor="@color/color4text" />
 
                     <LinearLayout
@@ -220,7 +220,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="@string/order_cancel_reason"
-                            android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionMode.Subtitle"
                             android:textColor="@color/color4text" />
                     </LinearLayout>
                 </LinearLayout>

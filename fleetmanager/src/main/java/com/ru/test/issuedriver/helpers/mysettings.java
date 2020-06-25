@@ -29,6 +29,8 @@ public class mysettings {
 
     public static final String APP_PREFERENCES_TOKENSAVED = "tokensaved";
 
+    public static final String APP_PREFERENCES_DISTANCE = "distance";
+
     private static SharedPreferences instance;
     public static SharedPreferences Init(AppCompatActivity activity) {
         if (instance == null)
@@ -157,4 +159,22 @@ public class mysettings {
             return instance.getBoolean(APP_PREFERENCES_TOKENSAVED, false);
         return false;
     }
+
+
+    public static void SetDistance(int dist) {
+        SharedPreferences.Editor editor = instance.edit();
+        editor.putInt(mysettings.APP_PREFERENCES_DISTANCE, dist);
+        editor.apply();
+    }
+    public static int GetDistance()
+    {
+        if(instance.contains(APP_PREFERENCES_DISTANCE))
+            return instance.getInt(APP_PREFERENCES_DISTANCE, 0);
+        return 0;
+    }
+
+
+
 }
+
+

@@ -438,7 +438,7 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
     @Override
     public void onCancelButtonClicked(order item) {
         Log.e("myLogs", "");
-        firestoreHelper.setOrderCancelState(item, 1, item.cancel_reason);
+        firestoreHelper.setOrderCancelState(item, 1, String.format("Отменен водителем", item.cancel_reason));
         firestoreHelper.setUserState(item.performer_email, 0);
         //ordersListViewModel.setOrderDelete(item);
 

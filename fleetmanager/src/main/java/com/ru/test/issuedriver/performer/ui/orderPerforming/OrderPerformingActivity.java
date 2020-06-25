@@ -23,24 +23,24 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.bottom_dialogs.OrderCloseBottonDialog;
-import com.ru.test.issuedriver.customer.CustomerV2Activity;
 import com.ru.test.issuedriver.customer.ui.order.OrderViewModel;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.helpers.MyBroadcastReceiver;
+import com.ru.test.issuedriver.helpers.mysettings;
 import com.ru.test.issuedriver.performer.PerformerActivity;
 
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.lifecycle.ViewModelProviders;
 
 import static com.ru.test.issuedriver.helpers.callBacks.callback4goToNavigate;
 
-public class OrderPerformingActivity extends MyActivity implements View.OnClickListener, OrderCloseBottonDialog.BottomSheetListener {
+public class OrderPerformingActivity extends MyActivity implements View.OnClickListener, OrderCloseBottonDialog.CloseBottomSheetListener {
 
     private static final String TAG = "myLogs";
     OrderViewModel orderViewModel;
@@ -135,6 +135,9 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
         mOrder_navigation.setOnClickListener(this);
         mOrder_performing_call.setOnClickListener(this);
          //currentDateTime.setOnClickListener(this);
+
+        distanse =  mysettings.GetDistance() - orderViewModel.getCurrentOrder().start_distance;
+        order_distance.setText(convertMetr2km());
 
         mOrder_chronometr.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
             @Override
@@ -253,6 +256,13 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
 
     final String LOG_TAG = "myLogs";
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        distanse =  mysettings.GetDistance() - orderViewModel.getCurrentOrder().start_distance;
+
+    }
+
     private Location lastLocation;
     private double distanse = 0;
     /** Called when the activity is first created. */
@@ -272,21 +282,28 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
                     lastLocation = position;
 
                     String rast;
-                    if (distanse < 1000) {
-                        rast = String.format("%d м", Math.round(distanse));
-                        Log.d(TAG, rast);
-                    } else {
-                        rast = String.format("%.1f км", distanse / 1000f);
-                        Log.d(TAG, rast);
-                    }
+                    rast = convertMetr2km();
                     order_distance.setText(rast);
                 }
             }
         };
     }
 
+    @NotNull
+    private String convertMetr2km() {
+        String rast;
+        if (distanse < 1000) {
+            rast = String.format("%d м", Math.round(distanse));
+            Log.d(TAG, rast);
+        } else {
+            rast = String.format("%.1f км", distanse / 1000f);
+            Log.d(TAG, rast);
+        }
+        return rast;
+    }
+
     @Override
-    public void onButtonClicked(int id, String time, String dist, String fuel) {
+    public void onCloseBottomButtonClicked(int id, String time, String dist, String fuel) {
         OrderViewModel.orderCompletedCalback = new OrderViewModel.orderCompleted() {
             @Override
             public void callback(boolean pass) {

@@ -20,6 +20,7 @@ import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.data.place;
 import com.ru.test.issuedriver.helpers.firestoreHelper;
 import com.ru.test.issuedriver.helpers.fsm.sender;
+import com.ru.test.issuedriver.helpers.mysettings;
 
 import java.util.UUID;
 
@@ -127,7 +128,8 @@ public class OrderViewModel extends ViewModel {
                 "end_timestamp", FieldValue.serverTimestamp(),
                 "spent_time", time,
                 "distance", dist,
-                "fuel", fuel)
+                "fuel", fuel,
+                "end_distance", mysettings.GetDistance())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

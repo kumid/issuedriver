@@ -17,6 +17,7 @@ import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.helpers.callBacks;
 import com.ru.test.issuedriver.helpers.fsm.sender;
 import com.ru.test.issuedriver.helpers.firestoreHelper;
+import com.ru.test.issuedriver.helpers.mysettings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -100,7 +101,7 @@ public class OrdersListViewModel extends ViewModel {
     private void observe2notification(user user) {
         String email = user.is_performer? "performer_email" : "customer_email";
         final Query collectionRef = db.collection("orders")
-                .orderBy("order_timestamp", Query.Direction.DESCENDING)
+                .orderBy("accept_timestamp", Query.Direction.DESCENDING)
                 .whereEqualTo(email, user.email)
                 .whereEqualTo("completed", false); //.document("SF");
         collectionRef.addSnapshotListener(new EventListener<QuerySnapshot>() {
@@ -142,7 +143,7 @@ private void notifycateIt(order curr, DocumentSnapshot snapshot) {
         return listNotifications;
     }
 
- public void setOrderAccept(final order item) {
+    public void setOrderAccept(final order item) {
         if(item.accept)
             return;
 
@@ -174,8 +175,11 @@ private void notifycateIt(order curr, DocumentSnapshot snapshot) {
             return;
         }
 
+        int dist = mysettings.GetDistance();
+
         DocumentReference orderRef = db.collection("orders").document(item.id);
-        orderRef.update("start_timestamp", FieldValue.serverTimestamp())
+        orderRef.update("start_timestamp", FieldValue.serverTimestamp(),
+                                "start_distance", dist)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

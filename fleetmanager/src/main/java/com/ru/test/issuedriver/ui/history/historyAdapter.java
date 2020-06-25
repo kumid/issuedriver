@@ -15,7 +15,6 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -82,7 +81,7 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
 //            holder.mHistory_item_cancel_reason.setText("");
             holder.mHistory_item_cancel_line.setVisibility(View.GONE);
         } else {
-            holder.mHistory_item_state.setImageDrawable(currentActivity.getResources().getDrawable(R.drawable.grey_triangle));
+            holder.mHistory_item_state.setImageDrawable(currentActivity.getResources().getDrawable(R.drawable.red_triangle));
             holder.mHistory_item_close_state_title.setText(currentActivity.getResources().getString(R.string.history_item_cancel_date));
 //            holder.mHistory_item_btn_status_completed.setText("Отменена");
             holder.mHistory_item_distance_calc_group.setVisibility(View.GONE);

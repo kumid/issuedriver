@@ -23,7 +23,7 @@ import androidx.annotation.Nullable;
 
 public class OrderCloseBottonDialog extends BottomSheetDialogFragment implements View.OnClickListener {
 
-    private BottomSheetListener mListener;
+    private CloseBottomSheetListener mListener;
     int id;
     String distStr, fuelStr;
     Chronometer mOrder_chronometr_bottom;
@@ -98,21 +98,21 @@ public class OrderCloseBottonDialog extends BottomSheetDialogFragment implements
         switch (v.getId()){
             case R.id.bottom_sheet_btn:
                 //PersonInfoActivity.getInstance().summaFromDialog = mPiBonusSumma.getText().toString();
-                mListener.onButtonClicked(id, time, distStr, fuelStr);
+                mListener.onCloseBottomButtonClicked(id, time, distStr, fuelStr);
                 dismiss();
                 break;
          }
     }
 
-    public interface BottomSheetListener{
-        void onButtonClicked(int id, String time, String distance, String fuel);
+    public interface CloseBottomSheetListener {
+        void onCloseBottomButtonClicked(int id, String time, String distance, String fuel);
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         try {
-            mListener = (BottomSheetListener) context;
+            mListener = (CloseBottomSheetListener) context;
         } catch (ClassCastException ex){
             throw new ClassCastException(context.toString()
                     + " must implement BottomSheetListener");

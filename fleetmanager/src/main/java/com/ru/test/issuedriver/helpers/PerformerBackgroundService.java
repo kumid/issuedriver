@@ -170,10 +170,11 @@ public class PerformerBackgroundService extends Service {
                             if(lastLocation == null) {
 //                                Log.d(TAG, "onLocationResult: lastLocation == null");
                                 lastLocation = location;
-                                saveUserLocation(geoPoint, location);
+                                saveUserLocation(geoPoint, location, 0);
                             } else {
-                                if (lastLocation.distanceTo(location) > 50) {
-                                    saveUserLocation(geoPoint, location);
+                                float dist = lastLocation.distanceTo(location);
+                                if (dist > 50) {
+                                    saveUserLocation(geoPoint, location, dist);
                                     lastLocation = location;
                                 } else {
                                     sendMyBroadcastMessage(null, 1);
@@ -214,7 +215,13 @@ public class PerformerBackgroundService extends Service {
 //        Log.d(TAG, "sendMyBroadcastMessage: sended");
     }
 
-    private void saveUserLocation(final GeoPoint userLocation, Location location){
+    private void saveUserLocation(final GeoPoint userLocation, Location location, float dist){
+
+        dist += mysettings.GetDistance();
+        mysettings.SetDistance((int)dist);
+
+        Log.d("Distance", "new distance = " + dist);
+
 //        if(0 != counter%5)
 //        {
 //            counter++;

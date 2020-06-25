@@ -57,6 +57,9 @@ public class order implements Parcelable {
     public int state;
     public String cancel_reason;
 
+    public int start_distance;
+    public int end_distance;
+
     public GeoPoint from_position;
     public GeoPoint to_position;
 
@@ -94,6 +97,9 @@ public class order implements Parcelable {
         this.state = 0;
         this.cancel_reason = "";
 
+        start_distance = 0;
+        end_distance = 0;
+
         setOrderActiveTime();
     }
 
@@ -130,6 +136,8 @@ public class order implements Parcelable {
         state = in.readInt();
         cancel_reason = in.readString();
         curr_position = in.readParcelable(Location.class.getClassLoader());
+        start_distance = in.readInt();
+        end_distance = in.readInt();
     }
 
     public static final Creator<order> CREATOR = new Creator<order>() {
@@ -203,6 +211,8 @@ public class order implements Parcelable {
         dest.writeInt(state);
         dest.writeString(cancel_reason);
         dest.writeParcelable(curr_position, flags);
+        dest.writeInt(start_distance);
+        dest.writeInt(end_distance);
     }
 
 //    public order(String data, String from, String to, String purpose, String comment,

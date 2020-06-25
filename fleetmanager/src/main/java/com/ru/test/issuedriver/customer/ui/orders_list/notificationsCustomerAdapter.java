@@ -50,7 +50,7 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
         order item = cards.get(position);
         holder.mNotification_item_fio.setText(item.performer_fio);
         if(item.order_timestamp != null) {
-            SimpleDateFormat sfd = new SimpleDateFormat("Поездка принята: dd-MM-yyyy HH:mm:ss");
+            SimpleDateFormat sfd = new SimpleDateFormat("Поездка: dd-MM-yyyy HH:mm:ss");
             holder.mNotification_item_data.setText(sfd.format(item.order_timestamp.toDate()));
         }
 
