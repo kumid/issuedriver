@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.GoogleMap;
@@ -39,6 +40,7 @@ import com.ru.test.issuedriver.customer.ui.orders_list.OrdersListViewModel;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.ui.orders.OrdersListActivity;
 import com.ru.test.issuedriver.ui.registration.RegistrationActivity;
+import com.squareup.picasso.Picasso;
 
 import java.util.Arrays;
 import java.util.List;
@@ -169,6 +171,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
             }
         });
 
+        initDrawer();
 //        test();
     }
     RecyclerView rv;
@@ -344,5 +347,28 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
                 }
                 return;
         }
+    }
+
+
+    private void initDrawer() {
+        if(CurrentUser == null)
+            return;
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View headerView = navigationView.getHeaderView(0);
+
+        TextView mNavigation_header_user_name = headerView.findViewById(R.id.navigation_header_user_name);
+        TextView mNavigation_header_user_email = headerView.findViewById(R.id.navigation_header_user_email);
+        TextView mNavigation_header_user_corp_email = headerView.findViewById(R.id.navigation_header_user_corp_email);
+//        ImageView mNavigation_header_user_photo = headerView.findViewById(R.id.navigation_header_user_photo);
+        mNavigation_header_user_name.setText(CurrentUser.fio);
+        mNavigation_header_user_email.setText(CurrentUser.email);
+        mNavigation_header_user_corp_email.setText(CurrentUser.corp);
+//        if(CurrentUser.photoPath.length() > 0) {
+//            Picasso.get().load(CurrentUser.photoPath)
+//                    .placeholder(R.drawable.avatar)
+//                    .error(R.drawable.avatar)
+//                    .into(mNavigation_header_user_photo);
+//        }
     }
 }

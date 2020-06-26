@@ -3,13 +3,9 @@ package com.ru.test.issuedriver.ui.registration;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProviders;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -29,8 +25,6 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -45,31 +39,29 @@ import com.ru.test.issuedriver.helpers.firestoreHelper;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 import com.ru.test.issuedriver.helpers.mysettings;
 import com.ru.test.issuedriver.helpers.storage.fbStorageUploads;
-import com.ru.test.issuedriver.helpers.storage.photolib;
 import com.ru.test.issuedriver.helpers.storage.picturelib;
 import com.ru.test.issuedriver.performer.PerformerActivity;
 import com.ru.test.issuedriver.helpers.MyBroadcastReceiver;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ru.test.issuedriver.helpers.MyFirebaseMessagingService.token_tbl;
-
 public class RegistrationActivity extends MyActivity implements fbStorageUploads.setPhotoFBpathInterface {
 
-    final int REQUEST_PERMISSION_CODE = 1000;
+
     private RegistrationViewModel registrationViewModel;
     TextInputEditText mFio, mStaff, mEmail, mCorp, mAutomodel, mAutovin, mAutonumber;
     EditText mTel;
     Button mRegistrationButton, mRegistration_btn_logout;
-    ImageView mRegistration_online, mRegistration_offline, mRegistration_photo;
+    ImageView  mRegistration_photo;
     RadioButton mCustomer, mPerformer;
     View mRegistration_performer_groupe, mRegistration_radio_group;
     FirebaseFirestore db;
-    private String fbPhotoPath = "";
     private ActionBar actionBar;
 
     private boolean isFromLogin = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,8 +81,6 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
         mRegistrationButton = findViewById(R.id.registration_btn);
         mRegistration_btn_logout = findViewById(R.id.registration_btn_logout);
         mTel = findViewById(R.id.registration_tel);
-        mRegistration_online = findViewById(R.id.registration_online);
-        mRegistration_offline = findViewById(R.id.registration_ofline);
         mRegistration_radio_group = findViewById(R.id.registration_radio_group);
         mRegistration_performer_groupe = findViewById(R.id.registration_performer_groupe);
         mCustomer = findViewById(R.id.radio_customer);
@@ -105,7 +95,7 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
 
         mRegistrationButton.setOnClickListener(click);
         mRegistration_btn_logout.setOnClickListener(click);
-        mRegistration_photo.setOnClickListener(click);
+        mRegistration_photo.setOnLongClickListener(longClick);
         init();
         mCustomer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -120,10 +110,8 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
             actionBar.setTitle("Личный кабинет");
         }
 
-        requestPermission();
+        picturelib.init(this);
 
-        photolib.init(RegistrationActivity.getMyInstance());
-        fbStorageUploads.init(RegistrationActivity.getMyInstance(), null);
     }
 
 
@@ -141,7 +129,6 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
             String user = getIntent().getStringExtra("user");
             getUser(user);
             mRegistrationButton.setText(getResources().getString(R.string.saveprofile) );
-            OnlineStateListen();
         }
      }
 
@@ -155,47 +142,26 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
                 case R.id.registration_btn:
                     addUser();
                     break;
-                case R.id.registration_photo:
+//                case R.id.registration_photo:
                     //if (checkPermissionFromDevice()) {
-                        picturelib.dispatchTakePictureIntent(RegistrationActivity.this);
+//                        picturelib.dispatchTakePictureIntent();
                         //photolib.getPhotoFromCamera(true);
                     //}
 //                    else {
 //                        requestPermission();
 //                    }
-                    break;
+//                    break;
             }
         }
     };
 
-    private void requestPermission() {
-        int hasWriteExtStorePMS0 = ActivityCompat.checkSelfPermission(RegistrationActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (hasWriteExtStorePMS0 != PackageManager.PERMISSION_GRANTED) {
-
-            Runnable run = new Runnable() {
-                @Override
-                public void run() {
-                    ActivityCompat.requestPermissions(RegistrationActivity.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, RegistrationActivity.RC_STORAGE_PERMS);
-                }
-            };
-            Thread thread = new Thread(run);
-            thread.start();
-
-            return;
+    private View.OnLongClickListener longClick = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            picturelib.dispatchTakePictureIntent();
+            return false;
         }
-        int hasWriteExtStorePMS = ActivityCompat.checkSelfPermission(RegistrationActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (hasWriteExtStorePMS != PackageManager.PERMISSION_GRANTED) {
-
-            Runnable run = new Runnable() {
-                @Override
-                public void run() {
-                    ActivityCompat.requestPermissions(RegistrationActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, RegistrationActivity.RC_STORAGE_PERMS);                        }
-            };
-            Thread thread = new Thread(run);
-            thread.start();
-            return;
-        }
-    }
+    };
 
     private void addUser() {
         final user current =
@@ -213,7 +179,7 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
         if(currentUser != null)
             current.UUID = currentUser.UUID;
 
-        current.photoPath = fbPhotoPath;
+        current.photoPath = currentUser.photoPath;
 
         current.fcmToken = mysettings.GetFCMToken().getToken();
 
@@ -277,7 +243,13 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
                                     mAutonumber.setText(currentUser.autonumber);
                                     mCustomer.setChecked(!currentUser.is_performer);
                                     mPerformer.setChecked(currentUser.is_performer);
-
+                                    if(currentUser.photoPath.length() > 0) {
+//                                        mRegistration_photo.setImageURI(Uri.parse(currentUser.photoPath));
+                                        Picasso.get().load(currentUser.photoPath)
+                                                .placeholder(R.drawable.avatar)
+                                                .error(R.drawable.avatar)
+                                                .into(mRegistration_photo);
+                                    }
                                     try {
                                         mTel.setText(currentUser.tel);
                                     } catch (Exception ex){
@@ -297,48 +269,6 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
 
 
 
-    private void OnlineStateListen() {
-        MyBroadcastReceiver.callback4onlineState = new MyBroadcastReceiver.onlineStateChange() {
-            @Override
-            public void callback(boolean state) {
-                Log.d("TAG", "Online " + state);
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRegistration_online.setVisibility(state ? View.VISIBLE : View.GONE);
-                        mRegistration_offline.setVisibility(!state ? View.VISIBLE : View.GONE);
-                    }
-                });
-            }
-        };
-
-        Runnable runnable = new Runnable() {
-            public void run() {
-
-                while (true) {
-                    synchronized (this) {
-                        try {
-                            wait(10000);
-                            Handler handler = new Handler(Looper.getMainLooper());
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mRegistration_online.setVisibility(View.GONE);
-                                    mRegistration_offline.setVisibility(View.VISIBLE);
-                                }
-                            });
-
-                        } catch (Exception e) {
-                        }
-                    }
-                }
-            }
-        };
-        Thread thread = new Thread(runnable);
-        thread.start();
-    }
-
     /// ActionBar Back button clicked
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -353,13 +283,13 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
     }
 
 
-    public static final int RC_STORAGE_PERMS = 101, RC_STORAGE_PERMS_READ = 102;
     private int hasWriteExtStorePMS;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Uri uri = picturelib.onActivityResult(requestCode, resultCode, data, resultCode == this.RESULT_OK, mRegistration_photo);
+//        permissionsHelper.onActivityResult(requestCode, resultCode, data);
 //        picturelib.setPic(mRegistration_photo);
 //        Uri uri = photolib.onActivityResult(requestCode, resultCode, data);
         Log.d("TAG", "onActivityResult");
@@ -387,6 +317,14 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
 
     @Override
     public void setPath(String path) {
-        fbPhotoPath = path;
+
+        currentUser.photoPath = path;
+        if(currentUser.photoPath.length() > 0) {
+//                                        mRegistration_photo.setImageURI(Uri.parse(currentUser.photoPath));
+            Picasso.get().load(currentUser.photoPath)
+                    .placeholder(R.drawable.avatar)
+                    .error(R.drawable.avatar)
+                    .into(mRegistration_photo);
+        }
     }
 }

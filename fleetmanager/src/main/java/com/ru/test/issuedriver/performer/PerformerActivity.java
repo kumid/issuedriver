@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,6 +19,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -38,14 +41,18 @@ import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.helpers.MyBroadcastReceiver;
 import com.ru.test.issuedriver.helpers.fsm.sender;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
+import com.ru.test.issuedriver.helpers.storage.fbStorageUploads;
+import com.ru.test.issuedriver.helpers.storage.picturelib;
 import com.ru.test.issuedriver.performer.ui.feedback.FeedbackActivity;
 import com.ru.test.issuedriver.helpers.PerformerBackgroundService;
 import com.ru.test.issuedriver.helpers.callBacks;
 import com.ru.test.issuedriver.helpers.firestoreHelper;
 import com.ru.test.issuedriver.performer.ui.orderPerforming.OrderPerformingActivity;
 import com.ru.test.issuedriver.ui.history.HistoryViewModel;
+import com.squareup.picasso.Picasso;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -56,7 +63,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-public class PerformerActivity extends MyActivity implements UserStateBottonDialog.BottomSheetListener, OrderCancelBottonDialog.CancelBottomSheetListener {
+public class PerformerActivity extends MyActivity implements UserStateBottonDialog.BottomSheetListener, OrderCancelBottonDialog.CancelBottomSheetListener , fbStorageUploads.setPhotoFBpathInterface{
 
     private static final String TAG = "myLogs";
 
@@ -85,6 +92,7 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
         setupNavigation();
 
         initViewModels();
+
        // setDefaultUserState();
 
 //        if(getIntent().hasExtra("object")){
@@ -121,7 +129,11 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
         };
 
         OnlineStateListen();
+
+        picturelib.init(this);
+
     }
+
 
     private void setupNavigation() {
 
@@ -519,5 +531,23 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
         } catch (Exception ex) {
             Log.d("TAG", "ERROR ");
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Uri uri = picturelib.onActivityResult(requestCode, resultCode, data, resultCode == this.RESULT_OK, null);
+    }
+
+    @Override
+    public void setPath(String path) {
+        mainViewModel.CurrentUser.photoPath = path;
+        CurrentUser.photoPath = path;
+        if(callback4UpdatePhotoInterface != null)
+            callback4UpdatePhotoInterface.callback(path);
+    }
+    public static UpdatePhotoInterface callback4UpdatePhotoInterface;
+    public interface  UpdatePhotoInterface {
+        void callback(String path);
     }
 }

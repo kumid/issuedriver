@@ -14,7 +14,11 @@ import android.widget.ImageView;
 
 import com.ru.test.issuedriver.BuildConfig;
 import com.ru.test.issuedriver.MyActivity;
+import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.data.order;
+import com.ru.test.issuedriver.helpers.permissionsHelper;
+import com.ru.test.issuedriver.ui.registration.RegistrationActivity;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,8 +35,16 @@ public class picturelib {
     static String currentPhotoPath;
     private static Uri photoURI;
     private static File photoFile;
+    private static Activity activity;
 
-    private static File createImageFile(Activity activity) throws IOException {
+    public static void init(Activity _activity){
+        activity = _activity;
+        permissionsHelper.requestPermissionRW_EXTERNAL_STORAGE(activity);
+        fbStorageUploads.init(activity);
+    }
+
+
+    private static File createImageFile() throws IOException {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
@@ -48,17 +60,16 @@ public class picturelib {
         return image;
     }
 
-
     private static final int REQUEST_IMAGE_CAPTURE = 1001;
 
-    public static void dispatchTakePictureIntent(Activity activity) {
+    public static void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(activity.getPackageManager()) != null) {
             // Create the File where the photo should go
             photoFile = null;
             try {
-                photoFile = createImageFile(activity);
+                photoFile = createImageFile();
             } catch (IOException ex) {
                 // Error occurred while creating the File
             }
@@ -73,7 +84,7 @@ public class picturelib {
         }
     }
 
-    private static void galleryAddPic(Activity activity) {
+    private static void galleryAddPic() {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
         File f = new File(currentPhotoPath);
         Uri contentUri = Uri.fromFile(f);
@@ -106,41 +117,26 @@ public class picturelib {
     }
 
     public static Uri onActivityResult(int requestCode, int resultCode, Intent data, boolean isResultOK, ImageView imageView) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE
-                && isResultOK) {
-            Bitmap imageBitmap = null;
-            if(data != null) {
-                Bundle extras = data.getExtras();
-                imageBitmap = (Bitmap) extras.get("data");
-                // не используется
+        if (requestCode != REQUEST_IMAGE_CAPTURE
+                || !isResultOK)
 
+            return null;
+        if (photoFile != null
+                && photoFile.exists()) {
+            docItem tmp = new docItem(photoURI, "");
+            processWithPicture(imageView);
+            fbStorageUploads.uploadFromFile(activity, tmp, currentPhotoPath);
 
-                return Uri.EMPTY;
-            }
-            else {
-                if(photoFile != null
-                        && photoFile.exists()) {
-                     docItem tmp = new docItem(photoURI, "");
-                        processWithPicture(imageView);
-                        fbStorageUploads.uploadFromFile(MyActivity.getMyInstance(), tmp, currentPhotoPath);
-                        //AnalizePage2Fragment.getInstance().initData(tmp);
-                        //AnalizeContainerFragment.viewPager.setCurrentItem(1, true);
-                        //Intent intent = new Intent(activity, IssueActivity.class);
-                        //intent.putExtra("photo", photoURI);
-                        //activity.startActivity(intent);
-                        //activity.overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
-                        return photoURI;
-                }
-            }
-            //if(imageBitmap!=null) {
-            //    imageView.setImageBitmap(imageBitmap);
-            //}
+            return photoURI;
         }
 
         return null;
     }
 
     private static void processWithPicture(ImageView imageView) {
+        if(imageView == null)
+            imageView = photoImageView;
+
         // Get the dimensions of the View
         int targetW = imageView.getWidth();
         int targetH = imageView.getHeight();
@@ -199,7 +195,11 @@ public class picturelib {
                 e.printStackTrace();
             }
 
-            imageView.setImageBitmap(rotatedBitmap);
+            Picasso.get().load(currentPhotoPath)
+                    .placeholder(R.drawable.avatar)
+                    .error(R.drawable.avatar)
+                    .into(imageView);
+//            imageView.setImageBitmap(rotatedBitmap);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -210,5 +210,11 @@ public class picturelib {
         matrix.postRotate(angle);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(),
                 matrix, true);
+    }
+
+    private static ImageView photoImageView;
+    public static void dispatchTakePictureIntent(ImageView iv) {
+        photoImageView = iv;
+        dispatchTakePictureIntent();
     }
 }

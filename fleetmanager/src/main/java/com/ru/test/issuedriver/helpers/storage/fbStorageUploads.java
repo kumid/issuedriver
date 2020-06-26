@@ -1,6 +1,7 @@
 package com.ru.test.issuedriver.helpers.storage;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -50,83 +51,25 @@ public class fbStorageUploads {
     private static final int RC_UPLOAD_FILE = 102;
     public static UploadTask mUploadTask;
 
-    private  static AppCompatActivity activity;
+    private  static Activity activity;
 
     private static StorageReference storageRef, folderRef, imageRef;
-    private static RegistrationViewModel employeeViewModel;
-    public static void init(AppCompatActivity _activity, RegistrationViewModel _employeeViewModel){
+    public static void init(Activity _activity){
         activity = _activity;
-        employeeViewModel = _employeeViewModel;
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        //FirebaseStorage storage = FirebaseStorage.getInstance("gs://jirawatee-eastern");
-        //FirebaseStorage storage = FirebaseStorage.getInstance("gs://jirawatee-northeastern");
-        //FirebaseStorage storage = FirebaseStorage.getInstance("gs://jirawatee-europe");
-        //FirebaseStorage storage = FirebaseStorage.getInstance("gs://jirawatee-easternus");
-        //FirebaseStorage storage = FirebaseStorage.getInstance("gs://jirawatee-europeunion");
         storageRef = storage.getReference();
     }
 
-    public static void uploadFromStream() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        activity.startActivityForResult(intent, RC_UPLOAD_STREAM);
+    public static void uploadFromFile(Context context, docItem item, String a_path) {
+
+        uploadFromFilePath(a_path, item);
     }
 
-    public static void uploadFromFile() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        activity.startActivityForResult(intent, RC_UPLOAD_FILE);
-    }
 
-    public static void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            if(data == null)
-                return;
+    public static void uploadFromFilePath(String path, docItem item) {
+        Log.e(TAG, "Strat - " + path);
 
-            String path = Helper.getPath(activity, Uri.parse(data.getData().toString()));
-            switch (requestCode) {
-                case RC_UPLOAD_STREAM:
-                    uploadFromStream(path);
-                    break;
-                case RC_UPLOAD_FILE:
-                    uploadFromFilePath(path, null);
-                    break;
-            }
-        }
-    }
-
-    private static void uploadFromStream(String path) {
-        Helper.showDialog(activity);
-        InputStream stream = null;
-        try {
-            stream = new FileInputStream(new File(path));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        mUploadTask = imageRef.putStream(stream);
-        mUploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Helper.dismissDialog();
-                Log.e(TAG, String.format("Failure: %s", exception.getMessage()));
-                //mTextView.setText(String.format("Failure: %s", exception.getMessage()));
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                Helper.dismissDialog();
-                imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                    @Override
-                    public void onSuccess(Uri uri) {
-                        Log.e(TAG, uri.toString()); //mTextView.setText(uri.toString());
-                    }
-                });
-            }
-        });
-    }
-
-     public static void uploadFromFilePath(String path, docItem item) {
-         Log.e(TAG, "Strat - " + path);
-
-         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmssSSS").format(new Date());
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmssSSS").format(new Date());
 
         if(folderRef == null){
             String timeStampDtring = new SimpleDateFormat("yyyyMMdd").format(new Date());
@@ -135,134 +78,48 @@ public class fbStorageUploads {
 
         String fbName = "JPEG_" + timeStamp;
         final Uri file = Uri.fromFile(new File(path));
-        //final StorageReference imageRef = folderRef.child(file.getLastPathSegment());
         imageRef = folderRef.child(String.format("%s.jpg", fbName));
-        //StorageMetadata metadata = new StorageMetadata.Builder().setContentType("image/jpg").build();
-        //UploadTask uploadTask = imageRef.putFile(file, metadata);
 
-//         Runnable run = new Runnable() {
-//             @Override
-//             public void run() {
-//
-//             }
-//         };
-//         Thread thread = new Thread(run);
-//         thread.start();
-//             }
+        mUploadTask = imageRef.putFile(file);
 
-         mUploadTask = imageRef.putFile(file);
+        Helper.initProgressDialog(activity);
+        Helper.mProgressDialog.show();
 
-         Helper.initProgressDialog(activity);
-         Helper.mProgressDialog.show();
-
-         mUploadTask.addOnFailureListener(new OnFailureListener() {
-             @Override
-             public void onFailure(@NonNull Exception exception) {
-                 Helper.dismissProgressDialog();
-                 Log.e(TAG, String.format("Failure: %s", exception.getMessage())); //mTextView.setText(String.format("Failure: %s", exception.getMessage()));
-             }
-         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-             @Override
-             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                 Helper.dismissProgressDialog();
-                 //findViewById(R.id.button_upload_resume).setVisibility(View.GONE);
-                 imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-                     @Override
-                     public void onSuccess(Uri uri) {
-                         Log.e(TAG, uri.toString()); //mTextView.setText(uri.toString());
-                         setPhotoFBpathInterface interf = ((setPhotoFBpathInterface)activity);
-                         if(interf != null)
-                             interf.setPath(uri.toString());
-//                         employeeViewModel.currentUser.fbUrl = uri.toString(); //MainActivity.currentOrder.addPicture(uri.toString());
-//                         employeeViewModel.currentUser.localpath = file.toString(); //MainActivity.currentOrder.addPicture(uri.toString());
-//                         employeeViewModel.photo.postValue(file.toString());
-                         //item.url = uri.toString();
-                     }
-                 });
-             }
-         }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-             @Override
-             public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                 int progress = (int) ((100 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
-                 Helper.setProgress(progress);
-             }
-         }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
-             @Override
-             public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
-                 //findViewById(R.id.button_upload_resume).setVisibility(View.VISIBLE);
-                 Log.e(TAG, "Пауза");//mTextView.setText(R.string.upload_paused);
-             }
-         });
-
-        /*
-        Helper.mProgressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Cancel", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                mUploadTask.cancel();
-            }
-        });
-        Helper.mProgressDialog.setButton(DialogInterface.BUTTON_NEUTRAL, "Pause", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                mUploadTask.pause();
-            }
-        });
-         */
-
-
-    }
-
-
-    public static void uploadFromDataInMemory(ImageView mImageView, String picName) {
-        imageRef = folderRef.child(String.format("%s.jpg", picName));
-        Helper.showDialog(activity);
-        // Get the data from an ImageView as bytes
-        // Get the data from an ImageView as bytes
-        //mImageView.setDrawingCacheEnabled(true);
-        //mImageView.buildDrawingCache();
-        //Bitmap bitmap = mImageView.getDrawingCache();
-        Bitmap bitmap = ((BitmapDrawable)mImageView.getDrawable()).getBitmap();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        int quality = 100;
-        if(bitmap.getAllocationByteCount() > 5000000)
-            quality = 80;
-        if(bitmap.getAllocationByteCount() > 25000000)
-            quality = 60;
-        if(bitmap.getAllocationByteCount() > 50000000)
-            quality = 40;
-
-        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
-        byte[] data = baos.toByteArray();
-
-        mUploadTask = imageRef.putBytes(data);
         mUploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                Helper.dismissDialog();
+                Helper.dismissProgressDialog();
                 Log.e(TAG, String.format("Failure: %s", exception.getMessage())); //mTextView.setText(String.format("Failure: %s", exception.getMessage()));
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                Helper.dismissDialog();
-
+                Helper.dismissProgressDialog();
+                //findViewById(R.id.button_upload_resume).setVisibility(View.GONE);
                 imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                     @Override
                     public void onSuccess(Uri uri) {
                         Log.e(TAG, uri.toString()); //mTextView.setText(uri.toString());
+                        setPhotoFBpathInterface interf = ((setPhotoFBpathInterface)activity);
+                        if(interf != null)
+                            interf.setPath(uri.toString());
                     }
                 });
             }
+        }).addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                int progress = (int) ((100 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
+                Helper.setProgress(progress);
+            }
+        }).addOnPausedListener(new OnPausedListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onPaused(UploadTask.TaskSnapshot taskSnapshot) {
+                //findViewById(R.id.button_upload_resume).setVisibility(View.VISIBLE);
+                Log.e(TAG, "Пауза");//mTextView.setText(R.string.upload_paused);
+            }
         });
     }
-
-    public static void uploadFromFile(Context context, docItem item, String a_path) {
-
-        uploadFromFilePath(a_path, item);
-    }
-
     public static void uploadFromFile(Context context, docItem item) {
 
 
@@ -358,6 +215,127 @@ public class fbStorageUploads {
     }
 
 
+    public interface  setPhotoFBpathInterface {
+        void setPath(String path);
+    }
+
+    /*
+
+
+
+
+
+
+    public static void uploadFromStream() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        activity.startActivityForResult(intent, RC_UPLOAD_STREAM);
+    }
+
+    public static void uploadFromFile() {
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        activity.startActivityForResult(intent, RC_UPLOAD_FILE);
+    }
+
+    public static void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if(data == null)
+                return;
+
+            String path = Helper.getPath(activity, Uri.parse(data.getData().toString()));
+            switch (requestCode) {
+                case RC_UPLOAD_STREAM:
+                    uploadFromStream(path);
+                    break;
+                case RC_UPLOAD_FILE:
+                    uploadFromFilePath(path, null);
+                    break;
+            }
+        }
+    }
+
+    private static void uploadFromStream(String path) {
+        Helper.showDialog(activity);
+        InputStream stream = null;
+        try {
+            stream = new FileInputStream(new File(path));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        mUploadTask = imageRef.putStream(stream);
+        mUploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Helper.dismissDialog();
+                Log.e(TAG, String.format("Failure: %s", exception.getMessage()));
+                //mTextView.setText(String.format("Failure: %s", exception.getMessage()));
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                Helper.dismissDialog();
+                imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Log.e(TAG, uri.toString()); //mTextView.setText(uri.toString());
+                    }
+                });
+            }
+        });
+    }
+
+
+    public static void uploadFromDataInMemory(ImageView mImageView, String picName) {
+        imageRef = folderRef.child(String.format("%s.jpg", picName));
+        Helper.showDialog(activity);
+        // Get the data from an ImageView as bytes
+        // Get the data from an ImageView as bytes
+        //mImageView.setDrawingCacheEnabled(true);
+        //mImageView.buildDrawingCache();
+        //Bitmap bitmap = mImageView.getDrawingCache();
+        Bitmap bitmap = ((BitmapDrawable)mImageView.getDrawable()).getBitmap();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+        int quality = 100;
+        if(bitmap.getAllocationByteCount() > 5000000)
+            quality = 80;
+        if(bitmap.getAllocationByteCount() > 25000000)
+            quality = 60;
+        if(bitmap.getAllocationByteCount() > 50000000)
+            quality = 40;
+
+        bitmap.compress(Bitmap.CompressFormat.JPEG, quality, baos);
+        byte[] data = baos.toByteArray();
+
+        mUploadTask = imageRef.putBytes(data);
+        mUploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Helper.dismissDialog();
+                Log.e(TAG, String.format("Failure: %s", exception.getMessage())); //mTextView.setText(String.format("Failure: %s", exception.getMessage()));
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Helper.dismissDialog();
+
+                imageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                    @Override
+                    public void onSuccess(Uri uri) {
+                        Log.e(TAG, uri.toString()); //mTextView.setText(uri.toString());
+                    }
+                });
+            }
+        });
+    }
+
+
+
+
+
+
+
+
     public static void setUserID(String uid) {
         folderRef = storageRef.child(uid);
     }
@@ -404,8 +382,7 @@ public class fbStorageUploads {
         };
     }
 
+    */
 
-    public interface  setPhotoFBpathInterface {
-        void setPath(String path);
-    }
+
 }

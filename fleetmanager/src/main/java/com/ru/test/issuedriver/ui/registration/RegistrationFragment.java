@@ -25,11 +25,16 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.redmadrobot.inputmask.MaskedTextChangedListener;
 import com.redmadrobot.inputmask.helper.AffinityCalculationStrategy;
+import com.ru.test.issuedriver.MainViewModel;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.data.user;
+import com.ru.test.issuedriver.helpers.callBacks;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 import com.ru.test.issuedriver.helpers.MyBroadcastReceiver;
+import com.ru.test.issuedriver.helpers.storage.picturelib;
+import com.ru.test.issuedriver.performer.PerformerActivity;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,13 +43,16 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
+import static com.ru.test.issuedriver.performer.PerformerActivity.callback4UpdatePhotoInterface;
+
 public class RegistrationFragment extends Fragment {
 
     private RegistrationViewModel registrationViewModel;
+    private MainViewModel mainViewModel;
     TextInputEditText mFio, mStaff, mEmail, mCorp, mAutomodel, mAutovin, mAutonumber;
     EditText mTel;
     Button mRegistrationButton, mRegistration_btn_logout;
-    ImageView mRegistration_online, mRegistration_offline;
+    ImageView mRegistration_photo;
     RadioButton mCustomer, mPerformer;
     View mRegistration_performer_groupe, mRegistration_radio_group;
     FirebaseFirestore db;
@@ -54,7 +62,7 @@ public class RegistrationFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         registrationViewModel =
                 ViewModelProviders.of(getActivity()).get(RegistrationViewModel.class);
-
+        mainViewModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
         View root = inflater.inflate(R.layout.activity_registration, container, false);
         //final TextView textView = root.findViewById(R.id.text_notifications);
 //        registrationViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
@@ -73,22 +81,20 @@ public class RegistrationFragment extends Fragment {
         mRegistrationButton = root.findViewById(R.id.registration_btn);
         mRegistration_btn_logout = root.findViewById(R.id.registration_btn_logout);
         mTel = root.findViewById(R.id.registration_tel);
-        mRegistration_online = root.findViewById(R.id.registration_online);
-        mRegistration_offline = root.findViewById(R.id.registration_ofline);
-
+        mRegistration_photo  = root.findViewById(R.id.registration_photo);
         mRegistration_radio_group = root.findViewById(R.id.registration_radio_group);
         mRegistration_performer_groupe = root.findViewById(R.id.registration_performer_groupe);
         mCustomer = root.findViewById(R.id.radio_customer);
         mPerformer = root.findViewById(R.id.radio_performer);
         mCustomer.setEnabled(false);
         mPerformer.setEnabled(false);
-        OnlineStateListen();
         db = FirebaseFirestore.getInstance();
 
         mRegistration_btn_logout.setVisibility(View.VISIBLE);
 
         mRegistrationButton.setOnClickListener(click);
         mRegistration_btn_logout.setOnClickListener(click);
+        mRegistration_photo.setOnLongClickListener(longClick);
         init();
 
         mCustomer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -103,47 +109,6 @@ public class RegistrationFragment extends Fragment {
         return root;
     }
 
-private void OnlineStateListen() {
-        MyBroadcastReceiver.callback4onlineState = new MyBroadcastReceiver.onlineStateChange() {
-            @Override
-            public void callback(boolean state) {
-                Log.d("TAG", "Online " + state);
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRegistration_online.setVisibility(state ? View.VISIBLE : View.GONE);
-                        mRegistration_offline.setVisibility(!state ? View.VISIBLE : View.GONE);
-                    }
-                });
-            }
-        };
-
-        Runnable runnable = new Runnable() {
-            public void run() {
-
-                while (true) {
-                    synchronized (this) {
-                        try {
-                            wait(10000);
-                            Handler handler = new Handler(Looper.getMainLooper());
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    mRegistration_online.setVisibility(View.GONE);
-                                    mRegistration_offline.setVisibility(View.VISIBLE);
-                                }
-                            });
-
-                        } catch (Exception e) {
-                        }
-                    }
-                }
-             }
-        };
-        Thread thread = new Thread(runnable);
-        thread.start();
-    }
     private void init() {
         mEmail.setText(googleAuthManager.getEmail());
         mRegistrationButton.setText(getResources().getString(R.string.saveprofile));
@@ -160,6 +125,13 @@ private void OnlineStateListen() {
                 addUser();
         }
     };
+    private View.OnLongClickListener longClick = new View.OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            picturelib.dispatchTakePictureIntent(mRegistration_photo);
+            return false;
+        }
+    };
 
     private void addUser() {
         final user current =
@@ -174,6 +146,7 @@ private void OnlineStateListen() {
                         mPerformer.isChecked(),
                         true
                 );
+        current.photoPath = mainViewModel.CurrentUser.photoPath;
 
         db.collection("users").document(mEmail.getText().toString()).set(current)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -261,6 +234,13 @@ private void OnlineStateListen() {
         mTel.setText(curr.tel);
         mRegistration_performer_groupe.setVisibility(curr.is_performer?View.VISIBLE:View.GONE);
         registrationViewModel.currentUser.postValue(curr);
+        if(curr.photoPath.length() > 0) {
+//                                        mRegistration_photo.setImageURI(Uri.parse(currentUser.photoPath));
+            Picasso.get().load(curr.photoPath)
+                    .placeholder(R.drawable.avatar)
+                    .error(R.drawable.avatar)
+                    .into(mRegistration_photo);
+        }
     }
 
 
@@ -282,5 +262,26 @@ private void OnlineStateListen() {
         );
 
         mTel.setHint(listener.placeholder());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        callback4UpdatePhotoInterface = new PerformerActivity.UpdatePhotoInterface() {
+            @Override
+            public void callback(String path) {
+                Picasso.get().load(path)
+                        .placeholder(R.drawable.avatar)
+                        .error(R.drawable.avatar)
+                        .into(mRegistration_photo);
+            }
+        };
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        callback4UpdatePhotoInterface = null;
     }
 }
