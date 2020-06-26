@@ -1,5 +1,6 @@
 package com.ru.test.issuedriver.customer.ui.order;
 
+import android.location.Location;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -11,20 +12,27 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.GeoPoint;
 import com.ru.test.issuedriver.customer.CustomerV2Activity;
 import com.ru.test.issuedriver.data.Token;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.data.place;
+import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.helpers.firestoreHelper;
 import com.ru.test.issuedriver.helpers.fsm.sender;
 import com.ru.test.issuedriver.helpers.mysettings;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModel;
 
 import static com.ru.test.issuedriver.helpers.MyFirebaseMessagingService.token_tbl;
@@ -152,7 +160,8 @@ public class OrderViewModel extends ViewModel {
     }
 
     private void addPlace2Collection() {
-        // Write a pos to the database
+
+    // Write a pos to the database
         DatabaseReference myRef = database.getReference();
 
         place newPlace = new place();
@@ -165,6 +174,33 @@ public class OrderViewModel extends ViewModel {
         } else {
             newPlace.latitude = currentOrder.to_position.getLatitude();
             newPlace.longtitude = currentOrder.to_position.getLongitude();
+        }
+
+        database.getReference().child("places").child(currentOrder.customer_uuid)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        List<place> lst = new ArrayList<>();
+                        for (DataSnapshot item: dataSnapshot.getChildren()) {
+                            lst.add(item.getValue(place.class));
+                        }
+                        checkAndAddPlace2Collection(lst, newPlace);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+     }
+
+    private void checkAndAddPlace2Collection(List<place> lst, place newPlace) {
+        DatabaseReference myRef = database.getReference();
+        for (place point: lst) {
+            float[] result = new float[1];
+            Location.distanceBetween(point.latitude, point.longtitude, newPlace.latitude, newPlace.longtitude, result);
+            if (result[0] < 200)
+                return;
         }
 
         myRef.child("places").child(currentOrder.customer_uuid).child(UUID.randomUUID().toString()).setValue(newPlace)

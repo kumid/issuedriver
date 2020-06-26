@@ -4,12 +4,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.helpers.callBacks;
 import com.ru.test.issuedriver.performer.PerformerActivity;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -58,6 +60,29 @@ public class notificationsPerformerAdapter extends RecyclerView.Adapter<notifica
         holder.mNotification_item_comment.setText(item.comment);
 
         //holder.mNotification_item_extra.setVisibility(View.GONE);
+        holder.mNotification_item_photo_card.setVisibility(View.GONE);
+        if(item.customer_photo.length() > 0) {
+//                                        mRegistration_photo.setImageURI(Uri.parse(currentUser.photoPath));
+            Picasso.get().load(item.customer_photo)
+                    .placeholder(R.drawable.avatar)
+                    .error(R.drawable.avatar)
+                    .into(holder.mNotification_item_photo);
+        }
+
+        holder.mNotification_item_photo_visiblility.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.mNotification_item_photo_card.setVisibility(View.VISIBLE);
+                holder.mNotification_item_photo_visiblility.setVisibility(View.GONE);
+            }
+        });
+        holder.mNotification_item_photo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.mNotification_item_photo_card.setVisibility(View.GONE);
+                holder.mNotification_item_photo_visiblility.setVisibility(View.VISIBLE);
+            }
+        });
 
         if(item.accept) {
             if (item.completed) {
@@ -147,8 +172,10 @@ public class notificationsPerformerAdapter extends RecyclerView.Adapter<notifica
 
     class VH extends RecyclerView.ViewHolder{
         TextView mNotification_item_fio, mNotification_item_purpose, mNotification_item_from, mNotification_item_to, mNotification_item_comment, mNotification_item_data;
-        View mNotification_item_extra, mNotification_item_btn_accept, mNotification_item_call, mNotification_item_btn_accept_ok, mNotification_item_navigate;
+        View mNotification_item_extra, mNotification_item_btn_accept, mNotification_item_call, mNotification_item_btn_accept_ok, mNotification_item_navigate,
+                mNotification_item_photo_card;
         Button mNotification_item_btn_status_wait, mNotification_item_btn_status_in_process, mNotification_item_btn_status_completed, mNotification_item_btn_start, mNotification_item_btn_cancel;
+        ImageView mNotification_item_photo, mNotification_item_photo_visiblility;
         CardView mNotification_item;
         public VH(@NonNull View itemView) {
             super(itemView);
@@ -161,6 +188,9 @@ public class notificationsPerformerAdapter extends RecyclerView.Adapter<notifica
             mNotification_item_btn_accept  = itemView.findViewById(R.id.notification_item_btn_accept);
             mNotification_item_btn_accept_ok  = itemView.findViewById(R.id.notification_item_btn_accept_ok);
             mNotification_item_btn_cancel  = itemView.findViewById(R.id.notification_item_performer_cancel);
+            mNotification_item_photo = itemView.findViewById(R.id.notification_item_photo);
+            mNotification_item_photo_card = itemView.findViewById(R.id.notification_item_photo_card);
+            mNotification_item_photo_visiblility = itemView.findViewById(R.id.notification_item_photo_visiblility);
             mNotification_item_call  = itemView.findViewById(R.id.notification_item_call);
             mNotification_item_fio = itemView.findViewById(R.id.notification_item_fio);
             mNotification_item_data  = itemView.findViewById(R.id.notification_item_data);

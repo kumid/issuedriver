@@ -4,12 +4,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.customer.CustomerV2Activity;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.helpers.callBacks;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -62,6 +64,29 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
         holder.mNotification_item_extra.setVisibility(View.GONE);
         holder.mNotification_item_extra_btns.setVisibility(View.GONE);
 
+        holder.mNotification_item_photo_card.setVisibility(View.GONE);
+        if(item.performer_photo.length() > 0) {
+//                                        mRegistration_photo.setImageURI(Uri.parse(currentUser.photoPath));
+            Picasso.get().load(item.performer_photo)
+                    .placeholder(R.drawable.avatar)
+                    .error(R.drawable.avatar)
+                    .into(holder.mNotification_item_photo);
+        }
+
+        holder.mNotification_item_photo_visiblility.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.mNotification_item_photo_card.setVisibility(View.VISIBLE);
+                holder.mNotification_item_photo_visiblility.setVisibility(View.GONE);
+            }
+        });
+        holder.mNotification_item_photo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.mNotification_item_photo_card.setVisibility(View.GONE);
+                holder.mNotification_item_photo_visiblility.setVisibility(View.VISIBLE);
+            }
+        });
 
         if(item.accept) {
             if (item.completed) {
@@ -145,8 +170,10 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
 
     class VH extends RecyclerView.ViewHolder{
         TextView mNotification_item_fio, mNotification_item_purpose, mNotification_item_from, mNotification_item_to, mNotification_item_comment, mNotification_item_data;
-        View mNotification_item_extra, mNotification_item_btn_accept, mNotification_item_call, mNotification_item_btn_accept_ok, mNotification_item_extra_btns, mNotification_item_navigate;
+        View mNotification_item_extra, mNotification_item_btn_accept, mNotification_item_call, mNotification_item_btn_accept_ok, mNotification_item_extra_btns, mNotification_item_navigate,
+                mNotification_item_photo_card;
         Button mNotification_item_btn_status_wait, mNotification_item_btn_status_in_process, mNotification_item_btn_status_completed, mNotification_item_btn_cancel, mNotification_item_btn_start;
+        ImageView mNotification_item_photo, mNotification_item_photo_visiblility;
 //                , mNotification_item_btn_status_canceled;
         CardView mNotification_item;
         public VH(@NonNull View itemView) {
@@ -166,6 +193,9 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
             mNotification_item_btn_accept_ok  = itemView.findViewById(R.id.notification_item_btn_accept_ok);
             mNotification_item_call  = itemView.findViewById(R.id.notification_item_call);
             mNotification_item_fio = itemView.findViewById(R.id.notification_item_fio);
+            mNotification_item_photo = itemView.findViewById(R.id.notification_item_photo);
+            mNotification_item_photo_card = itemView.findViewById(R.id.notification_item_photo_card);
+            mNotification_item_photo_visiblility = itemView.findViewById(R.id.notification_item_photo_visiblility);
             mNotification_item_data  = itemView.findViewById(R.id.notification_item_data);
             mNotification_item_purpose = itemView.findViewById(R.id.notification_item_purpose);
             mNotification_item_from  = itemView.findViewById(R.id.notification_item_from);

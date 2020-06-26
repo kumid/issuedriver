@@ -514,6 +514,7 @@ public class mapsUtils {
                 intent.putExtra("performer_uuid", markerMap.get(item)._user.UUID);
                 intent.putExtra("performer_fio", markerMap.get(item)._user.fio);
                 intent.putExtra("performer_phone", markerMap.get(item)._user.tel);
+                intent.putExtra("performer_photo", markerMap.get(item)._user.photoPath);
                 intent.putExtra("performer_email", markerMap.get(item)._user.email);
                 intent.putExtra("performer_token", markerMap.get(item)._user.fcmToken);
                 intent.putExtra("performer_car", markerMap.get(item)._user.automodel);
