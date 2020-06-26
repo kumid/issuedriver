@@ -221,6 +221,7 @@ public class mapsUtils {
             return;
 
         Map<String, String> cars = new HashMap<>();
+        Map<String, String> cars4delete = new HashMap<>();
 
 
         for (user item : actualUserList) {
@@ -236,10 +237,16 @@ public class mapsUtils {
         /// remove not liquid cars from map
         for (String car: markerMap.keySet()) {
             if(!cars.containsKey(car)){
-                markerMap.get(car).marker.remove();
-                markerMap.remove(car);
+                cars4delete.put(car, "");
             }
         }
+
+        for(String car: cars4delete.keySet()){
+            markerMap.get(car).marker.remove();
+            markerMap.remove(car);
+        }
+
+
 
         // проверяем актуальность Водителей
         if(markerMap.size() != 0) {

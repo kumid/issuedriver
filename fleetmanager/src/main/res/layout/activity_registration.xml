@@ -167,6 +167,24 @@
                     android:enabled="false"
                     android:inputType="textEmailAddress"/>
             </com.google.android.material.textfield.TextInputLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                app:cardElevation="3dp"
+                app:cardCornerRadius="15dp"
+                android:layout_gravity="center"
+                android:layout_margin="20dp"
+                >
+                <ImageView
+                    android:id="@+id/registration_photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/avatar"/>
+            </androidx.cardview.widget.CardView>
+
+
+
             <Button
                 android:id="@+id/registration_btn_logout"
                 android:layout_width="match_parent"
@@ -180,6 +198,7 @@
                 android:visibility="gone"
                 android:textColor="@android:color/white"/>
         </LinearLayout>
+
     </ScrollView>
     <Button
         android:id="@+id/registration_btn"

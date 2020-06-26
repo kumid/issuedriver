@@ -93,4 +93,11 @@ dependencies {
     implementation 'com.google.android.libraries.places:places:2.3.0'
 
     implementation 'com.google.android.gms:play-services-places:17.0.0'
+
+
+//Picasso
+    def picassoVersion = "2.71828"
+    implementation "com.squareup.picasso:picasso:$picassoVersion"
+
+    implementation 'com.google.firebase:firebase-storage:19.1.1'
 }

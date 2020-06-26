@@ -80,5 +80,6 @@
     <string name="order_complete_request">Внимание, поездка завершена</string>
     <string name="history_item_cancel_date">Заказ отменен</string>
     <string name="prompt_login">Введите номер телефона</string>
+    <string name="loading">Загружается...</string>
 
 </resources>

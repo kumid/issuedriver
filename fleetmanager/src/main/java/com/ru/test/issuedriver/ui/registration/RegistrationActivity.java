@@ -1,10 +1,16 @@
 package com.ru.test.issuedriver.ui.registration;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.lifecycle.ViewModelProviders;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -38,6 +44,9 @@ import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.helpers.firestoreHelper;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 import com.ru.test.issuedriver.helpers.mysettings;
+import com.ru.test.issuedriver.helpers.storage.fbStorageUploads;
+import com.ru.test.issuedriver.helpers.storage.photolib;
+import com.ru.test.issuedriver.helpers.storage.picturelib;
 import com.ru.test.issuedriver.performer.PerformerActivity;
 import com.ru.test.issuedriver.helpers.MyBroadcastReceiver;
 
@@ -46,16 +55,18 @@ import java.util.List;
 
 import static com.ru.test.issuedriver.helpers.MyFirebaseMessagingService.token_tbl;
 
-public class RegistrationActivity extends MyActivity {
+public class RegistrationActivity extends MyActivity implements fbStorageUploads.setPhotoFBpathInterface {
 
+    final int REQUEST_PERMISSION_CODE = 1000;
     private RegistrationViewModel registrationViewModel;
     TextInputEditText mFio, mStaff, mEmail, mCorp, mAutomodel, mAutovin, mAutonumber;
     EditText mTel;
     Button mRegistrationButton, mRegistration_btn_logout;
-    ImageView mRegistration_online, mRegistration_offline;
+    ImageView mRegistration_online, mRegistration_offline, mRegistration_photo;
     RadioButton mCustomer, mPerformer;
     View mRegistration_performer_groupe, mRegistration_radio_group;
     FirebaseFirestore db;
+    private String fbPhotoPath = "";
     private ActionBar actionBar;
 
     private boolean isFromLogin = false;
@@ -84,6 +95,7 @@ public class RegistrationActivity extends MyActivity {
         mRegistration_performer_groupe = findViewById(R.id.registration_performer_groupe);
         mCustomer = findViewById(R.id.radio_customer);
         mPerformer = findViewById(R.id.radio_performer);
+        mRegistration_photo  = findViewById(R.id.registration_photo);
 
         setSpinerOptins();
         //mCustomer.setEnabled(false);
@@ -93,20 +105,27 @@ public class RegistrationActivity extends MyActivity {
 
         mRegistrationButton.setOnClickListener(click);
         mRegistration_btn_logout.setOnClickListener(click);
+        mRegistration_photo.setOnClickListener(click);
         init();
         mCustomer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mRegistration_performer_groupe.setVisibility(isChecked?View.GONE:View.VISIBLE);
+                mRegistration_performer_groupe.setVisibility(isChecked ? View.GONE : View.VISIBLE);
             }
         });
 
         actionBar = getSupportActionBar();
-        if(actionBar != null) {
+        if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle("Личный кабинет");
         }
+
+        requestPermission();
+
+        photolib.init(RegistrationActivity.getMyInstance());
+        fbStorageUploads.init(RegistrationActivity.getMyInstance(), null);
     }
+
 
     private void init() {
         String email = googleAuthManager.getEmail();
@@ -129,14 +148,54 @@ public class RegistrationActivity extends MyActivity {
     private View.OnClickListener click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(v.getId() == R.id.registration_btn_logout) {
-                googleAuthManager.signOut();
+            switch (v.getId()) {
+                case R.id.registration_btn_logout:
+                    googleAuthManager.signOut();
+                    break;
+                case R.id.registration_btn:
+                    addUser();
+                    break;
+                case R.id.registration_photo:
+                    //if (checkPermissionFromDevice()) {
+                        picturelib.dispatchTakePictureIntent(RegistrationActivity.this);
+                        //photolib.getPhotoFromCamera(true);
+                    //}
+//                    else {
+//                        requestPermission();
+//                    }
+                    break;
             }
-            if(v.getId() == R.id.registration_btn)
-                addUser();
         }
     };
 
+    private void requestPermission() {
+        int hasWriteExtStorePMS0 = ActivityCompat.checkSelfPermission(RegistrationActivity.this, android.Manifest.permission.READ_EXTERNAL_STORAGE);
+        if (hasWriteExtStorePMS0 != PackageManager.PERMISSION_GRANTED) {
+
+            Runnable run = new Runnable() {
+                @Override
+                public void run() {
+                    ActivityCompat.requestPermissions(RegistrationActivity.this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, RegistrationActivity.RC_STORAGE_PERMS);
+                }
+            };
+            Thread thread = new Thread(run);
+            thread.start();
+
+            return;
+        }
+        int hasWriteExtStorePMS = ActivityCompat.checkSelfPermission(RegistrationActivity.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (hasWriteExtStorePMS != PackageManager.PERMISSION_GRANTED) {
+
+            Runnable run = new Runnable() {
+                @Override
+                public void run() {
+                    ActivityCompat.requestPermissions(RegistrationActivity.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, RegistrationActivity.RC_STORAGE_PERMS);                        }
+            };
+            Thread thread = new Thread(run);
+            thread.start();
+            return;
+        }
+    }
 
     private void addUser() {
         final user current =
@@ -153,6 +212,8 @@ public class RegistrationActivity extends MyActivity {
                 );
         if(currentUser != null)
             current.UUID = currentUser.UUID;
+
+        current.photoPath = fbPhotoPath;
 
         current.fcmToken = mysettings.GetFCMToken().getToken();
 
@@ -291,6 +352,19 @@ public class RegistrationActivity extends MyActivity {
         return true;
     }
 
+
+    public static final int RC_STORAGE_PERMS = 101, RC_STORAGE_PERMS_READ = 102;
+    private int hasWriteExtStorePMS;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Uri uri = picturelib.onActivityResult(requestCode, resultCode, data, resultCode == this.RESULT_OK, mRegistration_photo);
+//        picturelib.setPic(mRegistration_photo);
+//        Uri uri = photolib.onActivityResult(requestCode, resultCode, data);
+        Log.d("TAG", "onActivityResult");
+    }
+
     private void setSpinerOptins() {
         final List<String> affineFormats = new ArrayList<>();
         affineFormats.add("+7 ([000]) [000]-[00]-[00]#[000]");
@@ -309,5 +383,10 @@ public class RegistrationActivity extends MyActivity {
         );
 
         mTel.setHint(listener.placeholder());
+    }
+
+    @Override
+    public void setPath(String path) {
+        fbPhotoPath = path;
     }
 }

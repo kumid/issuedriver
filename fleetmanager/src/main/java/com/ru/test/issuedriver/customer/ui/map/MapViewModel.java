@@ -122,8 +122,8 @@ public class MapViewModel extends ViewModel {
         }
         isCameraOnPerformer = orders.size() > 0;
 
-        if(callBacks.callback4orderListChangedInterface != null)
-            callBacks.callback4orderListChangedInterface.callback();
+//        if(callBacks.callback4orderListChangedInterface != null)
+//            callBacks.callback4orderListChangedInterface.callback();
     }
 
     public boolean isOrderInActiveState(String email){
