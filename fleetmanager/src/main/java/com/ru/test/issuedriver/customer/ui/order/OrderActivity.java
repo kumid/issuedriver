@@ -32,6 +32,7 @@ import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
+import com.ru.test.issuedriver.ChatActivity;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.customer.ui.placesUtils;
@@ -175,7 +176,8 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         mOrder_car.setText(orderViewModel.getCurrentOrder().car);
         mOrder_carnumber.setText(orderViewModel.getCurrentOrder().car_number);
 
-        if(orderViewModel.getCurrentOrder().performer_photo.length() > 0) {
+        if(orderViewModel.getCurrentOrder().performer_photo != null
+            && orderViewModel.getCurrentOrder().performer_photo.length() > 0) {
             Picasso.get().load(orderViewModel.getCurrentOrder().performer_photo)
                     .placeholder(R.drawable.avatar)
                     .error(android.R.drawable.stat_notify_error)
@@ -193,7 +195,7 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         mOrder_from_btn.setOnClickListener(this);
         mOrder_to_btn.setOnClickListener(this);
         currentDateTime.setOnClickListener(this);
-
+        mOrder_photo.setOnClickListener(this);
 //        mOrder_from.setShowSoftInputOnFocus(false);
     }
 
@@ -311,7 +313,12 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         } else if (v.getId() == R.id.order_to_btn) {
             onSearchCalled(2, mOrder_to.getText().toString());
             return;
+        } else if (v.getId() == R.id.order_photo) {
+            Intent intent = new Intent(OrderActivity.this, ChatActivity.class);
+            startActivity(intent);
+             return;
         }
+
 
         org.joda.time.DateTime time = new DateTime();
 

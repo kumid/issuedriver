@@ -88,7 +88,7 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
             holder.mHistory_item_fio.setText(item.customer_fio);
         }
 
-        if(photo.length() > 0) {
+        if(photo != null && photo.length() > 0) {
             Picasso.get().load(photo)
                     .placeholder(R.drawable.avatar)
                     .error(android.R.drawable.stat_notify_error)

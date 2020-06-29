@@ -40,7 +40,7 @@
 
     <string name="order_completed">Завершить</string>
     <string name="action_send">Обратная связь</string>
-    <string name="feedback_send">Отправить</string>
+    <string name="send">Отправить</string>
     <string name="order_now">Сегодня</string>
     <string name="order_tomorrow">Завтра</string>
     <string name="data_name">Дата</string>
@@ -81,5 +81,7 @@
     <string name="history_item_cancel_date">Заказ отменен</string>
     <string name="prompt_login">Введите номер телефона</string>
     <string name="loading">Загружается...</string>
+    <string name="action_to">Заявка на ТО</string>
+    <string name="action_shina">Шиномонтаж</string>
 
 </resources>

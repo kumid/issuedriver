@@ -48,6 +48,8 @@ import com.ru.test.issuedriver.helpers.PerformerBackgroundService;
 import com.ru.test.issuedriver.helpers.callBacks;
 import com.ru.test.issuedriver.helpers.firestoreHelper;
 import com.ru.test.issuedriver.performer.ui.orderPerforming.OrderPerformingActivity;
+import com.ru.test.issuedriver.performer.ui.shina.ShinaActivity;
+import com.ru.test.issuedriver.performer.ui.to.TOActivity;
 import com.ru.test.issuedriver.ui.history.HistoryViewModel;
 import com.squareup.picasso.Picasso;
 
@@ -334,7 +336,9 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
             public void callback(boolean success) {
                 if(!success)
                     return;
-                sender.send(item, sender.orderStateType.performing_order);
+
+                if(item.start_timestamp == null)
+                    sender.send(item, sender.orderStateType.performing_order);
 
                 Intent intent = new Intent(PerformerActivity.this, OrderPerformingActivity.class);
                 intent.putExtra("order", item);
@@ -391,10 +395,21 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_send:
-                        Intent intent = new Intent(PerformerActivity.this, FeedbackActivity.class);
-                        intent.putExtra("phone", CurrentUser.tel);
-                        startActivity(intent);
+                Intent intentF = new Intent(PerformerActivity.this, FeedbackActivity.class);
+                intentF.putExtra("phone", CurrentUser.tel);
+                startActivity(intentF);
                 return true;
+            case R.id.action_to:
+                Intent intentTO = new Intent(PerformerActivity.this, TOActivity.class);
+                intentTO.putExtra("phone", CurrentUser.tel);
+                startActivity(intentTO);
+                return true;
+            case R.id.action_shina:
+                Intent intentSH = new Intent(PerformerActivity.this, ShinaActivity.class);
+                intentSH.putExtra("phone", CurrentUser.tel);
+                startActivity(intentSH);
+                return true;
+
             case R.id.action_state:
                 UserStateBottonDialog dialog = new UserStateBottonDialog();
                 dialog.show(getSupportFragmentManager(), null);
@@ -450,7 +465,7 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
     @Override
     public void onCancelButtonClicked(order item) {
         Log.e("myLogs", "");
-        firestoreHelper.setOrderCancelState(item, 1, String.format("Отменен водителем", item.cancel_reason));
+        firestoreHelper.setOrderCancelState(item, 1, String.format("Отменен водителем: %s", item.cancel_reason));
         firestoreHelper.setUserState(item.performer_email, 0);
         //ordersListViewModel.setOrderDelete(item);
 

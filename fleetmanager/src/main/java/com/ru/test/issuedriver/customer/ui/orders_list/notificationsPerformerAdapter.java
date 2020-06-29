@@ -65,7 +65,7 @@ public class notificationsPerformerAdapter extends RecyclerView.Adapter<notifica
         holder.mNotification_item_car.setText(item.car);
         holder.mNotification_item_carnumber.setText(item.car_number);
 
-        if(item.customer_photo.length() > 0) {
+        if(item.customer_photo != null && item.customer_photo.length() > 0) {
 //                                        mRegistration_photo.setImageURI(Uri.parse(currentUser.photoPath));
 //            Picasso.get().load(item.customer_photo)
 //                    .placeholder(R.drawable.avatar)

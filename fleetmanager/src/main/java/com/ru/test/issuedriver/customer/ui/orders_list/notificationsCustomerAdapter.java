@@ -69,7 +69,7 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
         holder.mNotification_item_car.setText(item.car);
         holder.mNotification_item_carnumber.setText(item.car_number);
 
-        if(item.performer_photo.length() > 0) {
+        if(item.performer_photo != null && item.performer_photo.length() > 0) {
             Picasso.get().load(item.performer_photo)
                     .placeholder(R.drawable.avatar)
                     .error(android.R.drawable.stat_notify_error)

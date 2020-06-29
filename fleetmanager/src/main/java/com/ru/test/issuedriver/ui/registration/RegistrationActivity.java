@@ -243,7 +243,7 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
                                     mAutonumber.setText(currentUser.autonumber);
                                     mCustomer.setChecked(!currentUser.is_performer);
                                     mPerformer.setChecked(currentUser.is_performer);
-                                    if(currentUser.photoPath.length() > 0) {
+                                    if(currentUser.photoPath != null && currentUser.photoPath.length() > 0) {
 //                                        mRegistration_photo.setImageURI(Uri.parse(currentUser.photoPath));
                                         Picasso.get().load(currentUser.photoPath)
                                                 .placeholder(R.drawable.avatar)
@@ -319,7 +319,7 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
     public void setPath(String path) {
 
         currentUser.photoPath = path;
-        if(currentUser.photoPath.length() > 0) {
+        if(currentUser.photoPath != null && currentUser.photoPath.length() > 0) {
 //                                        mRegistration_photo.setImageURI(Uri.parse(currentUser.photoPath));
             Picasso.get().load(currentUser.photoPath)
                     .placeholder(R.drawable.avatar)

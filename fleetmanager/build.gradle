@@ -18,8 +18,8 @@ android {
         applicationId "com.ru.test.issuedriver"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 16
-        versionName '0.016'
+        versionCode 17
+        versionName '0.017'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.debug
@@ -100,4 +100,10 @@ dependencies {
     implementation "com.squareup.picasso:picasso:$picassoVersion"
 
     implementation 'com.google.firebase:firebase-storage:19.1.1'
+
+
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
+    // Firebase UI
+    implementation 'com.firebaseui:firebase-ui-database:6.2.1'
 }

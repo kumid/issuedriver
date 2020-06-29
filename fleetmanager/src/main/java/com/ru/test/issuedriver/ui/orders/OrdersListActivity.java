@@ -141,7 +141,7 @@ public class OrdersListActivity extends AppCompatActivity implements OrderCancel
     public void onCancelButtonClicked(order item) {
         Log.e("myLogs", "");
         firestoreHelper.setOrderCancelState(item, 1,
-                String.format(MyActivity.CurrentUser.is_performer ? "Отменен водителем":"Отменен заказчиком", item.cancel_reason));
+                String.format(MyActivity.CurrentUser.is_performer ? "Отменен водителем: %s":"Отменен заказчиком: %s", item.cancel_reason));
         firestoreHelper.setUserState(item.performer_email, 0);
         //ordersListViewModel.setOrderDelete(item);
 

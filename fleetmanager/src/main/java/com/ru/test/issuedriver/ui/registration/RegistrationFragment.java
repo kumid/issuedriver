@@ -234,7 +234,7 @@ public class RegistrationFragment extends Fragment {
         mTel.setText(curr.tel);
         mRegistration_performer_groupe.setVisibility(curr.is_performer?View.VISIBLE:View.GONE);
         registrationViewModel.currentUser.postValue(curr);
-        if(curr.photoPath.length() > 0) {
+        if(curr.photoPath != null && curr.photoPath.length() > 0) {
 //                                        mRegistration_photo.setImageURI(Uri.parse(currentUser.photoPath));
             Picasso.get().load(curr.photoPath)
                     .placeholder(R.drawable.avatar)

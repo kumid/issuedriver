@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".feedback.FeedbackActivity">
+    android:layout_height="match_parent" >
 
     <EditText
         android:id="@+id/feedback_msg"
@@ -68,7 +67,7 @@
         android:layout_marginTop="20dp"
         android:background="@color/colorPrimary"
         android:textColor="@android:color/white"
-        android:text="@string/feedback_send"
+        android:text="@string/send"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/feedback_callme_phone" />
