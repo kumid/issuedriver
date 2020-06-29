@@ -176,7 +176,7 @@ public class OrderViewModel extends ViewModel {
             newPlace.longtitude = currentOrder.to_position.getLongitude();
         }
 
-        database.getReference().child("places").child(currentOrder.customer_uuid)
+        myRef.child("places").child(currentOrder.customer_uuid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

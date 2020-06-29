@@ -17,6 +17,7 @@ import com.ru.test.issuedriver.taxi.data.user;
 import com.ru.test.issuedriver.taxi.helpers.callBacks;
 import com.ru.test.issuedriver.taxi.helpers.firestoreHelper;
 import com.ru.test.issuedriver.taxi.helpers.fsm.sender;
+import com.ru.test.issuedriver.taxi.helpers.mysettings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -166,6 +167,7 @@ private void notifycateIt(order curr, DocumentSnapshot snapshot) {
                 });
 
     }
+
     public void setOrderDelete(order item) {
         DocumentReference orderRef = db.collection("orders").document(item.id);
         orderRef.delete()
@@ -188,7 +190,36 @@ private void notifycateIt(order curr, DocumentSnapshot snapshot) {
                 });
     }
 
+    public void setOrderStartPerforming(final order item) {
+        if(item.start_timestamp != null){
+            if(callBacks.callback4StartOrderPerforming!=null)
+                callBacks.callback4StartOrderPerforming.callback(true);
+            return;
+        }
 
+        int dist = mysettings.GetDistance();
+
+        DocumentReference orderRef = db.collection("orders").document(item.id);
+        orderRef.update("start_timestamp", FieldValue.serverTimestamp(),
+                "start_distance", dist)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        if(callBacks.callback4StartOrderPerforming!=null)
+                            callBacks.callback4StartOrderPerforming.callback(true);
+                        Log.d("TAG", "DocumentSnapshot successfully updated!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        if(callBacks.callback4StartOrderPerforming!=null)
+                            callBacks.callback4StartOrderPerforming.callback(false);
+                        Log.w("TAG", "Error updating document", e);
+                    }
+                });
+
+    }
 
 
 }

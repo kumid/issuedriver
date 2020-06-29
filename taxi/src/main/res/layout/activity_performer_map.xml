@@ -30,4 +30,7 @@
         android:layout_margin="@dimen/fab_margin"
         app:srcCompat="@android:drawable/ic_dialog_email" />
 
+    <!-- подключение нижнего экрана -->
+    <include layout="@layout/bottom_sheet" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

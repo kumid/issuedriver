@@ -27,6 +27,7 @@ import com.ru.test.issuedriver.taxi.R;
 import com.ru.test.issuedriver.taxi.customer.CustomerActivity;
 import com.ru.test.issuedriver.taxi.data.user;
 import com.ru.test.issuedriver.taxi.helpers.MyBroadcastReceiver;
+import com.ru.test.issuedriver.taxi.helpers.firestoreHelper;
 import com.ru.test.issuedriver.taxi.helpers.googleAuthManager;
 import com.ru.test.issuedriver.taxi.helpers.mysettings;
 import com.ru.test.issuedriver.taxi.performer.PerformerActivity;
@@ -146,6 +147,8 @@ public class RegistrationActivity extends MyActivity {
             current.UUID = currentUser.UUID;
 
         current.fcmToken = mysettings.GetFCMToken().getToken();
+
+        firestoreHelper.setUserToken(current.UUID, current.fcmToken, false);
 
         db.collection("users").document(mEmail.getText().toString()).set(current)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {

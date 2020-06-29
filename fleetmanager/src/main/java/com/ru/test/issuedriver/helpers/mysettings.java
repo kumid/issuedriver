@@ -126,7 +126,6 @@ public class mysettings {
     }
 
 
-
     public static void SetFCMToken(Token token) {
         Gson gson = new Gson();
         String json = gson.toJson(token);

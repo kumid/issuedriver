@@ -30,6 +30,7 @@ import com.ru.test.issuedriver.customer.ui.map.placesAdapter;
 import com.ru.test.issuedriver.customer.ui.mapsUtils;
 import com.ru.test.issuedriver.data.place;
 import com.ru.test.issuedriver.helpers.callBacks;
+import com.ru.test.issuedriver.helpers.firestoreHelper;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 import com.ru.test.issuedriver.ui.history.HistoryActivity;
 import com.ru.test.issuedriver.MyActivity;
@@ -172,6 +173,8 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         });
 
         initDrawer();
+
+        firestoreHelper.updateUserInfo(this);
 //        test();
     }
     RecyclerView rv;

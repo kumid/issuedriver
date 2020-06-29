@@ -54,14 +54,16 @@ public class CustommerCall extends AppCompatActivity {
         mediaPlayer.setLooping(true);
         mediaPlayer.start();
 
-        if (getIntent()!=null){
+        if (getIntent() != null) {
             lat=getIntent().getDoubleExtra("lat", -1.0);
             lng=getIntent().getDoubleExtra("lng", -1.0);
             riderID=getIntent().getStringExtra("rider");
             riderEmail=getIntent().getStringExtra("email");
             token=getIntent().getStringExtra("token");
 
-        }else finish();
+        } else
+            finish();
+
         btnDecline.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

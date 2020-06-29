@@ -81,4 +81,6 @@
   <string name="history_item_close_date">Заказ закрыт</string>
     <string name="navigate">Построить маршрут</string>
     <string name="order_cancel">Отменить</string>
+    <string name="bottom_sheet_peek">bottom_sheet_peek</string>
+    <string name="bottom_sheet_content">bottom_sheet_content</string>
 </resources>

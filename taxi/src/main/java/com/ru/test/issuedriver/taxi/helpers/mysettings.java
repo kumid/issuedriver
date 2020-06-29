@@ -27,6 +27,9 @@ public class mysettings {
 
     public static final String APP_PREFERENCES_ORDERS = "orders";
 
+public static final String APP_PREFERENCES_TOKENSAVED = "tokensaved";
+
+    public static final String APP_PREFERENCES_DISTANCE = "distance";
 
     private static SharedPreferences instance;
     public static SharedPreferences Init(AppCompatActivity activity) {
@@ -127,6 +130,7 @@ public class mysettings {
         String json = gson.toJson(token);
         SharedPreferences.Editor editor = instance.edit();
         editor.putString(mysettings.APP_PREFERENCES_TOKEN, json);
+        editor.putBoolean(mysettings.APP_PREFERENCES_TOKENSAVED, false);
         editor.apply();
     }
     public static Token GetFCMToken() {
@@ -153,5 +157,25 @@ public class mysettings {
         } catch (Exception ex){
             return "";
         }
+    }
+
+    public static boolean GetTokenSaved()
+    {
+        if(instance.contains(APP_PREFERENCES_TOKENSAVED))
+            return instance.getBoolean(APP_PREFERENCES_TOKENSAVED, false);
+        return false;
+    }
+
+
+    public static void SetDistance(int dist) {
+        SharedPreferences.Editor editor = instance.edit();
+        editor.putInt(mysettings.APP_PREFERENCES_DISTANCE, dist);
+        editor.apply();
+    }
+    public static int GetDistance()
+    {
+        if(instance.contains(APP_PREFERENCES_DISTANCE))
+            return instance.getInt(APP_PREFERENCES_DISTANCE, 0);
+        return 0;
     }
 }

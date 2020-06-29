@@ -8,8 +8,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.data.order;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -23,11 +25,14 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
     List<order> cards;
     HistoryViewModel viewModel;
     Activity currentActivity ;
+    boolean isPerformer;
     public historyAdapter(HistoryViewModel historyViewModel, List<order> lst, Activity activity){
         cards = lst;
         viewModel = historyViewModel;
         currentActivity = activity;
+        isPerformer = MyActivity.CurrentUser.is_performer;
     }
+
     public void setChangedData(List<order> lst) {
         cards = lst;
         notifyDataSetChanged();
@@ -58,7 +63,6 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
             holder.mHistory_item_close_date.setText(sfd.format(item.end_timestamp.toDate()));
         }
 
-        holder.mHistory_item_fio.setText(item.performer_fio);
         holder.mHistory_item_purpose.setText(item.purpose);
         holder.mHistory_item_from.setText(item.from);
         holder.mHistory_item_to.setText(item.to);
@@ -71,6 +75,25 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
         holder.mHistory_item_extra.setVisibility(View.GONE);
 
         holder.mHistory_item_btn_status_completed.setVisibility(View.GONE);
+
+
+        String photo = "";
+        if(!isPerformer){
+            photo = item.performer_photo;
+            holder.mHistory_item_fio.setText(item.performer_fio);
+            holder.mHistory_item_car.setText(item.car);
+            holder.mHistory_item_carnumber.setText(item.car_number);
+        } else {
+            photo = item.customer_photo;
+            holder.mHistory_item_fio.setText(item.customer_fio);
+        }
+
+        if(photo.length() > 0) {
+            Picasso.get().load(photo)
+                    .placeholder(R.drawable.avatar)
+                    .error(android.R.drawable.stat_notify_error)
+                    .into(holder.mHistory_item_item_photo);
+        }
 
         if (item.state == 0) {
             holder.mHistory_item_state.setImageDrawable(currentActivity.getResources().getDrawable(R.drawable.green_triangle));
@@ -97,9 +120,11 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
 
 
     class VH extends RecyclerView.ViewHolder{
-        TextView mHistory_item_fio, mHistory_item_purpose, mHistory_item_from, mHistory_item_to, mHistory_item_comment, mHistory_time, mHistory_distance, mHistory_fuel, mHistory_item_accept_date, mHistory_item_cancel_reason, mHistory_item_close_date, mHistory_item_close_state_title;
-        View mHistory_item_extra, mHistory_item_call, mHistory_item_cancel_line, mHistory_item_distance_calc_group;
-        ImageView mHistory_item_state;
+        TextView mHistory_item_fio, mHistory_item_purpose, mHistory_item_from, mHistory_item_to, mHistory_item_comment, mHistory_time, mHistory_distance, mHistory_fuel,
+                mHistory_item_accept_date, mHistory_item_cancel_reason, mHistory_item_close_date, mHistory_item_close_state_title,
+                mHistory_item_car, mHistory_item_carnumber;
+        View mHistory_item_extra, mHistory_item_call, mHistory_item_cancel_line, mHistory_item_distance_calc_group, mHistory_item_car_group;
+        ImageView mHistory_item_state, mHistory_item_item_photo;
         Button mHistory_item_btn_status_completed;
         CardView mHistory_item;
 
@@ -118,6 +143,12 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
             mHistory_item_from  = itemView.findViewById(R.id.history_item_from);
             mHistory_item_to  = itemView.findViewById(R.id.history_item_to);
             mHistory_item_comment = itemView.findViewById(R.id.history_item_comment);
+
+            mHistory_item_car_group = itemView.findViewById(R.id.history_item_car_group);
+            mHistory_item_car = itemView.findViewById(R.id.history_item_car);
+            mHistory_item_carnumber = itemView.findViewById(R.id.history_item_carnumber);
+            mHistory_item_item_photo = itemView.findViewById(R.id.history_item_photo);
+            if(isPerformer) mHistory_item_car_group.setVisibility(View.GONE);
 
             mHistory_item_cancel_reason = itemView.findViewById(R.id.history_item_cancel_reason);
             mHistory_item_cancel_line = itemView.findViewById(R.id.history_item_cancel_line);

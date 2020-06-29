@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
@@ -45,6 +46,7 @@ import java.util.List;
 
 import com.ru.test.issuedriver.BuildConfig;
 import com.ru.test.issuedriver.helpers.mysettings;
+import com.squareup.picasso.Picasso;
 
 public class OrderActivity extends MyActivity implements View.OnClickListener {
 
@@ -56,6 +58,7 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
     ActionBar actionBar;
     TextInputEditText mOrder_from, mOrder_to, mOrder_purpose, mOrder_comment;
     MaterialTextView mOrder_name, mOrder_car, mOrder_carnumber;
+    ImageView mOrder_photo;
     TextView currentDateTime;
     TimePicker mOrderTime;
     View mOrder_from_btn, mOrder_to_btn;
@@ -134,7 +137,7 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
     }
 
     private void initViews() {
-        mOrder_name = findViewById(R.id.order_name);
+        mOrder_name = findViewById(R.id.order_fio);
         currentDateTime = findViewById(R.id.order_data);
         mOrder_from = findViewById(R.id.order_from);
         mOrder_to = findViewById(R.id.order_to);
@@ -149,7 +152,7 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         mOrder_tomorrow  = findViewById(R.id.order_tomorrow);
         mOrder_from_btn   = findViewById(R.id.order_from_btn);
         mOrder_to_btn   = findViewById(R.id.order_to_btn);
-
+        mOrder_photo   = findViewById(R.id.order_photo);
 //        final Calendar c = Calendar.getInstance();
 //        int mHour = c.get(Calendar.HOUR_OF_DAY);
 //        int mMinute = c.get(Calendar.MINUTE);
@@ -171,6 +174,13 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         mOrder_name.setText(orderViewModel.getCurrentOrder().performer_fio);
         mOrder_car.setText(orderViewModel.getCurrentOrder().car);
         mOrder_carnumber.setText(orderViewModel.getCurrentOrder().car_number);
+
+        if(orderViewModel.getCurrentOrder().performer_photo.length() > 0) {
+            Picasso.get().load(orderViewModel.getCurrentOrder().performer_photo)
+                    .placeholder(R.drawable.avatar)
+                    .error(android.R.drawable.stat_notify_error)
+                    .into(mOrder_photo);
+        }
 
         if(orderViewModel.fromPlace != null){
             mOrder_from.setText(orderViewModel.fromPlace.address);

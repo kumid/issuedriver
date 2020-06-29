@@ -24,6 +24,7 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.google.gson.Gson;
 import com.ru.test.issuedriver.taxi.R;
 import com.ru.test.issuedriver.taxi.data.Pickup;
+import com.ru.test.issuedriver.taxi.data.user;
 import com.ru.test.issuedriver.taxi.helpers.firestoreHelper;
 import com.ru.test.issuedriver.taxi.helpers.mysettings;
 import com.ru.test.issuedriver.taxi.performer.CustommerCall;
@@ -44,9 +45,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         mysettings.Init(getApplicationContext());
         mysettings.SetFCMToken(token);
 
-//        if (FirebaseAuth.getInstance().getCurrentUser() != null)
-//            tokens.child(FirebaseAuth.getInstance().getUid())
-//                .setValue(token);
+        user curr = mysettings.GetUser();
+
+        if (curr != null)
+            firestoreHelper.setUserToken(curr.UUID, mysettings.GetFCMToken().getToken(), true);
 
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {

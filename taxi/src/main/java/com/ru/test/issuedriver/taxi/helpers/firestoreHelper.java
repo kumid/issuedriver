@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -20,6 +21,8 @@ import org.joda.time.DateTime;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import static com.ru.test.issuedriver.taxi.rider.Common.token_tbl;
 
 public class firestoreHelper {
     private static final String TAG = "myLogs";
@@ -187,5 +190,32 @@ public class firestoreHelper {
 //                            orderSendCompleteCalback.callback(false);
                     }
                 });
+    }
+
+
+    public static void setUserToken(String uuid, String token, boolean isUserCollectionSaved) {
+        FirebaseDatabase dbToken=FirebaseDatabase.getInstance();
+        DatabaseReference tokens = dbToken.getReference(token_tbl);
+        tokens.child(uuid).setValue(token);
+
+        if(!isUserCollectionSaved)
+            return;
+
+        DocumentReference userRef = db.collection("users").document(uuid);
+        userRef.update("fcmToken", token)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("TAG", "DocumentSnapshot successfully updated!");
+
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("TAG", "Error updating document", e);
+                    }
+                });
+
     }
 }

@@ -24,7 +24,12 @@ import com.ru.test.issuedriver.taxi.MyActivity;
 import com.ru.test.issuedriver.taxi.R;
 import com.ru.test.issuedriver.taxi.bottom_dialogs.OrderCloseBottonDialog;
 import com.ru.test.issuedriver.taxi.customer.ui.order.OrderViewModel;
+import com.ru.test.issuedriver.taxi.data.order;
 import com.ru.test.issuedriver.taxi.helpers.MyBroadcastReceiver;
+import com.ru.test.issuedriver.taxi.helpers.mysettings;
+
+import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,7 +39,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import static com.ru.test.issuedriver.taxi.helpers.callBacks.callback4goToNavigate;
 
-public class OrderPerformingActivity extends MyActivity implements View.OnClickListener, OrderCloseBottonDialog.BottomSheetListener {
+public class OrderPerformingActivity extends MyActivity implements View.OnClickListener, OrderCloseBottonDialog.CloseBottomSheetListener {
 
     private static final String TAG = "myLogs";
     OrderViewModel orderViewModel;
@@ -42,6 +47,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
     TextInputEditText mOrder_name, mOrder_from, mOrder_to, mOrder_purpose, mOrder_comment, mOrder_car, mOrder_carnumber;
     TextView currentDateTime, order_distance, order_log;
     Button mOrder_btn, mOrder_navigation;
+//    View mOrder_performing_call;
     ProgressBar mProgress_circular;
     Calendar dateAndTime=Calendar.getInstance();
     Chronometer mOrder_chronometr;
@@ -71,25 +77,28 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
     }
 
     private void initExtra() {
-        orderViewModel.customer_uuid = getIntent().getStringExtra("customer_uuid");
-        orderViewModel.customer_fio = getIntent().getStringExtra("customer_fio");
-        orderViewModel.customer_phone = getIntent().getStringExtra("customer_phone");
-        orderViewModel.customer_email = getIntent().getStringExtra("customer_email");
-        orderViewModel.performer_fio = getIntent().getStringExtra("performer_fio");
-        orderViewModel.performer_phone = getIntent().getStringExtra("performer_phone");
-        orderViewModel.performer_email = getIntent().getStringExtra("performer_email");
-        orderViewModel.performer_car = getIntent().getStringExtra("performer_car");
-        orderViewModel.performer_car_numbr = getIntent().getStringExtra("performer_car_number");
-
-        orderViewModel.order_from = getIntent().getStringExtra("from");
-        orderViewModel.order_to = getIntent().getStringExtra("to");
-        orderViewModel.purpose = getIntent().getStringExtra("purpose");
-        orderViewModel.comment = getIntent().getStringExtra("comment");
-        orderViewModel.orderId = getIntent().getStringExtra("order_id");
-
+        order extra = getIntent().getParcelableExtra("order");
         orderViewModel.fromPlace = getIntent().getParcelableExtra("from_place");
         orderViewModel.toPlace = getIntent().getParcelableExtra("to_place");
-        orderViewModel.setOrder();
+
+        orderViewModel.setOrder(extra);
+//        orderViewModel.customer_uuid = getIntent().getStringExtra("customer_uuid");
+//        orderViewModel.customer_fio = getIntent().getStringExtra("customer_fio");
+//        orderViewModel.customer_phone = getIntent().getStringExtra("customer_phone");
+//        orderViewModel.customer_email = getIntent().getStringExtra("customer_email");
+//        orderViewModel.performer_fio = getIntent().getStringExtra("performer_fio");
+//        orderViewModel.performer_phone = getIntent().getStringExtra("performer_phone");
+//        orderViewModel.performer_email = getIntent().getStringExtra("performer_email");
+//        orderViewModel.performer_car = getIntent().getStringExtra("performer_car");
+//        orderViewModel.performer_car_numbr = getIntent().getStringExtra("performer_car_number");
+//
+//        orderViewModel.order_from = getIntent().getStringExtra("from");
+//        orderViewModel.order_to = getIntent().getStringExtra("to");
+//        orderViewModel.purpose = getIntent().getStringExtra("purpose");
+//        orderViewModel.comment = getIntent().getStringExtra("comment");
+//        orderViewModel.orderId = getIntent().getStringExtra("order_id");
+//
+//        orderViewModel.setOrder();
     }
 
 
@@ -102,6 +111,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
         mOrder_comment = findViewById(R.id.order_comment);
         mOrder_btn = findViewById(R.id.order_btn);
         mOrder_navigation = findViewById(R.id.order_navigation);
+//        mOrder_performing_call  = findViewById(R.id.order_performing_call);
         mProgress_circular = findViewById(R.id.progress_circular);
         mOrder_car = findViewById(R.id.order_car);
         mOrder_carnumber = findViewById(R.id.order_carnumber);
@@ -111,18 +121,22 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
         order_distance = findViewById(R.id.order_distance);
         order_log = findViewById(R.id.order_log);
 
-        mOrder_name.setText(orderViewModel.performer_fio);
-        mOrder_car.setText(orderViewModel.performer_car);
-        mOrder_carnumber.setText(orderViewModel.performer_car_numbr);
+mOrder_name.setText(orderViewModel.getCurrentOrder().performer_fio);
+        mOrder_car.setText(orderViewModel.getCurrentOrder().car);
+        mOrder_carnumber.setText(orderViewModel.getCurrentOrder().car_number);
 
-        mOrder_from.setText(orderViewModel.order_from);
-        mOrder_to.setText(orderViewModel.order_to);
-        mOrder_purpose.setText(orderViewModel.purpose);
-        mOrder_comment.setText(orderViewModel.comment);
+        mOrder_from.setText(orderViewModel.getCurrentOrder().from);
+        mOrder_to.setText(orderViewModel.getCurrentOrder().to);
+        mOrder_purpose.setText(orderViewModel.getCurrentOrder().purpose);
+        mOrder_comment.setText(orderViewModel.getCurrentOrder().comment);
 
         mOrder_btn.setOnClickListener(this);
         mOrder_navigation.setOnClickListener(this);
-        //currentDateTime.setOnClickListener(this);
+//        mOrder_performing_call.setOnClickListener(this);
+         //currentDateTime.setOnClickListener(this);
+
+        distanse =  mysettings.GetDistance() - orderViewModel.getCurrentOrder().start_distance;
+        order_distance.setText(convertMetr2km());
 
         mOrder_chronometr.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
             @Override
@@ -145,9 +159,15 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
 //            isCountDown = true;
 //            mOrder_chronometr.setCountDown(true);
 //            mOrder_chronometr.setBase(SystemClock.elapsedRealtime() + TIMER_RESTART);
+            if (orderViewModel.getCurrentOrder().start_timestamp != null) {
+                DateTime start = new DateTime(orderViewModel.getCurrentOrder().start_timestamp.toDate());
+                int delta = DateTime.now().getSecondOfDay() - start.getSecondOfDay();
+                mOrder_chronometr.setBase(SystemClock.elapsedRealtime() - (delta * 1000 + 0 * 1000));
+            }
         }
         else
             mOrder_chronometr.setBase(SystemClock.elapsedRealtime());
+
         mOrder_chronometr.start();
     }
 
@@ -202,7 +222,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-    switch (v.getId()) {
+        switch (v.getId()) {
             case R.id.order_btn:
                 OrderCloseBottonDialog dialog = new OrderCloseBottonDialog(mOrder_chronometr.getText().toString(), distanse);
                 dialog.show(getSupportFragmentManager(), null);
@@ -212,6 +232,9 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
                 if(callback4goToNavigate != null)
                     callback4goToNavigate.callback(orderViewModel.getCurrentOrder());
                 break;
+//            case R.id.order_performing_call:
+//                    PerformerActivity.getInstance().callPhone(orderViewModel.getCurrentOrder().customer_phone);
+//                break;
         }
     }
 
@@ -221,8 +244,9 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                OrderCloseBottonDialog dialog = new OrderCloseBottonDialog(mOrder_chronometr.getText().toString(), distanse);
-                dialog.show(getSupportFragmentManager(), null);
+//                OrderCloseBottonDialog dialog = new OrderCloseBottonDialog(mOrder_chronometr.getText().toString(), distanse);
+//                dialog.show(getSupportFragmentManager(), null);
+                finish();
                 //Toast.makeText(getApplicationContext(),"Back button clicked", Toast.LENGTH_SHORT).show();
                 break;
         }
@@ -230,6 +254,13 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
     }
 
     final String LOG_TAG = "myLogs";
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        distanse =  mysettings.GetDistance() - orderViewModel.getCurrentOrder().start_distance;
+
+    }
 
     private Location lastLocation;
     private double distanse = 0;
@@ -250,21 +281,28 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
                     lastLocation = position;
 
                     String rast;
-                    if (distanse < 1000) {
-                        rast = String.format("%d м", Math.round(distanse));
-                        Log.d(TAG, rast);
-                    } else {
-                        rast = String.format("%.1f км", distanse / 1000f);
-                        Log.d(TAG, rast);
-                    }
+                    rast = convertMetr2km();
                     order_distance.setText(rast);
                 }
             }
         };
     }
 
+     @NotNull
+     private String convertMetr2km() {
+        String rast;
+        if (distanse < 1000) {
+            rast = String.format("%d м", Math.round(distanse));
+            Log.d(TAG, rast);
+        } else {
+            rast = String.format("%.1f км", distanse / 1000f);
+            Log.d(TAG, rast);
+        }
+        return rast;
+    }
+
     @Override
-    public void onButtonClicked(int id, String time, String dist, String fuel) {
+    public void onCloseBottomButtonClicked(int id, String time, String dist, String fuel) {
         OrderViewModel.orderCompletedCalback = new OrderViewModel.orderCompleted() {
             @Override
             public void callback(boolean pass) {
@@ -274,86 +312,15 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
                     MyActivity.showToast("Ошибка передачи данных", Toast.LENGTH_SHORT);
             }
         };
-        orderViewModel.setOrderComleted(orderViewModel.orderId, orderViewModel.performer_email, time, dist, fuel);
+        orderViewModel.setOrderComleted(orderViewModel.getCurrentOrder().id, orderViewModel.getCurrentOrder().performer_email, time, dist, fuel);
 
         Log.d(TAG, "Close order");
     }
 
-
-    public class LL{
-        public String X;
-        public String Y;
-
-        public LL(String x, String y) {
-            X = x;
-            Y = y;
-        }
-    }
-    private ArrayList<LL> poss;
-    private void startTest() {
-        //        https://megapolis-kulebaki.ru/api/lcab/SetGeoPosition/6/60/16.05.2020/53.597017508000135/34.33555598370731/0.87/bus/
-        poss = new ArrayList<>();
-        poss.add(new LL("55.407806", "42.545458"));
-        poss.add(new LL("55.408357", "42.544692"));
-        poss.add(new LL("55.408886", "42.543991"));
-        poss.add(new LL("55.409458", "42.543206"));
-        poss.add(new LL("55.410356", "42.541892"));
-        poss.add(new LL("55.412285", "42.537042"));
-        poss.add(new LL("55.413270", "42.534844"));
-        poss.add(new LL("55.413814", "42.534445"));
-        poss.add(new LL("55.414599", "42.531090"));
-        poss.add(new LL("55.414777", "42.529329"));
-
-
-        Runnable runnable = new Runnable() {
-            public void run() {
-                // Переносим сюда старый код
-                long endTime = System.currentTimeMillis()
-                        + 5 * 1000;
-
-                int counter = 0;
-
-                //while (System.currentTimeMillis() < endTime) {
-                while (true) {
-                    synchronized (this) {
-                        try {
-
-                            LL pos = poss.get(counter);
-
-                            Location targetLocation = new Location("");//provider name is unnecessary
-                            targetLocation.setLatitude(Double.parseDouble(pos.X));//your coords of course
-                            targetLocation.setLongitude(Double.parseDouble(pos.Y));
-
-                            Intent intent = new Intent();
-                            intent.setAction("com.ru.test.issuedriver.performer.ui.order.MY_NOTIFICATION");
-                            intent.putExtra("data", targetLocation);
-                            sendBroadcast(intent);
-
-                            counter++;
-                            if(counter == poss.size())
-                                counter = 0;
-                            wait(5000);
-//                            wait(endTime -
-//                                    System.currentTimeMillis());
-                        } catch (Exception e) {
-                        }
-                    }
-                }
-                //Log.i("Thread", "Сегодня коты перебегали дорогу: " + mCounter++ + " раз");
-                // Нельзя!
-                // TextView infoTextView =
-                //         (TextView) findViewById(R.id.textViewInfo);
-                // infoTextView.setText("Сегодня коты перебегали дорогу: " + mCounter++ + " раз");
-            }
-        };
-        Thread thread = new Thread(runnable);
-        thread.start();
-    }
-
     @Override
     public void onBackPressed() {
-        OrderCloseBottonDialog dialog = new OrderCloseBottonDialog(mOrder_chronometr.getText().toString(), distanse);
-        dialog.show(getSupportFragmentManager(), null);
-//        super.onBackPressed();
+//        OrderCloseBottonDialog dialog = new OrderCloseBottonDialog(mOrder_chronometr.getText().toString(), distanse);
+//        dialog.show(getSupportFragmentManager(), null);
+        super.onBackPressed();
     }
 }

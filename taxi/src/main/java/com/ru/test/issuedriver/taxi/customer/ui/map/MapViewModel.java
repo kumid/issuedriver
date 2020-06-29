@@ -3,13 +3,14 @@ package com.ru.test.issuedriver.taxi.customer.ui.map;
 import android.location.Location;
 import android.util.Log;
 
-import com.firebase.geofire.GeoLocation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
-import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ru.test.issuedriver.taxi.data.order;
 import com.ru.test.issuedriver.taxi.data.user;
@@ -18,28 +19,28 @@ import com.ru.test.issuedriver.taxi.helpers.geofireHelper;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import static com.ru.test.issuedriver.taxi.helpers.callBacks.callback4geofireItemRecieve;
-
 public class MapViewModel extends ViewModel {
 
     private static final String TAG = "myLogs";
     FirebaseFirestore db;
+
     private MutableLiveData<List<user>> userList;
+    private List<user> avaibleUserList;
+
     public boolean isCameraOnPerformer = false;
-    private Map<String, GeoLocation> mapGeohash;
     public MapViewModel() {
         db = FirebaseFirestore.getInstance();
         userList = new MutableLiveData<>();
-        initUsersData();
+        avaibleUserList = new ArrayList<>();
+        //initUsersData();
         orders = new ArrayList<>();
     }
 
@@ -73,7 +74,6 @@ public class MapViewModel extends ViewModel {
             }
         });
 
-        mapGeohash = new HashMap<>();
 
 //        callback4geofireItemRecieve = new callBacks.geofireItemRecieveInterface() {
 //            @Override
@@ -101,6 +101,10 @@ public class MapViewModel extends ViewModel {
 
     public LiveData<List<user>> getUsers() {
         return userList;
+    }
+
+    public List<user> getAvaibleUsers() {
+        return avaibleUserList;
     }
 
     private List<order> orders;
@@ -131,7 +135,65 @@ public class MapViewModel extends ViewModel {
 
     // Получить все машины в радиусе
     public void getCarAround(Location location){
-       geofireHelper.getLocations(location.getLatitude(), location.getLongitude(), 3000.5);
+       geofireHelper.getLocations(location.getLatitude(), location.getLongitude(), 10.5);
     }
 
+    // Поиск в списке и добавление элемента если он отсутствует
+    public void addAvaibleUser2List(String key) {
+        if (avaibleUserList.size() != 0) {
+
+            for (user elem : avaibleUserList) {
+                if (elem.UUID.equals(key)) {
+                    if(callBacks.callback4AvaibleUserAdd!=null)
+                        callBacks.callback4AvaibleUserAdd.callback(elem);
+                    return;
+                }
+            }
+        }
+
+        db.collection("users")
+                .whereEqualTo("UUID", key)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                user curr = document.toObject(user.class);
+                                avaibleUserList.add(curr);
+                                if(callBacks.callback4AvaibleUserAdd!=null)
+                                    callBacks.callback4AvaibleUserAdd.callback(curr);
+                                Log.d(TAG, document.getId() + " => " + document.getData());
+                            }
+                        } else {
+                            Log.w(TAG, "Error getting documents.", task.getException());
+                        }
+                    }
+                })
+        .addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+                Log.w(TAG, "Error getting documents.");
+            }
+        });
+
+    }
+
+    public String removeAvaibleUserFromList(String key) {
+        user forRemove = null;
+        for (user elem : avaibleUserList) {
+            if (elem.UUID.equals(key)) {
+                forRemove = elem;
+                break;
+            }
+        }
+        if(forRemove == null)
+            return null;
+
+        avaibleUserList.remove(forRemove);
+        userList.postValue(avaibleUserList);
+
+        return forRemove.email;
+    }
 }

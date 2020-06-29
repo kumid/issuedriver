@@ -131,7 +131,7 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
         OnlineStateListen();
 
         picturelib.init(this);
-
+        firestoreHelper.updateUserInfo(this);
     }
 
 

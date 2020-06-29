@@ -32,7 +32,6 @@ import com.ru.test.issuedriver.taxi.bottom_dialogs.SelectDirectionBottonDialog;
 import com.ru.test.issuedriver.taxi.customer.ui.map.MapViewModel;
 import com.ru.test.issuedriver.taxi.customer.ui.map.imHere;
 import com.ru.test.issuedriver.taxi.customer.ui.map.placesAdapter;
-import com.ru.test.issuedriver.taxi.customer.ui.mapsUtils;
 import com.ru.test.issuedriver.taxi.customer.ui.orders_list.OrdersListViewModel;
 import com.ru.test.issuedriver.taxi.data.Pickup;
 import com.ru.test.issuedriver.taxi.data.order;
@@ -134,12 +133,12 @@ public class CustomerActivity extends MyActivity implements NavigationView.OnNav
         mMapView.onResume(); // needed to get the map to display immediately
 
         mImgLocationPinUp = findViewById(R.id.imgLocationPinUp);
-        mapsUtils.Init(this, mMapView, mapViewModel, mImgLocationPinUp);
+        customerMapsUtils.Init(this, mMapView, mapViewModel, mImgLocationPinUp);
 
         ImageView mMap_plus = findViewById(R.id.map_plus);
         ImageView mMap_minus = findViewById(R.id.map_minus);
-        mMap_plus.setOnClickListener(mapsUtils.clickZoom);
-        mMap_minus.setOnClickListener(mapsUtils.clickZoom);
+        mMap_plus.setOnClickListener(customerMapsUtils.clickZoom);
+        mMap_minus.setOnClickListener(customerMapsUtils.clickZoom);
 
 
             final AutocompleteSupportFragment autocompleteSupportFragment =
@@ -251,7 +250,7 @@ public class CustomerActivity extends MyActivity implements NavigationView.OnNav
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        return mapsUtils.onMarkerClick(marker, imHere.getMyPlace(), mainViewModel.currentPlace);
+        return customerMapsUtils.onMarkerClick(marker, imHere.getMyPlace(), mainViewModel.currentPlace);
     }
 
     public static final int PERMISSIONS= 123;
@@ -319,7 +318,7 @@ public class CustomerActivity extends MyActivity implements NavigationView.OnNav
 //                if(mainViewModel.currentPlace != null) {
 //
 //                }
-                PickupHelper.sendRequest(curr, mapViewModel.getUsers().getValue());
+                PickupHelper.sendRequest(curr, mapViewModel.getAvaibleUsers()); //PickupHelper.sendRequest(curr, mapViewModel.getUsers().getValue());
                 break;
 
             case FAR:

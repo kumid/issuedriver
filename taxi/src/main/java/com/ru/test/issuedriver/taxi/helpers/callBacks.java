@@ -2,6 +2,7 @@ package com.ru.test.issuedriver.taxi.helpers;
 
 import com.firebase.geofire.GeoLocation;
 import com.ru.test.issuedriver.taxi.data.order;
+import com.ru.test.issuedriver.taxi.data.user;
 
 // изменение состояния водителя
 public class callBacks {
@@ -44,12 +45,27 @@ public class callBacks {
         void callback(String key, GeoLocation location);
     }
 
+    // машина опкунула  радиус действия
+    public static geofireItemExitRecieveInterface callback4geofireItemExitRecieve;
+    public interface  geofireItemExitRecieveInterface {
+        void callback(String key);
+    }
+
     // Получили новые геоданные по радиусу
     public static geofireFinishRecieveInterface callback4geofireFinishRecieve;
     public interface  geofireFinishRecieveInterface {
         void callback();
     }
 
+    public static StartOrderPerformingInterface callback4StartOrderPerforming;
+    public interface  StartOrderPerformingInterface {
+        void callback(boolean success);
+    }
+
+    public static AvaibleUserAddInterface callback4AvaibleUserAdd;
+    public interface AvaibleUserAddInterface {
+        void callback(user addedUser);
+    }
 }
 
 

@@ -146,6 +146,8 @@ public class geofireHelper {
 
             @Override
             public void onKeyExited(String key) {
+                if(callBacks.callback4geofireItemExitRecieve != null)
+                    callBacks.callback4geofireItemExitRecieve.callback(key);
                 System.out.println(String.format("Key %s is no longer in the search area", key));
             }
 

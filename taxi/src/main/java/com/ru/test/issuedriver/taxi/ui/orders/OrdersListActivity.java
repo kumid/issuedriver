@@ -29,7 +29,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import static com.ru.test.issuedriver.taxi.helpers.callBacks.callback4goToNavigate;
 
-public class OrdersListActivity extends AppCompatActivity implements OrderCancelBottonDialog.BottomSheetListener {
+public class OrdersListActivity extends AppCompatActivity implements OrderCancelBottonDialog.CancelBottomSheetListener {
 
     RecyclerView notification_rv;
     notificationsCustomerAdapter adapterCustomer;
@@ -136,7 +136,7 @@ public class OrdersListActivity extends AppCompatActivity implements OrderCancel
     }
 
     @Override
-    public void onButtonClicked(order item) {
+    public void onCancelButtonClicked(order item) {
         Log.e("myLogs", "");
         firestoreHelper.setOrderState(item, 1, item.cancel_reason);
         firestoreHelper.setUserState(item.performer_email, 0);
