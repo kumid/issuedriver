@@ -113,7 +113,7 @@ public class OrderViewModel extends ViewModel {
 
     public static orderSendComplete orderSendCompleteCalback;
 
-    public void setOrder(order extra) {
+    public void setOrder(order extra, boolean isPerforming) {
         currentOrder = extra;
         if(fromPlace != null) {
             currentOrder.from = fromPlace.address;
@@ -124,6 +124,19 @@ public class OrderViewModel extends ViewModel {
             currentOrder.to = toPlace.address;
             currentOrder.to_position = new GeoPoint(toPlace.latitude, toPlace.longtitude);
         }
+
+        if(isPerforming) {
+            db.collection("orders").document(extra.id).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                    order curr = documentSnapshot.toObject(order.class);
+                    if (curr.state == 1
+                            && orderCanceledCalback != null)
+                        orderCanceledCalback.callback(curr.cancel_reason);
+                }
+            });
+        }
+
     }
 
     public interface orderSendComplete{
@@ -223,5 +236,9 @@ public class OrderViewModel extends ViewModel {
     public static orderCompleted orderCompletedCalback;
     public interface orderCompleted {
         void callback(boolean pass);
+    }
+    public static orderCanceled orderCanceledCalback;
+    public interface orderCanceled {
+        void callback(String msg);
     }
 }

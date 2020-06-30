@@ -65,6 +65,7 @@ public class FixActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void aVoid) {
                         PerformerActivity.showToast("Сообщение успешно отправлено", Toast.LENGTH_SHORT);
+                        FixActivity.this.finish();
                         mFix_msg.setText("");
                         mFix_callme_phone.setText("");
                     }

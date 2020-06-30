@@ -133,7 +133,7 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         }
 //        orderViewModel.setOrder();
 
-        orderViewModel.setOrder(newOrder);
+        orderViewModel.setOrder(newOrder, false);
 
     }
 

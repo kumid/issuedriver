@@ -65,6 +65,7 @@ public class ShinaActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void aVoid) {
                         PerformerActivity.showToast("Сообщение успешно отправлено", Toast.LENGTH_SHORT);
+                        ShinaActivity.this.finish();
                         mShina_msg.setText("");
                         mShina_callme_phone.setText("");
                     }

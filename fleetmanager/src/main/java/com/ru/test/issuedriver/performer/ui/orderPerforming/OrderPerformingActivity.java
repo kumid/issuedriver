@@ -38,6 +38,7 @@ import java.util.Calendar;
 import androidx.appcompat.app.ActionBar;
 import androidx.lifecycle.ViewModelProviders;
 
+import static com.ru.test.issuedriver.customer.ui.order.OrderViewModel.orderCanceledCalback;
 import static com.ru.test.issuedriver.helpers.callBacks.callback4goToNavigate;
 
 public class OrderPerformingActivity extends MyActivity implements View.OnClickListener, OrderCloseBottonDialog.CloseBottomSheetListener {
@@ -82,7 +83,14 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
         orderViewModel.fromPlace = getIntent().getParcelableExtra("from_place");
         orderViewModel.toPlace = getIntent().getParcelableExtra("to_place");
 
-        orderViewModel.setOrder(extra);
+        orderViewModel.setOrder(extra, true);
+        orderCanceledCalback = new OrderViewModel.orderCanceled() {
+            @Override
+            public void callback(String msg) {
+                showToast(String.format("Заказ: %s", msg), Toast.LENGTH_SHORT);
+                OrderPerformingActivity.this.finish();
+            }
+        };
 //        orderViewModel.customer_uuid = getIntent().getStringExtra("customer_uuid");
 //        orderViewModel.customer_fio = getIntent().getStringExtra("customer_fio");
 //        orderViewModel.customer_phone = getIntent().getStringExtra("customer_phone");
@@ -135,6 +143,9 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
         mOrder_navigation.setOnClickListener(this);
         mOrder_performing_call.setOnClickListener(this);
          //currentDateTime.setOnClickListener(this);
+
+        if(orderViewModel.getCurrentOrder().start_distance == 0)
+            orderViewModel.getCurrentOrder().start_distance = mysettings.GetDistance();
 
         distanse =  mysettings.GetDistance() - orderViewModel.getCurrentOrder().start_distance;
         order_distance.setText(convertMetr2km());

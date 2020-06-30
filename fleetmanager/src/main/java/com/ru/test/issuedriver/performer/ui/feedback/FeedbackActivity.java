@@ -65,6 +65,7 @@ public class FeedbackActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Void aVoid) {
                         PerformerActivity.showToast("Сообщение успешно отправлено", Toast.LENGTH_SHORT);
+                        FeedbackActivity.this.finish();
                         mFeedback_msg.setText("");
                         mFeedback_callme_phone.setText("");
                     }
