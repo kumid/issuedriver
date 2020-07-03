@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.lifecycle.ViewModelProviders;
+import kz.nurzhan.maskededittext.MaskedEditText;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -51,8 +52,9 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
 
 
     private RegistrationViewModel registrationViewModel;
-    TextInputEditText mFio, mStaff, mEmail, mCorp, mAutomodel, mAutovin, mAutonumber;
+    TextInputEditText mFio, mStaff, mEmail, mCorp, mAutomodel, mAutovin;
     EditText mTel;
+    MaskedEditText mAutonumber;
     Button mRegistrationButton, mRegistration_btn_logout;
     ImageView  mRegistration_photo;
     RadioButton mCustomer, mPerformer;
@@ -88,6 +90,7 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
         mRegistration_photo  = findViewById(R.id.registration_photo);
 
         setSpinerOptins();
+        //setSpinerOptins2();
         //mCustomer.setEnabled(false);
         //mPerformer.setEnabled(false);
 
@@ -314,6 +317,7 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
 
         mTel.setHint(listener.placeholder());
     }
+
 
     @Override
     public void setPath(String path) {

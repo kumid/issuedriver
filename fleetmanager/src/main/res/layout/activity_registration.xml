@@ -146,13 +146,16 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" >
-                    <com.google.android.material.textfield.TextInputEditText
+                    <kz.nurzhan.maskededittext.MaskedEditText
                         android:id="@+id/registration_auto_number"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/registration_auto_number"
-                        android:inputType="text"/>
+                        android:layout_marginVertical="5dp"
+                        app:mask="A999AA 99"
+                        />
                 </com.google.android.material.textfield.TextInputLayout>
+
+
 
             </LinearLayout>
             <com.google.android.material.textfield.TextInputLayout

@@ -14,12 +14,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
 import android.widget.DatePicker;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.bottom_dialogs.OrderCloseBottonDialog;
@@ -41,20 +44,23 @@ import androidx.lifecycle.ViewModelProviders;
 import static com.ru.test.issuedriver.customer.ui.order.OrderViewModel.orderCanceledCalback;
 import static com.ru.test.issuedriver.helpers.callBacks.callback4goToNavigate;
 
-public class OrderPerformingActivity extends MyActivity implements View.OnClickListener, OrderCloseBottonDialog.CloseBottomSheetListener {
+public class OrderPerformingActivity extends MyActivity implements View.OnClickListener {  //, OrderCloseBottonDialog.CloseBottomSheetListener
 
     private static final String TAG = "myLogs";
     OrderViewModel orderViewModel;
 
-    TextInputEditText mOrder_name, mOrder_from, mOrder_to, mOrder_purpose, mOrder_comment, mOrder_car, mOrder_carnumber;
-    TextView currentDateTime, order_distance, order_log;
-    Button mOrder_btn, mOrder_navigation;
+    TextInputEditText mOrder_name, mOrder_from, mOrder_to, mOrder_purpose, mOrder_comment; //, mOrder_car, mOrder_carnumber;
+    TextView currentDateTime, mOrder_distance, order_log, mOrder_distance_bottom, mOrder_fuel_bottom;
+    Button mOrder_btn, mOrder_navigation, mBottom_sheet_btn;
     View mOrder_performing_call;
     ProgressBar mProgress_circular;
-    Calendar dateAndTime=Calendar.getInstance();
-    Chronometer mOrder_chronometr;
-
+    Calendar dateAndTime = Calendar.getInstance();
+    Chronometer mOrder_chronometr, mOrder_chronometr_bottom;
+    private long fuel_consumption = FirebaseRemoteConfig.getInstance().getLong("fuel_consumption");
     boolean isCountDown = false;
+
+    private BottomSheetBehavior sheetBehavior;
+    private LinearLayout bottom_sheet;
 
 
     @Override
@@ -74,8 +80,6 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
         }
 
         BroadcastReceiverCreate();
-
-        //startTest();
     }
 
     private void initExtra() {
@@ -91,48 +95,31 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
                 OrderPerformingActivity.this.finish();
             }
         };
-//        orderViewModel.customer_uuid = getIntent().getStringExtra("customer_uuid");
-//        orderViewModel.customer_fio = getIntent().getStringExtra("customer_fio");
-//        orderViewModel.customer_phone = getIntent().getStringExtra("customer_phone");
-//        orderViewModel.customer_email = getIntent().getStringExtra("customer_email");
-//        orderViewModel.performer_fio = getIntent().getStringExtra("performer_fio");
-//        orderViewModel.performer_phone = getIntent().getStringExtra("performer_phone");
-//        orderViewModel.performer_email = getIntent().getStringExtra("performer_email");
-//        orderViewModel.performer_car = getIntent().getStringExtra("performer_car");
-//        orderViewModel.performer_car_numbr = getIntent().getStringExtra("performer_car_number");
-//
-//        orderViewModel.order_from = getIntent().getStringExtra("from");
-//        orderViewModel.order_to = getIntent().getStringExtra("to");
-//        orderViewModel.purpose = getIntent().getStringExtra("purpose");
-//        orderViewModel.comment = getIntent().getStringExtra("comment");
-//        orderViewModel.orderId = getIntent().getStringExtra("order_id");
-//
-//        orderViewModel.setOrder();
     }
 
 
     private void initViews() {
-        mOrder_name = findViewById(R.id.order_name);
-        currentDateTime = findViewById(R.id.order_data);
-        mOrder_from = findViewById(R.id.order_from);
-        mOrder_to = findViewById(R.id.order_to);
-        mOrder_purpose = findViewById(R.id.order_purpose);
-        mOrder_comment = findViewById(R.id.order_comment);
-        mOrder_btn = findViewById(R.id.order_btn);
-        mOrder_navigation = findViewById(R.id.order_navigation);
+        mOrder_name = findViewById(R.id.order_performing_name);
+        currentDateTime = findViewById(R.id.order_performing_data);
+        mOrder_from = findViewById(R.id.order_performing_from);
+        mOrder_to = findViewById(R.id.order_performing_to);
+        mOrder_purpose = findViewById(R.id.order_performing_purpose);
+        mOrder_comment = findViewById(R.id.order_performing_comment);
+        mOrder_btn = findViewById(R.id.order_performing_btn);
+        mOrder_navigation = findViewById(R.id.order_performing_navigation);
         mOrder_performing_call  = findViewById(R.id.order_performing_call);
-        mProgress_circular = findViewById(R.id.progress_circular);
-        mOrder_car = findViewById(R.id.order_car);
-        mOrder_carnumber = findViewById(R.id.order_carnumber);
+        mProgress_circular = findViewById(R.id.order_performing_progress_circular);
+        mOrder_chronometr = findViewById(R.id.order_performing_chronometr);
 
-        mOrder_chronometr = findViewById(R.id.order_chronometr);
+        mOrder_distance = findViewById(R.id.order_performing_distance);
+        order_log = findViewById(R.id.order_performing_log);
 
-        order_distance = findViewById(R.id.order_distance);
-        order_log = findViewById(R.id.order_log);
+        mOrder_chronometr_bottom = findViewById(R.id.order_chronometr_bottom);
+        mOrder_distance_bottom = findViewById(R.id.order_distance_bottom);
+        mOrder_fuel_bottom = findViewById(R.id.order_fuel_bottom);
+        mBottom_sheet_btn = findViewById(R.id.bottom_sheet_btn);
 
         mOrder_name.setText(orderViewModel.getCurrentOrder().performer_fio);
-        mOrder_car.setText(orderViewModel.getCurrentOrder().car);
-        mOrder_carnumber.setText(orderViewModel.getCurrentOrder().car_number);
 
         mOrder_from.setText(orderViewModel.getCurrentOrder().from);
         mOrder_to.setText(orderViewModel.getCurrentOrder().to);
@@ -140,15 +127,17 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
         mOrder_comment.setText(orderViewModel.getCurrentOrder().comment);
 
         mOrder_btn.setOnClickListener(this);
+        mBottom_sheet_btn.setOnClickListener(this);
         mOrder_navigation.setOnClickListener(this);
         mOrder_performing_call.setOnClickListener(this);
-         //currentDateTime.setOnClickListener(this);
 
         if(orderViewModel.getCurrentOrder().start_distance == 0)
             orderViewModel.getCurrentOrder().start_distance = mysettings.GetDistance();
 
         distanse =  mysettings.GetDistance() - orderViewModel.getCurrentOrder().start_distance;
-        order_distance.setText(convertMetr2km());
+        mOrder_distance.setText(convertMetr2km(distanse));
+        mOrder_distance_bottom.setText(convertMetr2km(distanse));
+        mOrder_fuel_bottom.setText(getFuel(distanse));
 
         mOrder_chronometr.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
             @Override
@@ -156,31 +145,30 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
                 long elapsedMillis = SystemClock.elapsedRealtime()
                         - mOrder_chronometr.getBase();
 
-//                if ((elapsedMillis > TIMER_RESTART)
-//                        || (isCountDown && elapsedMillis > 0)) {
-//                    mOrder_chronometr.stop();
-//                    mOrder_chronometr.navigateUp();
-//                }
             }
         });
         startTimer();
+
+        bottom_sheet = findViewById(R.id.bottom_sheet);
+        sheetBehavior = BottomSheetBehavior.from(bottom_sheet);
     }
 
     private void startTimer() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//            isCountDown = true;
-//            mOrder_chronometr.setCountDown(true);
-//            mOrder_chronometr.setBase(SystemClock.elapsedRealtime() + TIMER_RESTART);
             if (orderViewModel.getCurrentOrder().start_timestamp != null) {
                 DateTime start = new DateTime(orderViewModel.getCurrentOrder().start_timestamp.toDate());
                 int delta = DateTime.now().getSecondOfDay() - start.getSecondOfDay();
-                mOrder_chronometr.setBase(SystemClock.elapsedRealtime() - (delta * 1000 + 0 * 1000));
+                long t = SystemClock.elapsedRealtime() - (delta * 1000 + 0 * 1000);
+                mOrder_chronometr.setBase(t);
+                mOrder_chronometr_bottom.setBase(t);
             }
         }
-        else
+        else {
             mOrder_chronometr.setBase(SystemClock.elapsedRealtime());
-
+            mOrder_chronometr_bottom.setBase(SystemClock.elapsedRealtime());
+        }
         mOrder_chronometr.start();
+        mOrder_chronometr_bottom.start();
     }
 
     private void initVM() {
@@ -188,21 +176,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
                 ViewModelProviders.of(OrderPerformingActivity.this).get(OrderViewModel.class);
     }
 
-    // отображаем диалоговое окно для выбора даты
-    public void setDate(View v) {
-        new DatePickerDialog(OrderPerformingActivity.this, d,
-                dateAndTime.get(Calendar.YEAR),
-                dateAndTime.get(Calendar.MONTH),
-                dateAndTime.get(Calendar.DAY_OF_MONTH))
-                .show();
-    }
-    // отображаем диалоговое окно для выбора времени
-    public void setTime(View v) {
-        new TimePickerDialog(OrderPerformingActivity.this, t,
-                dateAndTime.get(Calendar.HOUR_OF_DAY),
-                dateAndTime.get(Calendar.MINUTE), true)
-                .show();
-    }
+
     // установка начальных даты и времени
     private void setInitialDateTime() {
 
@@ -212,35 +186,19 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
                         | DateUtils.FORMAT_SHOW_TIME));
     }
 
-    // установка обработчика выбора времени
-    TimePickerDialog.OnTimeSetListener t=new TimePickerDialog.OnTimeSetListener() {
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            dateAndTime.set(Calendar.HOUR_OF_DAY, hourOfDay);
-            dateAndTime.set(Calendar.MINUTE, minute);
-            setInitialDateTime();
-        }
-    };
 
-    // установка обработчика выбора даты
-    DatePickerDialog.OnDateSetListener d = new DatePickerDialog.OnDateSetListener() {
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            dateAndTime.set(Calendar.YEAR, year);
-            dateAndTime.set(Calendar.MONTH, monthOfYear);
-            dateAndTime.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            setInitialDateTime();
-            setTime(currentDateTime);
-        }
-    };
+//    OrderCloseBottonDialog dialog = new OrderCloseBottonDialog(); // .getText().toString());
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.order_btn:
-                OrderCloseBottonDialog dialog = new OrderCloseBottonDialog(mOrder_chronometr.getText().toString(), distanse);
-                dialog.show(getSupportFragmentManager(), null);
+            case R.id.order_performing_btn:
+                sheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+//                dialog.showDialog(getSupportFragmentManager(), mOrder_chronometr.getBase(), distanse);
                 break;
-
-            case R.id.order_navigation:
+            case R.id.bottom_sheet_btn:
+                onCloseBottomButtonClicked( mOrder_chronometr_bottom.getText().toString(), mOrder_distance_bottom.getText().toString(), mOrder_fuel_bottom.getText().toString());
+            case R.id.order_performing_navigation:
                 if(callback4goToNavigate != null)
                     callback4goToNavigate.callback(orderViewModel.getCurrentOrder());
                 break;
@@ -249,7 +207,6 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
                 break;
         }
     }
-
 
     /// ActionBar Back button clicked
     @Override
@@ -293,28 +250,37 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
                     lastLocation = position;
 
                     String rast;
-                    rast = convertMetr2km();
-                    order_distance.setText(rast);
+                    rast = convertMetr2km(distanse);
+                    String fuelStr = getFuel(distanse);
+
+                    mOrder_distance.setText(rast);
+                    mOrder_distance_bottom.setText(rast);
+                    mOrder_fuel_bottom.setText(fuelStr);
                 }
             }
         };
     }
 
+    private String getFuel(double distanse) {
+        double fuel = distanse * fuel_consumption / 100f;
+        return  String.format("%.1f л.", fuel / 1000f);
+    }
+
     @NotNull
-    private String convertMetr2km() {
+    private String convertMetr2km(double dist) {
         String rast;
-        if (distanse < 1000) {
-            rast = String.format("%d м", Math.round(distanse));
+//        if (distanse < 1000) {
+//            rast = String.format("%d м", Math.round(distanse));
+//            Log.d(TAG, rast);
+//        } else {
+            rast = String.format("%.1f км", dist / 1000f);
             Log.d(TAG, rast);
-        } else {
-            rast = String.format("%.1f км", distanse / 1000f);
-            Log.d(TAG, rast);
-        }
+//        }
         return rast;
     }
 
-    @Override
-    public void onCloseBottomButtonClicked(int id, String time, String dist, String fuel) {
+//    @Override
+    public void onCloseBottomButtonClicked(String time, String dist, String fuel) {
         OrderViewModel.orderCompletedCalback = new OrderViewModel.orderCompleted() {
             @Override
             public void callback(boolean pass) {

@@ -280,6 +280,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
             @Override
             public void onChanged(List<order> orders) {
                 mapViewModel.setOrders(orders);
+                mapsUtils.refreshCarsOnMap();
             }
         });
 

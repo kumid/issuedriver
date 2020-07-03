@@ -97,6 +97,7 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         newOrder.customer_photo = CurrentUser.photoPath;
         newOrder.customer_email = CurrentUser.email;
         newOrder.customer_token = CurrentUser.fcmToken;
+        newOrder.customer_staff = CurrentUser.staff;
 
         newOrder.performer_uuid = getIntent().getStringExtra("performer_uuid");
         newOrder.performer_fio = getIntent().getStringExtra("performer_fio");

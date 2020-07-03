@@ -19,8 +19,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -378,7 +381,7 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
 
     }
 
-    MenuItem onlineStateItem, onlineServerItem;
+    MenuItem onlineStateItem, onlineServerItem, action_msgItem;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -411,7 +414,16 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
                 return true;
 
             case R.id.action_state:
-                UserStateBottonDialog dialog = new UserStateBottonDialog();
+                if(ordersListViewModel.getNotifications().getValue() != null){
+                   for(order elem: ordersListViewModel.getNotifications().getValue()) {
+                       if (elem.accept_timestamp != null) {
+                           showToast("Есть активный заказ", Toast.LENGTH_SHORT);
+                           return true;
+                       }
+
+                   }
+                }
+                   UserStateBottonDialog dialog = new UserStateBottonDialog();
                 dialog.show(getSupportFragmentManager(), null);
                 return true;
             case R.id.action_isonline:

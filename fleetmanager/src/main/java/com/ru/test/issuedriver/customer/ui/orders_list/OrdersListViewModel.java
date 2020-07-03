@@ -101,7 +101,7 @@ public class OrdersListViewModel extends ViewModel {
     private void observe2notification(user user) {
         String email = user.is_performer? "performer_email" : "customer_email";
         final Query collectionRef = db.collection("orders")
-                .orderBy("accept_timestamp", Query.Direction.DESCENDING)
+                .orderBy("order_timestamp", Query.Direction.DESCENDING)
                 .whereEqualTo(email, user.email)
                 .whereEqualTo("completed", false); //.document("SF");
         collectionRef.addSnapshotListener(new EventListener<QuerySnapshot>() {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -12,132 +12,106 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_margin="10dp"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:layout_weight="1">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/order_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/registration_name"
-                    android:enabled="false"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:helperText="@string/order_performong_data">
-
-                <TextView
-                    android:id="@+id/order_data"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:hint="@string/order_data"
-                    android:inputType="text|datetime"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
-                    android:textSize="18sp"
-                    android:enabled="false"/>
-            </com.google.android.material.textfield.TextInputLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="gone">
+                android:orientation="vertical">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="wrap_content">
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/order_car"
+                        android:id="@+id/order_performing_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:enabled="false"
-                        android:hint="@string/registration_car"
-
-                        android:inputType="text" />
+                        android:hint="@string/registration_name"
+                        android:enabled="false"/>
                 </com.google.android.material.textfield.TextInputLayout>
+
                 <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:helperText="@string/order_performong_data">
+
+                    <TextView
+                        android:id="@+id/order_performing_data"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:hint="@string/order_data"
+                        android:inputType="text|datetime"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"
+                        android:textSize="18sp"
+                        android:enabled="false"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/order_performing_from"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/order_from"
+                        android:enabled="false"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionMode.Subtitle"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/order_carnumber"
+                        android:id="@+id/order_performing_to"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:enabled="false"
-                        android:hint="@string/registration_car_number"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/order_to"
+                        android:enabled="false" />
+                </com.google.android.material.textfield.TextInputLayout>
 
-                        android:inputType="text" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/order_performing_purpose"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/order_purpose"
+                        android:text="111111111"
+                        android:enabled="false"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/order_performing_comment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/order_comment"
+                        android:enabled="false"/>
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+        </ScrollView>
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/order_from"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/order_from"
-                    android:enabled="false"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/order_to"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/order_to"
-                    android:enabled="false" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/order_purpose"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/order_purpose"
-                    android:enabled="false"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/order_comment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/order_comment"
-                    android:enabled="false"/>
-            </com.google.android.material.textfield.TextInputLayout>
-        </LinearLayout>
 
             <TextView
-                android:id="@+id/order_log"
+                android:id="@+id/order_performing_log"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="log"
@@ -153,7 +127,7 @@
             android:src="@drawable/phone" />
 
         <Button
-            android:id="@+id/order_navigation"
+            android:id="@+id/order_performing_navigation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/navigate"
@@ -185,7 +159,7 @@
                             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                             android:text="@string/order_time" />
                         <Chronometer
-                            android:id="@+id/order_chronometr"
+                            android:id="@+id/order_performing_chronometr"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
@@ -213,7 +187,7 @@
                             android:text="@string/order_distance"
                             android:layout_marginHorizontal="5dp"/>
                         <TextView
-                            android:id="@+id/order_distance"
+                            android:id="@+id/order_performing_distance"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
@@ -227,7 +201,7 @@
             </LinearLayout>
 
         <Button
-            android:id="@+id/order_btn"
+            android:id="@+id/order_performing_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/colorPrimary"
@@ -239,7 +213,7 @@
     </LinearLayout>
 
     <ProgressBar
-        android:id="@+id/progress_circular"
+        android:id="@+id/order_performing_progress_circular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -247,4 +221,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:visibility="gone"/>
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- подключение нижнего экрана -->
+    <include
+        layout="@layout/bottom_sheet"/>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

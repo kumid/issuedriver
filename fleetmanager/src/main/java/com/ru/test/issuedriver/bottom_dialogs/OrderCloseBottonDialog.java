@@ -20,6 +20,7 @@ import com.ru.test.issuedriver.R;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.fragment.app.FragmentManager;
 
 public class OrderCloseBottonDialog extends BottomSheetDialogFragment implements View.OnClickListener {
 
@@ -31,24 +32,10 @@ public class OrderCloseBottonDialog extends BottomSheetDialogFragment implements
 
     String time;
     double dist, fuel = 0f;
-    public OrderCloseBottonDialog(String time, double dist) {
-        this.time = time;
-        this.dist = dist;
-        long fuel_consumption = FirebaseRemoteConfig.getInstance().getLong("fuel_consumption");
-        fuel = dist * fuel_consumption / 100f;
+    public OrderCloseBottonDialog() {
+//        this.time = time;
+//        this.dist = dist;
 
-        if (dist < 1000) {
-            distStr = String.format("%d м", Math.round(dist));
-
-        } else {
-            distStr = String.format("%.1f км", dist / 1000f);
-        }
-        if (fuel < 1000) {
-            fuelStr = String.format("%d гр.", Math.round(fuel));
-
-        } else {
-            fuelStr = String.format("%.1f л.", fuel / 1000f);
-        }
     }
 
     @Override
@@ -83,15 +70,19 @@ public class OrderCloseBottonDialog extends BottomSheetDialogFragment implements
         mOrder_fuel_bottom = view.findViewById(R.id.order_fuel_bottom);
         Button mBottom_sheet_btn = view.findViewById(R.id.bottom_sheet_btn);
 
-        mOrder_chronometr_bottom.setText(time);
+//        mOrder_chronometr_bottom.setText(time);
 
         mOrder_distance_bottom.setText(distStr);
         mOrder_fuel_bottom.setText(String.valueOf(fuelStr));
 
         mBottom_sheet_btn.setOnClickListener(this);
 
+        setDistance(basetime, dist);
+        mOrder_chronometr_bottom.start();
         return view;
     }
+
+
 
     @Override
     public void onClick(View v) {
@@ -102,6 +93,35 @@ public class OrderCloseBottonDialog extends BottomSheetDialogFragment implements
                 dismiss();
                 break;
          }
+    }
+
+    long basetime;
+    public void setDistance(long time, double distance) {
+        basetime = time;
+        mOrder_chronometr_bottom.setBase(time);
+        this.dist = distance;
+        long fuel_consumption = FirebaseRemoteConfig.getInstance().getLong("fuel_consumption");
+        fuel = dist * fuel_consumption / 100f;
+
+        if (dist < 1000) {
+            distStr = String.format("%d м", Math.round(dist));
+
+        } else {
+            distStr = String.format("%.1f км", dist / 1000f);
+        }
+        if (fuel < 1000) {
+            fuelStr = String.format("%d гр.", Math.round(fuel));
+
+        } else {
+            fuelStr = String.format("%.1f л.", fuel / 1000f);
+        }
+    }
+
+    public void showDialog(FragmentManager supportFragmentManager, long time, double distance) {
+        basetime = time;
+        dist = distance;
+
+        this.show(supportFragmentManager, null);
     }
 
     public interface CloseBottomSheetListener {

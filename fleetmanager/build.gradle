@@ -18,8 +18,8 @@ android {
         applicationId "com.ru.test.issuedriver"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 17
-        versionName '0.017'
+        versionCode 19
+        versionName '0.019'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.debug
@@ -84,6 +84,7 @@ dependencies {
     implementation "com.squareup.okhttp3:logging-interceptor:4.3.1"
 
     implementation 'com.redmadrobot:input-mask-android:5.0.0'
+    implementation 'com.github.nurjan84:MaskedEditText:1.0.1'
 
     implementation 'com.google.android.gms:play-services-location:17.0.0'
     implementation 'com.google.firebase:firebase-config:19.1.4'

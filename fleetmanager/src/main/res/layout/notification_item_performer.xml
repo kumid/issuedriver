@@ -185,61 +185,41 @@
                                 android:layout_height="wrap_content"
                                 android:layout_margin="10dp"
                                 android:orientation="horizontal">
-                                <com.google.android.material.textfield.TextInputLayout
+
+
+                                <com.google.android.material.textview.MaterialTextView
+                                    android:id="@+id/notification_item_fio"
+                                    style="@style/TextAppearance.Compat.Notification.Info"
                                     android:layout_width="0dp"
-                                    android:layout_weight="0.5"
                                     android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
                                     android:layout_margin="5dp"
-                                    android:layout_gravity="center_vertical">
+                                    android:layout_weight="0.5" />
+
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center_vertical"
+                                    android:layout_marginHorizontal="5dp"
+                                    android:layout_weight="0.5"
+                                    android:orientation="vertical">
+                                    <com.google.android.material.textview.MaterialTextView
+                                        android:id="@+id/notification_item_user_extra1"
+                                        android:layout_width="match_parent"
+                                        android:layout_height="wrap_content"/>
 
                                     <com.google.android.material.textview.MaterialTextView
-                                        android:id="@+id/notification_item_fio"
+                                        android:id="@+id/notification_item_user_extra2"
                                         android:layout_width="match_parent"
-                                        android:layout_height="wrap_content"
-                                        android:enabled="false"
-                                        style="@style/TextAppearance.Compat.Notification.Info"
-                                        android:hint="@string/registration_name"
-                                        android:inputType="text" />
-                                </com.google.android.material.textfield.TextInputLayout>
-                                <LinearLayout
-                                    android:id="@+id/notification_item_car_groupe"
-                                    android:layout_width="0dp"
-                                    android:layout_weight="0.5"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:layout_gravity="center_vertical"
-                                    android:layout_marginHorizontal="5dp">
-                                    <com.google.android.material.textfield.TextInputLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content">
-
-                                        <com.google.android.material.textview.MaterialTextView
-                                            android:id="@+id/notification_item_car"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="wrap_content"
-                                            android:hint="@string/registration_car"
-
-                                            android:inputType="text" />
-                                    </com.google.android.material.textfield.TextInputLayout>
-                                    <com.google.android.material.textfield.TextInputLayout
-                                        android:layout_width="match_parent"
-                                        android:layout_height="wrap_content">
-
-                                        <com.google.android.material.textview.MaterialTextView
-                                            android:id="@+id/notification_item_carnumber"
-                                            android:layout_width="match_parent"
-                                            android:layout_height="match_parent"
-                                            android:hint="@string/registration_car_number"
-
-                                            android:inputType="text" />
-                                    </com.google.android.material.textfield.TextInputLayout>
+                                        android:layout_height="match_parent"/>
                                 </LinearLayout>
+
                                 <androidx.cardview.widget.CardView
-                                    android:id="@+id/notification_item_photo_card2"
+                                    android:id="@+id/order_photo_card"
                                     android:layout_width="50dp"
                                     android:layout_height="50dp"
                                     app:cardCornerRadius="25dp"
-                                    app:cardElevation="2dp" >
+                                    app:cardElevation="2dp">
 
 
                                     <ImageView

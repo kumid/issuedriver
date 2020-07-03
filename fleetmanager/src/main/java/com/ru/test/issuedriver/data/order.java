@@ -33,6 +33,7 @@ public class order implements Parcelable {
     public String performer_token;
     public String car;
     public String car_number;
+    public String customer_staff;
 
     public boolean accept;
     public boolean completed;
@@ -45,7 +46,7 @@ public class order implements Parcelable {
     public Timestamp start_timestamp;
     /// Время окончания выполнения заказа - задается Водителем
     public Timestamp end_timestamp;
-    /// Время подачи машины - задается Инженером
+    ///  время активации заказа - за 30 минут до "order_timestamp" - Времени подачи машины - задается Инженером
     public Timestamp order_active_timestamp;
     @Exclude
     public Date order_active_time;
@@ -125,6 +126,7 @@ public class order implements Parcelable {
         performer_token = in.readString();
         car = in.readString();
         car_number = in.readString();
+        customer_staff = in.readString();
         accept = in.readByte() != 0;
         completed = in.readByte() != 0;
         is_notify = in.readByte() != 0;
@@ -202,6 +204,7 @@ public class order implements Parcelable {
         dest.writeString(performer_token);
         dest.writeString(car);
         dest.writeString(car_number);
+        dest.writeString(customer_staff);
         dest.writeByte((byte) (accept ? 1 : 0));
         dest.writeByte((byte) (completed ? 1 : 0));
         dest.writeByte((byte) (is_notify ? 1 : 0));

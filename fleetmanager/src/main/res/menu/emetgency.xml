@@ -1,35 +1,29 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
-    <item android:visible="true" android:id="@+id/m_area"
-        android:title="Сообщения"
-        android:icon="@drawable/ic_mail_white_24dp"
-        android:enabled="true">
-        <menu>
-            <item
-                android:id="@+id/action_send"
-                android:title="@string/action_send"
-                app:showAsAction="always"/>
-            <item
-                android:id="@+id/action_to"
-                android:title="@string/action_to"
-                app:showAsAction="always"/>
-            <item
-                android:id="@+id/action_shina"
-                android:title="@string/action_shina"
-                app:showAsAction="always"/>
-
-        </menu>
-    </item>
-
     <item
         android:id="@+id/action_state"
         android:icon="@drawable/online"
         android:title="@string/action_state"
         app:showAsAction="always"/>
+
     <item
         android:id="@+id/action_isonline"
         android:icon="@drawable/online_no_server"
         android:title="@string/action_isonline"
         app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/action_send"
+        android:title="@string/action_send"
+        android:icon="@drawable/online"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_to"
+        android:title="@string/action_to"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_shina"
+        android:title="@string/action_shina"
+        app:showAsAction="never"/>
+
 </menu>

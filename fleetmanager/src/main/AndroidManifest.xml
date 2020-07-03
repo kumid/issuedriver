@@ -54,6 +54,12 @@
         <activity android:name=".customer.ui.order.OrderActivity"
             android:screenOrientation="portrait"/>
 
+        <activity
+            android:name=".helpers.fsm.NotificationActivity"
+            android:taskAffinity=""
+            android:excludeFromRecents="true">
+        </activity>
+
         <service
             android:name=".helpers.MyFirebaseMessagingService"
             android:exported="false">

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
+import com.ru.test.issuedriver.customer.CustomerV2Activity;
 import com.ru.test.issuedriver.data.order;
 import com.squareup.picasso.Picasso;
 
@@ -53,9 +54,9 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
         order item = cards.get(position);
 
         SimpleDateFormat sfd;
-        if (item.accept_timestamp != null) {
+        if (item.order_timestamp != null) {
             sfd = new SimpleDateFormat("Поездка: dd-MM-yyyy HH:mm:ss");
-            holder.mHistory_item_accept_date.setText(sfd.format(item.accept_timestamp.toDate()));
+            holder.mHistory_item_order_date.setText(sfd.format(item.order_timestamp.toDate()));
             holder.mHistory_item_close_date.setText("");
         }
         if (item.end_timestamp != null) {
@@ -81,11 +82,13 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
         if(!isPerformer){
             photo = item.performer_photo;
             holder.mHistory_item_fio.setText(item.performer_fio);
-            holder.mHistory_item_car.setText(item.car);
-            holder.mHistory_item_carnumber.setText(item.car_number);
+            holder.mHistory_item_user_extra1.setText(item.car);
+            holder.mHistory_item_user_extra2.setText(item.car_number);
         } else {
             photo = item.customer_photo;
             holder.mHistory_item_fio.setText(item.customer_fio);
+            holder.mHistory_item_user_extra1.setText(item.customer_staff);
+            holder.mHistory_item_user_extra2.setText("");
         }
 
         if(photo != null && photo.length() > 0) {
@@ -112,6 +115,16 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
 //            holder.mHistory_item_cancel_reason.setVisibility(View.VISIBLE);
             holder.mHistory_item_cancel_reason.setText(item.cancel_reason);
         }
+
+        holder.mHistory_item_call.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isPerformer)
+                    MyActivity.getMyInstance().callPhone(item.customer_phone);
+                else
+                    MyActivity.getMyInstance().callPhone(item.performer_phone);
+            }
+        });
     }
     @Override
     public int getItemCount() {
@@ -121,21 +134,22 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
 
     class VH extends RecyclerView.ViewHolder{
         TextView mHistory_item_fio, mHistory_item_purpose, mHistory_item_from, mHistory_item_to, mHistory_item_comment, mHistory_time, mHistory_distance, mHistory_fuel,
-                mHistory_item_accept_date, mHistory_item_cancel_reason, mHistory_item_close_date, mHistory_item_close_state_title,
-                mHistory_item_car, mHistory_item_carnumber;
-        View mHistory_item_extra, mHistory_item_call, mHistory_item_cancel_line, mHistory_item_distance_calc_group, mHistory_item_car_group;
+                mHistory_item_order_date, mHistory_item_cancel_reason, mHistory_item_close_date, mHistory_item_close_state_title,
+                mHistory_item_user_extra1, mHistory_item_user_extra2;
+        View mHistory_item_extra, mHistory_item_call, mHistory_item_cancel_line, mHistory_item_distance_calc_group;
         ImageView mHistory_item_state, mHistory_item_item_photo;
         Button mHistory_item_btn_status_completed;
-        CardView mHistory_item;
+        View mHistory_item_rowtitle;
 
         public VH(@NonNull View itemView) {
             super(itemView);
 
-            mHistory_item  = itemView.findViewById(R.id.history_item);
+            mHistory_item_rowtitle  = itemView.findViewById(R.id.history_item_rowtitle);
+
             mHistory_item_extra = itemView.findViewById(R.id.history_item_extra);
             mHistory_item_btn_status_completed = itemView.findViewById(R.id.history_item_btn_status_completed);
             mHistory_item_call  = itemView.findViewById(R.id.history_item_call);
-            mHistory_item_accept_date = itemView.findViewById(R.id.history_item_accept_date);
+            mHistory_item_order_date = itemView.findViewById(R.id.history_item_order_date);
             mHistory_item_close_date = itemView.findViewById(R.id.history_item_close_date);
             mHistory_item_close_state_title = itemView.findViewById(R.id.history_item_close_state_title);
             mHistory_item_fio = itemView.findViewById(R.id.history_item_fio);
@@ -144,11 +158,12 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
             mHistory_item_to  = itemView.findViewById(R.id.history_item_to);
             mHistory_item_comment = itemView.findViewById(R.id.history_item_comment);
 
-            mHistory_item_car_group = itemView.findViewById(R.id.history_item_car_group);
-            mHistory_item_car = itemView.findViewById(R.id.history_item_car);
-            mHistory_item_carnumber = itemView.findViewById(R.id.history_item_carnumber);
+            mHistory_item_user_extra1 = itemView.findViewById(R.id.history_item_user_extra1);
+            mHistory_item_user_extra2 = itemView.findViewById(R.id.history_item_user_extra2);
             mHistory_item_item_photo = itemView.findViewById(R.id.history_item_photo);
-            if(isPerformer) mHistory_item_car_group.setVisibility(View.GONE);
+            if(isPerformer) {
+                mHistory_item_user_extra2.setVisibility(View.GONE);
+            }
 
             mHistory_item_cancel_reason = itemView.findViewById(R.id.history_item_cancel_reason);
             mHistory_item_cancel_line = itemView.findViewById(R.id.history_item_cancel_line);
@@ -160,7 +175,7 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
 
             mHistory_item_state = itemView.findViewById(R.id.history_item_state);
 
-            mHistory_item.setOnClickListener(new View.OnClickListener() {
+            mHistory_item_rowtitle.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if(mHistory_item_extra.getVisibility() == View.GONE) {

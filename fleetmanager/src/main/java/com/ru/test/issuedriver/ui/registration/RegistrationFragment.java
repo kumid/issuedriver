@@ -49,8 +49,8 @@ public class RegistrationFragment extends Fragment {
 
     private RegistrationViewModel registrationViewModel;
     private MainViewModel mainViewModel;
-    TextInputEditText mFio, mStaff, mEmail, mCorp, mAutomodel, mAutovin, mAutonumber;
-    EditText mTel;
+    TextInputEditText mFio, mStaff, mEmail, mCorp, mAutomodel, mAutovin;
+    EditText mTel, mAutonumber;
     Button mRegistrationButton, mRegistration_btn_logout;
     ImageView mRegistration_photo;
     RadioButton mCustomer, mPerformer;
@@ -105,7 +105,6 @@ public class RegistrationFragment extends Fragment {
         });
 
         setSpinerOptins();
-
         return root;
     }
 

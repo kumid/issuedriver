@@ -1,5 +1,6 @@
 package com.ru.test.issuedriver.helpers;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -30,6 +31,7 @@ import com.ru.test.issuedriver.SplashScreen;
 import com.ru.test.issuedriver.data.Token;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.data.user;
+import com.ru.test.issuedriver.helpers.fsm.NotificationActivity;
 import com.ru.test.issuedriver.helpers.fsm.sender;
 
 import androidx.annotation.NonNull;
@@ -145,10 +147,17 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     }
 
     private void notify(String title, String message) {
+        counter++;
+        PendingIntent dismissIntent = NotificationActivity.getDismissIntent(counter, getApplicationContext());
+
+
         Intent intent = new Intent(this, SplashScreen.class);
         String channel_id = "fleet_channel";
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT); // .FLAG_ONE_SHOT);
+        PendingIntent notifyPIntent =
+                PendingIntent.getActivity(getApplicationContext(), 0, new Intent(), 0);
+
         Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), channel_id)
                 .setSmallIcon(R.drawable.logo_small)
@@ -156,7 +165,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setAutoCancel(true)
                 .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
                 .setOnlyAlertOnce(true)
-                .setContentIntent(pendingIntent);
+                .setContentIntent(notifyPIntent);
+//                .setContentIntent(pendingIntent);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             builder = builder.setContent(getCustomDesign(title, message));
@@ -173,7 +183,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             notificationManager.createNotificationChannel(notificationChannel);
         }
 
-        notificationManager.notify(counter++, builder.build());
+        builder.setAutoCancel(true);
+        Notification notification = builder.build();
+
+        notificationManager.notify(counter, notification);
     }
 
     private RemoteViews getCustomDesign(String title,String message){

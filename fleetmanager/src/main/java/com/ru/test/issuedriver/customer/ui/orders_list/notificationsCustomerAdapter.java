@@ -66,8 +66,8 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
 
         holder.mNotification_item_photo_card.setVisibility(View.GONE);
 
-        holder.mNotification_item_car.setText(item.car);
-        holder.mNotification_item_carnumber.setText(item.car_number);
+        holder.mNotification_item_user_extra1.setText(item.car);
+        holder.mNotification_item_user_extra2.setText(item.car_number);
 
         if(item.performer_photo != null && item.performer_photo.length() > 0) {
             Picasso.get().load(item.performer_photo)
@@ -173,7 +173,7 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
 
     class VH extends RecyclerView.ViewHolder{
         TextView mNotification_item_fio, mNotification_item_purpose, mNotification_item_from, mNotification_item_to, mNotification_item_comment, mNotification_item_data,
-                mNotification_item_car, mNotification_item_carnumber;
+                mNotification_item_user_extra1, mNotification_item_user_extra2;
         View mNotification_item_extra, mNotification_item_btn_accept, mNotification_item_call, mNotification_item_btn_accept_ok, mNotification_item_extra_btns, mNotification_item_navigate,
                 mNotification_item_photo_card;
         Button mNotification_item_btn_status_wait, mNotification_item_btn_status_in_process, mNotification_item_btn_status_completed, mNotification_item_btn_cancel, mNotification_item_btn_start;
@@ -198,8 +198,8 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
             mNotification_item_call  = itemView.findViewById(R.id.notification_item_call);
             mNotification_item_fio = itemView.findViewById(R.id.notification_item_fio);
 
-            mNotification_item_car = itemView.findViewById(R.id.notification_item_car);
-            mNotification_item_carnumber = itemView.findViewById(R.id.notification_item_carnumber);
+            mNotification_item_user_extra1 = itemView.findViewById(R.id.notification_item_user_extra1);
+            mNotification_item_user_extra2 = itemView.findViewById(R.id.notification_item_user_extra2);
 
             mNotification_item_photo = itemView.findViewById(R.id.notification_item_photo);
             mNotification_item_photo_card = itemView.findViewById(R.id.notification_item_photo_card);
