@@ -311,14 +311,13 @@
                         android:textStyle="bold" />
                     <Button
                         android:id="@+id/notification_item_btn_status_in_process"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:paddingHorizontal="25dp"
-                        android:visibility="gone"
                         android:layout_gravity="end"
                         android:layout_marginVertical="10dp"
                         android:background="@drawable/rounded_blue"
-                        android:text="В работе"
+                        android:text="@string/order_state_accepted"
                         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                         android:textColor="@android:color/white"
                         android:textSize="18sp"

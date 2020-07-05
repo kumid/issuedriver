@@ -147,6 +147,14 @@ public class googleAuthManager {
     // [END signin]
 
     public static void signOut() {
+        if(mAuth != null) {
+            mAuth.signOut();
+//            if(callback4signout != null)
+//                callback4signout.callback();
+//            return;
+        }
+
+
         if(mGoogleSignInClient != null) {
             // Google sign out
             mGoogleSignInClient.signOut().addOnCompleteListener(activity,
@@ -161,13 +169,13 @@ public class googleAuthManager {
                     });
         }
 
-        if(mAuth == null) {
-            if(callback4signout != null)
-                callback4signout.callback();
-            return;
-        }
-
-        mAuth.signOut();
+//        if(mAuth == null) {
+//            if(callback4signout != null)
+//                callback4signout.callback();
+//            return;
+//        }
+//
+//        mAuth.signOut();
 
     }
 

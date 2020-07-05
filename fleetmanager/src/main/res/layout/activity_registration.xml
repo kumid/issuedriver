@@ -151,7 +151,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginVertical="5dp"
-                        app:mask="A999AA 99"
+                        app:mask="A999AA 999"
                         />
                 </com.google.android.material.textfield.TextInputLayout>
 

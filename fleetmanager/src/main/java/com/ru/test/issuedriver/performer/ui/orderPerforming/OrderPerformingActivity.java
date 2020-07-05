@@ -198,6 +198,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
                 break;
             case R.id.bottom_sheet_btn:
                 onCloseBottomButtonClicked( mOrder_chronometr_bottom.getText().toString(), mOrder_distance_bottom.getText().toString(), mOrder_fuel_bottom.getText().toString());
+                break;
             case R.id.order_performing_navigation:
                 if(callback4goToNavigate != null)
                     callback4goToNavigate.callback(orderViewModel.getCurrentOrder());

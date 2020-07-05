@@ -35,6 +35,7 @@ import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.data.place;
 import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.helpers.firestoreHelper;
+import com.ru.test.issuedriver.helpers.mysettings;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -84,7 +85,7 @@ public class mapsUtils {
     }
 
     private static Map<String, markerPair> markerMap = new HashMap<>();
-
+    static LatLng cameraPos;
     public static void Init(CustomerV2Activity activity, MapView mMapView, MapViewModel _mapViewModel, ImageView imgLocationPinUp){
 
         mapActivity = activity;
@@ -92,6 +93,17 @@ public class mapsUtils {
         mImgLocationPinUp = imgLocationPinUp;
         if(!isImgLocationPinUpOn)
             mImgLocationPinUp.setVisibility(View.GONE);
+
+        cameraPos = new LatLng(Double.parseDouble("45.058403"), Double.parseDouble("38.983933"));
+
+        try {
+            Location lastPos = mysettings.GetPosition();
+            if (lastPos != null
+                && lastPos.getLatitude() > 0)
+                cameraPos = new LatLng(lastPos.getLatitude(), lastPos.getLongitude());
+        } catch (Exception ex){
+            Log.e("myError", "0");
+        }
 
         try {
             MapsInitializer.initialize( mapActivity);
@@ -103,7 +115,9 @@ public class mapsUtils {
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap mMap) {
+                Log.e("myError", "1");
                 googleMap = mMap;
+                mMapView.onResume();
 
                 placesUtils.Init(mapActivity, googleMap, true);
 
@@ -111,10 +125,16 @@ public class mapsUtils {
                 googleMap.setMinZoomPreference(16f);
                 googleMap.setMaxZoomPreference(17f);
 
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(Double.parseDouble("45.058403"), Double.parseDouble("38.983933"))).zoom(carZoomLevel).build();
-                googleMap.animateCamera(CameraUpdateFactory
-                        .newCameraPosition(cameraPosition));
+                googleMap.setMyLocationEnabled(true);
+
+                try {
+                    CameraPosition cameraPosition = new CameraPosition.Builder()
+                            .target(cameraPos).zoom(carZoomLevel).build();
+                    googleMap.animateCamera(CameraUpdateFactory
+                            .newCameraPosition(cameraPosition));
+                } catch (Exception ex){
+                    Log.e("myError", "Error 2");
+                }
 
                 googleMap.getUiSettings().setCompassEnabled(false);
 
@@ -123,10 +143,10 @@ public class mapsUtils {
                     public void callBack(Location location) {
                         setMyPosition(location);
                         googleMap.setMinZoomPreference(5f);
-                        googleMap.setMyLocationEnabled(true);
                     }
                 };
                 imHere.init(mapActivity);
+                Log.e("myError", "1-1");
 
                 observe2performers();
 
@@ -137,18 +157,21 @@ public class mapsUtils {
 //                rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
 //                rlp.setMargins(0, 180, 180, 0);
 
+                Log.e("myError", "1-2");
 
                 googleMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
                     @Override
                     public void onCameraMove() {
                         if(!isImgLocationPinUpOn)
                             return;
+                        Log.e("myError", "1-2-1");
 
                         mImgLocationPinUp.setVisibility(View.VISIBLE);
                         if(markerPin!=null)
                             markerPin.remove();
                     }
                 });
+                Log.e("myError", "1-3");
 
                 googleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
                     @Override
@@ -190,8 +213,12 @@ public class mapsUtils {
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(imHere.getLatitude(),
                             imHere.getLongitude())).zoom(zoom).build();
-            googleMap.animateCamera(CameraUpdateFactory
-                    .newCameraPosition(cameraPosition));
+            try {
+                googleMap.animateCamera(CameraUpdateFactory
+                        .newCameraPosition(cameraPosition));
+            } catch (Exception ex) {
+                Log.e("myError", "Error 2");
+            }
         } else {
             animateMarker(null, ImMarker,
                     new LatLng(imHere.getLatitude(),
@@ -333,10 +360,15 @@ public class mapsUtils {
 
                     break;
             }
-            if(zoom != 0f)
-                googleMap.animateCamera(CameraUpdateFactory
-                        .newCameraPosition(cameraPosition));
+            if(zoom != 0f) {
+                try {
+                    googleMap.animateCamera(CameraUpdateFactory
+                            .newCameraPosition(cameraPosition));
+                } catch (Exception ex){
+                Log.e("myError", "Error 2");
+            }
 
+        }
         }
     };
 
@@ -480,8 +512,13 @@ public class mapsUtils {
                     float zoom = googleMap.getCameraPosition().zoom;
                     CameraPosition cameraPosition = new CameraPosition.Builder()
                             .target(toPosition).zoom(zoom).build();
-                    googleMap.animateCamera(CameraUpdateFactory
-                            .newCameraPosition(cameraPosition));
+                    try {
+                        googleMap.animateCamera(CameraUpdateFactory
+                                .newCameraPosition(cameraPosition));
+                    }catch (Exception ex) {
+                        Log.e("myError", "Error 2");
+                    }
+
                 }
                 if (t < 1.0) {
                     // Post again 16ms later.

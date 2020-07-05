@@ -121,7 +121,7 @@ public class sender {
                 break;
             case cancel_order_from_customer:
                 title = "cancel_order_from_customer";
-                uuid = currentOrder.customer_uuid;
+                uuid = currentOrder.performer_uuid;
                 break;
             case cancel_order_from_performer:
                 title = "cancel_order_from_performer";

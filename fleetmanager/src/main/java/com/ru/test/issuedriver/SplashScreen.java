@@ -31,6 +31,10 @@ public class SplashScreen extends AppCompatActivity {
                 public void callback() {
                     Intent intent = new Intent(SplashScreen.this, LoginActivity.class);
                     intent.putExtra("accept", false);
+                    if(getIntent().hasExtra("msg_mode")) {
+                        int mode = getIntent().getExtras().getInt("msg_mode");
+                        intent.putExtra("msg_mode", mode);
+                    }
                     startActivity(intent);
                     SplashScreen.this.finish();
                 }
@@ -44,6 +48,10 @@ public class SplashScreen extends AppCompatActivity {
                 if (curr.accept || true) // true - в боевой версии убрать
                 {
                     Intent intent = new Intent(instance, curr.is_performer ? PerformerActivity.class : CustomerV2Activity.class);
+                    if(getIntent().hasExtra("msg_mode")) {
+                        int mode = getIntent().getExtras().getInt("msg_mode");
+                        intent.putExtra("msg_mode", mode);
+                    }
                     startActivity(intent);
                     finish();
                 } else {

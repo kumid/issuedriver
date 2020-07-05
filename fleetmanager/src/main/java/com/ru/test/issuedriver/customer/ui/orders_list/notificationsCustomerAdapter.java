@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.StringRes;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -107,7 +108,12 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
 //                holder.mNotification_item_btn_cancel.setVisibility(View.GONE);
             } else {
                 holder.mNotification_item_btn_status_in_process.setVisibility(View.VISIBLE);
-//                holder.mNotification_item_navigate.setVisibility(View.VISIBLE);
+                if(item.start_timestamp == null) {
+                    holder.mNotification_item_btn_status_in_process.setText("Принята водителем");
+                } else {
+                    holder.mNotification_item_btn_status_in_process.setText("В работе");
+                }
+ //                holder.mNotification_item_navigate.setVisibility(View.VISIBLE);
                 holder.mNotification_item_btn_status_wait.setVisibility(View.GONE);
 //                holder.mNotification_item_btn_cancel.setVisibility(View.GONE);
                 holder.mNotification_item_btn_status_completed.setVisibility(View.GONE);

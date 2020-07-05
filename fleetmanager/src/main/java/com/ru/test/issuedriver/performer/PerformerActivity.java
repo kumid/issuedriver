@@ -9,6 +9,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Build;
@@ -19,10 +21,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -54,7 +52,6 @@ import com.ru.test.issuedriver.performer.ui.orderPerforming.OrderPerformingActiv
 import com.ru.test.issuedriver.performer.ui.shina.ShinaActivity;
 import com.ru.test.issuedriver.performer.ui.to.TOActivity;
 import com.ru.test.issuedriver.ui.history.HistoryViewModel;
-import com.squareup.picasso.Picasso;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -74,6 +71,8 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
 
     private static PerformerActivity inst;
 //    private user currentUser;
+    NavController navController;
+    public BottomNavigationView navView;
 
     public static PerformerActivity getInstance(){
         return inst;
@@ -139,20 +138,41 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
         firestoreHelper.updateUserInfo(this);
     }
 
+    boolean isInit = false;
+    private void initExtra() {
+        if(isInit)
+            return;
+        isInit = true;
+        if(getIntent().hasExtra("msg_mode")) {
+            int mode = getIntent().getExtras().getInt("msg_mode");
+            switch (mode){
+                case 1:
+                    navController.navigate(R.id.navigation_notifications);
+                    break;
 
+                case 5:
+                    navController.navigate(R.id.navigation_history);
+                    break;
+
+            }
+
+        }
+    }
     private void setupNavigation() {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
 
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_notifications, R.id.navigation_dashboard, R.id.navigation_registration)
+                R.id.navigation_notifications, R.id.navigation_history, R.id.navigation_registration)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+
     }
 
     private void initViewModels() {
@@ -515,6 +535,7 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
     @Override
     protected void onResume() {
         super.onResume();
+        initExtra();
         registerReceiver();
     }
 
@@ -578,3 +599,27 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
         void callback(String path);
     }
 }
+
+
+
+/*
+    Menu menu = navView.getMenu();
+        navView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+@Override
+public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == R.id.navigation_notifications){
+        menu.findItem(R.id.navigation_notifications).setIcon(getResources().getDrawable(R.drawable.bell_extra));
+
+        navView.setItemIconTintList(ColorStateList.valueOf(Color.parseColor("#ff0000")));
+
+//        menu.findItem(R.id.navigation_notifications).co
+//        navView.setItemIconTintList(ColorStateList.valueOf(Color.parseColor("#3F51B5")));
+//        menu.findItem(R.id.navigation_notifications).setIcon(getResources().getDrawable(R.drawable.ic_notifications_black_24dp));
+
+        }
+
+
+        return false;
+        }
+        });
+        */

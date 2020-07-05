@@ -13,6 +13,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.ru.test.issuedriver.data.place;
+import com.ru.test.issuedriver.helpers.mysettings;
 
 import androidx.core.app.ActivityCompat;
 
@@ -82,6 +83,7 @@ public class imHere {
                             if(lastLocation == null) {
                                 Log.d(TAG, "onLocationResult: lastLocation == null");
                                 lastLocation = location;
+//                                mysettings.SetPosition(location);
                                 if(myPositionChanged != null)
                                     myPositionChanged.callBack(location);
                             } else {
@@ -89,6 +91,7 @@ public class imHere {
                                     if(myPositionChanged != null)
                                         myPositionChanged.callBack(location);
                                     lastLocation = location;
+//                                    mysettings.SetPosition(location);
                                 }
                             }
                          } else

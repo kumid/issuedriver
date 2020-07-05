@@ -1,10 +1,13 @@
 package com.ru.test.issuedriver.customer.ui.orders_list;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -89,6 +92,15 @@ public class OrdersListFragment extends Fragment {
             public void onChanged(List<order> orders) {
                 if(MyActivity.CurrentUser.is_performer) {
                     adapterPerformer.setChangedData(orders);
+                    boolean isRed = false;
+                    for (order one: orders){
+                        if(!one.accept){
+                           isRed = true;
+                           break;
+                        }
+                    }
+                    PerformerActivity.getInstance().navView.setItemIconTintList(ColorStateList.valueOf(Color.parseColor(isRed?"#ff0000":"#6200EE")));
+
                 }
                 else
                     adapterCustomer.setChangedData(orders);

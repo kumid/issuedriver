@@ -62,6 +62,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static com.ru.test.issuedriver.performer.PerformerActivity.PERMISSIONS10;
+
 public class CustomerV2Activity extends MyActivity implements NavigationView.OnNavigationItemSelectedListener, GoogleMap.OnMarkerClickListener {
 
     private static CustomerV2Activity instance;
@@ -86,6 +88,9 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         super.onCreate(savedInstanceState);
         instance = this;
         setContentView(R.layout.activity_customer_v2);
+
+        checkPermission(this);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         FloatingActionButton fab = findViewById(R.id.fab);
@@ -136,7 +141,6 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
 
         mMapView = (MapView) findViewById(R.id.mapView);
         mMapView.onCreate(savedInstanceState);
-        mMapView.onResume(); // needed to get the map to display immediately
 
         mImgLocationPinUp = findViewById(R.id.imgLocationPinUp);
 
@@ -162,7 +166,6 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
                 Log.e(TAG, "onError");
             }
         });
-        checkPermission(this);
 
         rv = findViewById(R.id.places_rv);
         mainViewModel.getPlacesLiveData().observe(this, new Observer<List<place>>() {
@@ -175,8 +178,44 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         initDrawer();
 
         firestoreHelper.updateUserInfo(this);
+
 //        test();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+         initExtra();
+    }
+
+
+
+    boolean isInit = false;
+    private void initExtra() {
+        if(isInit)
+            return;
+        isInit = true;
+        // перешли через уведомление пуш.
+        if(getIntent().hasExtra("msg_mode")) {
+            int mode = getIntent().getExtras().getInt("msg_mode");
+            switch (mode){
+                case 2:
+                case 3:
+                    startOrdersActivity();
+                    break;
+
+                case 4:
+                case 6:
+                    startHistoryActivity();
+                    break;
+
+            }
+
+            getIntent().removeExtra("msg_mode");
+        }
+    }
+
     RecyclerView rv;
 //    private void test() {
 //        Intent intent=new Intent(this, SplashScreen.class);
@@ -228,13 +267,11 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         Intent intent;
         switch (id){
             case R.id.nav_orders:
-                intent = new Intent(CustomerV2Activity.this, OrdersListActivity.class);
-                startActivity(intent);
+                startOrdersActivity();
 //                Toast.makeText(getApplicationContext(), "Вы выбрали home", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_history:
-                intent = new Intent(CustomerV2Activity.this, HistoryActivity.class);
-                startActivity(intent);
+                startHistoryActivity();
 //                Toast.makeText(getApplicationContext(), "Вы выбрали galery", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_cabinet:
@@ -252,6 +289,18 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void startHistoryActivity() {
+        Intent intent;
+        intent = new Intent(CustomerV2Activity.this, HistoryActivity.class);
+        startActivity(intent);
+    }
+
+    private void startOrdersActivity() {
+        Intent intent;
+        intent = new Intent(CustomerV2Activity.this, OrdersListActivity.class);
+        startActivity(intent);
     }
 
 
@@ -306,14 +355,14 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
     public static boolean checkPermission(final Context context)
     {
         int currentAPIVersion = Build.VERSION.SDK_INT;
-        if(currentAPIVersion>= Build.VERSION_CODES.M)
+        if(currentAPIVersion >= Build.VERSION_CODES.M)
         {
             if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.ACCESS_FINE_LOCATION) ) {
                     AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
                     alertBuilder.setCancelable(true);
                     alertBuilder.setTitle("Разрешения");
-                    alertBuilder.setMessage("Разрешение необходимо для определения Вашей позиции на карте");
+                    alertBuilder.setMessage("Определение геопозиции устройства ВАЖНО для работы приложения");
                     alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
                         public void onClick(DialogInterface dialog, int which) {
@@ -326,6 +375,33 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
 
                 } else {
                     ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS);
+
+                }
+                return false;
+            }
+            else {
+                return true;
+            }
+        } else if(currentAPIVersion >= Build.VERSION_CODES.Q)
+        {
+            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale((Activity) context, Manifest.permission.ACCESS_FINE_LOCATION) ) {
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
+                    alertBuilder.setCancelable(true);
+                    alertBuilder.setTitle("Разрешения");
+                    alertBuilder.setMessage("Определение геопозиции устройства ВАЖНО для работы приложения");
+                    alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, PERMISSIONS10);
+
+                        }
+                    });
+                    AlertDialog alert = alertBuilder.create();
+                    alert.show();
+
+                } else {
+                    ActivityCompat.requestPermissions((Activity) context, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, PERMISSIONS10);
 
                 }
                 return false;

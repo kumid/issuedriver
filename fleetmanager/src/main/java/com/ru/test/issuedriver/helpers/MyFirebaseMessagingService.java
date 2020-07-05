@@ -6,18 +6,18 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
-import android.preference.PreferenceManager;
+import android.os.SystemClock;
 import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -32,12 +32,9 @@ import com.ru.test.issuedriver.data.Token;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.helpers.fsm.NotificationActivity;
-import com.ru.test.issuedriver.helpers.fsm.sender;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
-
-import static com.ru.test.issuedriver.helpers.mysettings.APP_PREFERENCES;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private static int counter = 0;
@@ -112,22 +109,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             String title = remoteMessage.getData().get("title");
             switch (title) {
                 case "new_order":
-                    showNotification4Order(remoteMessage.getData().get("message"), "Новая заявка", "Поступила новая заявка");
+                    showNotification4Order(remoteMessage.getData().get("message"), "Новая заявка", "Поступила новая заявка", 1);
                     break;
                 case "accepted_order":
-                    showNotification4Order(remoteMessage.getData().get("message"), "Статус заявки изменен", "Заявка принята водителем");
+                    showNotification4Order(remoteMessage.getData().get("message"), "Статус заявки изменен", "Заявка принята водителем", 2);
                     break;
                 case "performing_order":
-                    showNotification4Order(remoteMessage.getData().get("message"), "Статус заявки изменен", "Поездка начата");
+                    showNotification4Order(remoteMessage.getData().get("message"), "Статус заявки изменен", "Поездка начата", 3);
                     break;
                 case "complete_order":
-                    showNotification4Order(remoteMessage.getData().get("message"), "Статус заявки изменен", "Поездка успешно завершена");
+                    showNotification4Order(remoteMessage.getData().get("message"), "Статус заявки изменен", "Поездка успешно завершена", 4);
                     break;
                 case "cancel_order_from_customer":
-                    showNotification4Order(remoteMessage.getData().get("message"), "Статус заявки изменен", "Поездка отменена заказчиком");
+                    showNotification4Order(remoteMessage.getData().get("message"), "Статус заявки изменен", "Поездка отменена заказчиком", 5);
                     break;
                 case "cancel_order_from_performer":
-                    showNotification4Order(remoteMessage.getData().get("message"), "Статус заявки изменен", "Поездка отменена водителем");
+                    showNotification4Order(remoteMessage.getData().get("message"), "Статус заявки изменен", "Поездка отменена водителем", 6);
                     break;
                 default:
                     showNotification(title, remoteMessage.getData().get("message"));
@@ -139,19 +136,21 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
     }
 
-    private void showNotification4Order(String message, String title, String body) {
+    private void showNotification4Order(String message, String title, String body, int nitifiMode) {
         Gson gson = new Gson();
         order newOrder = gson.fromJson(message, order.class);
 
-        notify(title, body);
+        notify(title, body, nitifiMode);
     }
 
-    private void notify(String title, String message) {
+    private void notify(String title, String message, int notifiMode) {
         counter++;
         PendingIntent dismissIntent = NotificationActivity.getDismissIntent(counter, getApplicationContext());
 
 
         Intent intent = new Intent(this, SplashScreen.class);
+        intent.putExtra("msg_mode", notifiMode);
+
         String channel_id = "fleet_channel";
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT); // .FLAG_ONE_SHOT);
@@ -164,16 +163,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setSound(uri)
                 .setAutoCancel(true)
                 .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                .setShowWhen(true)
+                .setWhen(System.currentTimeMillis())
+                .setUsesChronometer(true)
                 .setOnlyAlertOnce(true)
-                .setContentIntent(notifyPIntent);
-//                .setContentIntent(pendingIntent);
+//                .setContentIntent(notifyPIntent);
+                .setContentIntent(pendingIntent);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             builder = builder.setContent(getCustomDesign(title, message));
         } else {
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.logo_small, options);
             builder = builder.setContentTitle(title)
                     .setContentText(message)
-                    .setSmallIcon(R.drawable.logo_small);
+                    .setSmallIcon(R.drawable.logo_small)
+                    .setLargeIcon(bitmap);
         }
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -191,9 +196,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private RemoteViews getCustomDesign(String title,String message){
         RemoteViews remoteViews=new RemoteViews(getApplicationContext().getPackageName(), R.layout.notification);
-        remoteViews.setTextViewText(R.id.title,title);
-        remoteViews.setTextViewText(R.id.message,message);
+        remoteViews.setTextViewText(R.id.title, title);
+        remoteViews.setTextViewText(R.id.message, message);
         remoteViews.setImageViewResource(R.id.icon,R.drawable.logo_small);
+        remoteViews.setChronometer(R.id.myChronometere, SystemClock.elapsedRealtime(),
+                null, true); //pausing
         return remoteViews;
     }
 
@@ -220,7 +227,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
         Log.e("Token","5");
 
-        notify(title, message);
+        notify(title, message, 0);
         }
 
 }

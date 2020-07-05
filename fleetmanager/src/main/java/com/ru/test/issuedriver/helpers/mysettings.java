@@ -2,10 +2,12 @@ package com.ru.test.issuedriver.helpers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.internal.$Gson$Preconditions;
 import com.ru.test.issuedriver.data.Token;
 import com.ru.test.issuedriver.data.user;
 
@@ -59,11 +61,20 @@ public class mysettings {
         return "";
     }
 
-    public static String GetPosition()
+    public static Location GetPosition()
     {
-        if(instance.contains(APP_PREFERENCES_POSITION))
-            return instance.getString(APP_PREFERENCES_POSITION, "");
-        return "";
+        try {
+            if (instance != null
+                    && instance.contains(APP_PREFERENCES_POSITION)) {
+                String json = instance.getString(APP_PREFERENCES_POSITION, "");
+                Gson gson = new Gson();
+                return gson.fromJson(json, Location.class);
+            }
+        }
+        catch (Exception ex){
+            Log.e("myError", "mysettings1");
+        }
+        return null;
     }
 
     public static String GetOrders()
@@ -86,9 +97,11 @@ public class mysettings {
         editor.apply();
     }
 
-    public static void SetPosition(String pos) {
+    public static void SetPosition(Location pos) {
         SharedPreferences.Editor editor = instance.edit();
-        editor.putString(mysettings.APP_PREFERENCES_POSITION, pos);
+        Gson gson = new Gson();
+        String json = gson.toJson(pos);
+        editor.putString(mysettings.APP_PREFERENCES_POSITION, json);
         editor.apply();
     }
     public static void SetOrders(String orders) {

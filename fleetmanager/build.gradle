@@ -18,8 +18,8 @@ android {
         applicationId "com.ru.test.issuedriver"
         minSdkVersion 21
         targetSdkVersion 29
-        versionCode 19
-        versionName '0.019'
+        versionCode 22
+        versionName '0.021'
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         signingConfig signingConfigs.debug
