@@ -146,7 +146,9 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
         if(getIntent().hasExtra("msg_mode")) {
             int mode = getIntent().getExtras().getInt("msg_mode");
             switch (mode){
-                case 1:
+                case 3:
+                case 7:
+                case 8:
                     navController.navigate(R.id.navigation_notifications);
                     break;
 

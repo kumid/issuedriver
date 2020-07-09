@@ -39,11 +39,18 @@
             android:layout_gravity="center_vertical"
             android:layout_weight="1"/>
 
-        <Button
+        <ImageView
             android:id="@+id/sendButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:enabled="false"
+            ads:srcCompat="@drawable/send"/>
+        <Button
+            android:id="@+id/sendButtonOld"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
+            android:visibility="gone"
             android:enabled="false"
             android:text="SEND"/>
 
@@ -54,6 +61,7 @@
         style="?android:attr/progressBarStyleLarge"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"/>
 </RelativeLayout>

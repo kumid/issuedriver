@@ -19,17 +19,18 @@ public class FriendlyMessage {
 
     private String id;
     private String text;
-    private String name;
-    private String photoUrl;
+    private String sender_id;
+//    private String photoUrl;
     private String imageUrl;
 
     public FriendlyMessage() {
     }
 
-    public FriendlyMessage(String text, String name, String photoUrl, String imageUrl) {
+//    public FriendlyMessage(String text, String sender_name, String photoUrl, String imageUrl) {
+    public FriendlyMessage(String text, String sender_name, String imageUrl) {
         this.text = text;
-        this.name = name;
-        this.photoUrl = photoUrl;
+        this.sender_id = sender_name;
+//        this.photoUrl = photoUrl;
         this.imageUrl = imageUrl;
     }
 
@@ -45,25 +46,25 @@ public class FriendlyMessage {
         this.text = text;
     }
 
-    public String getName() {
-        return name;
+    public String getSender_id() {
+        return sender_id;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setSender_id(String sender_id) {
+        this.sender_id = sender_id;
     }
 
-    public String getPhotoUrl() {
-        return photoUrl;
-    }
+//    public String getPhotoUrl() {
+//        return photoUrl;
+//    }
 
     public String getText() {
         return text;
     }
 
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
-    }
+//    public void setPhotoUrl(String photoUrl) {
+//        this.photoUrl = photoUrl;
+//    }
 
     public String getImageUrl() {
         return imageUrl;

@@ -126,6 +126,12 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 case "cancel_order_from_performer":
                     showNotification4Order(remoteMessage.getData().get("message"), "Статус заявки изменен", "Поездка отменена водителем", 6);
                     break;
+                case "msg_from_customer":
+                    showNotification4Order(remoteMessage.getData().get("message"), "Новое сообщение", "Заказчик отправил Вам сообщение", 7);
+                    break;
+                case "msg_from_performer":
+                    showNotification4Order(remoteMessage.getData().get("message"), "Новое сообщение", "Водитель отправил Вам сообщение", 8);
+                    break;
                 default:
                     showNotification(title, remoteMessage.getData().get("message"));
                     break;
@@ -146,7 +152,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private void notify(String title, String message, int notifiMode) {
         counter++;
         PendingIntent dismissIntent = NotificationActivity.getDismissIntent(counter, getApplicationContext());
-
 
         Intent intent = new Intent(this, SplashScreen.class);
         intent.putExtra("msg_mode", notifiMode);

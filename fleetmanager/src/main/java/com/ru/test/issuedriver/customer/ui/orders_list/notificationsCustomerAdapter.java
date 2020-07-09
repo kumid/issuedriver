@@ -1,5 +1,6 @@
 package com.ru.test.issuedriver.customer.ui.orders_list;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,7 +9,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ru.test.issuedriver.R;
+import com.ru.test.issuedriver.chat.ChatActivity;
 import com.ru.test.issuedriver.customer.CustomerV2Activity;
+import com.ru.test.issuedriver.customer.ui.order.OrderActivity;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.helpers.callBacks;
 import com.squareup.picasso.Picasso;
@@ -161,6 +164,14 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
                 CustomerV2Activity.getInstance().callPhone(item.performer_phone);
             }
         });
+        holder.mNotification_item_chat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CustomerV2Activity.getInstance(), ChatActivity.class);
+                intent.putExtra("order", item);
+                CustomerV2Activity.getInstance().startActivity(intent);
+            }
+        });
         holder.mNotification_item_navigate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -180,7 +191,7 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
     class VH extends RecyclerView.ViewHolder{
         TextView mNotification_item_fio, mNotification_item_purpose, mNotification_item_from, mNotification_item_to, mNotification_item_comment, mNotification_item_data,
                 mNotification_item_user_extra1, mNotification_item_user_extra2;
-        View mNotification_item_extra, mNotification_item_btn_accept, mNotification_item_call, mNotification_item_btn_accept_ok, mNotification_item_extra_btns, mNotification_item_navigate,
+        View mNotification_item_extra, mNotification_item_btn_accept, mNotification_item_call, mNotification_item_chat, mNotification_item_btn_accept_ok, mNotification_item_extra_btns, mNotification_item_navigate,
                 mNotification_item_photo_card;
         Button mNotification_item_btn_status_wait, mNotification_item_btn_status_in_process, mNotification_item_btn_status_completed, mNotification_item_btn_cancel, mNotification_item_btn_start;
         ImageView mNotification_item_photo, mNotification_item_photo_visiblility, mNotification_item_photo2;
@@ -202,6 +213,7 @@ public class notificationsCustomerAdapter extends RecyclerView.Adapter<notificat
             mNotification_item_btn_accept  = itemView.findViewById(R.id.notification_item_btn_accept);
             mNotification_item_btn_accept_ok  = itemView.findViewById(R.id.notification_item_btn_accept_ok);
             mNotification_item_call  = itemView.findViewById(R.id.notification_item_call);
+            mNotification_item_chat  = itemView.findViewById(R.id.notification_item_chat);
             mNotification_item_fio = itemView.findViewById(R.id.notification_item_fio);
 
             mNotification_item_user_extra1 = itemView.findViewById(R.id.notification_item_user_extra1);

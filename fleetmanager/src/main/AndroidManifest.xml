@@ -84,7 +84,7 @@
         <activity android:name=".performer.ui.fix.FixActivity"
             android:screenOrientation="portrait"/>
 
-        <activity android:name=".ChatActivity"
+        <activity android:name=".chat.ChatActivity"
             android:screenOrientation="portrait"/>
 
         <service

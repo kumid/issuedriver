@@ -32,7 +32,7 @@ import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textview.MaterialTextView;
-import com.ru.test.issuedriver.ChatActivity;
+import com.ru.test.issuedriver.chat.ChatActivity;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.customer.ui.placesUtils;
@@ -46,7 +46,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import com.ru.test.issuedriver.BuildConfig;
-import com.ru.test.issuedriver.helpers.mysettings;
 import com.squareup.picasso.Picasso;
 
 public class OrderActivity extends MyActivity implements View.OnClickListener {
@@ -314,11 +313,13 @@ public class OrderActivity extends MyActivity implements View.OnClickListener {
         } else if (v.getId() == R.id.order_to_btn) {
             onSearchCalled(2, mOrder_to.getText().toString());
             return;
-        } else if (v.getId() == R.id.order_photo) {
-            Intent intent = new Intent(OrderActivity.this, ChatActivity.class);
-            startActivity(intent);
-             return;
         }
+//        else if (v.getId() == R.id.order_photo) {
+//            Intent intent = new Intent(OrderActivity.this, ChatActivity.class);
+//            intent.putExtra("order", orderViewModel.getCurrentOrder());
+//            startActivity(intent);
+//             return;
+//        }
 
 
         org.joda.time.DateTime time = new DateTime();

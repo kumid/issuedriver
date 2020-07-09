@@ -395,9 +395,17 @@
                         android:id="@+id/notification_item_call"
                         android:layout_width="60dp"
                         android:layout_height="60dp"
-                        android:layout_margin="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
                         android:layout_gravity="end"
                         android:src="@drawable/phone" />
+                    <ImageView
+                        android:id="@+id/notification_item_chat"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:layout_margin="10dp"
+                        android:layout_gravity="end"
+                        android:src="@drawable/chat" />
 
                 </LinearLayout>
 

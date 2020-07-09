@@ -202,6 +202,8 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
             switch (mode){
                 case 2:
                 case 3:
+                case 7:
+                case 8:
                     startOrdersActivity();
                     break;
 

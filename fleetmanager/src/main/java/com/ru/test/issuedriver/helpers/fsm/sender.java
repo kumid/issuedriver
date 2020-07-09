@@ -127,6 +127,14 @@ public class sender {
                 title = "cancel_order_from_performer";
                 uuid = currentOrder.customer_uuid;
                 break;
+            case msg_from_customer:
+                title = "msg_from_customer";
+                uuid = currentOrder.performer_uuid;
+                break;
+            case msg_from_performer:
+                title = "msg_from_performer";
+                uuid = currentOrder.customer_uuid;
+                break;
         }
 
         updateTokenAndSend(uuid, title, json);
@@ -155,6 +163,8 @@ public class sender {
         performing_order,
         complete_order,
         cancel_order_from_customer,
-        cancel_order_from_performer
+        cancel_order_from_performer,
+        msg_from_customer,
+        msg_from_performer
     }
 }
