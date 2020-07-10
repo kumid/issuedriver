@@ -436,6 +436,21 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
                 return true;
 
             case R.id.action_state:
+
+
+
+
+                final FirebaseDatabase database = FirebaseDatabase.getInstance();
+
+                         DatabaseReference myRef = database.getReference("articles").push();
+                        Article article = new Article("title", "author");
+                        myRef.setValue(article);
+
+
+
+
+
+
                 if(ordersListViewModel.getNotifications().getValue() != null){
                    for(order elem: ordersListViewModel.getNotifications().getValue()) {
                        if (elem.accept_timestamp != null) {
