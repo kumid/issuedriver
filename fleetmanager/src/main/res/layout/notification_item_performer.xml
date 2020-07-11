@@ -173,7 +173,8 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="10dp">
                         <androidx.cardview.widget.CardView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -250,34 +251,41 @@
 <!--                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.Button"-->
 <!--                        android:textColor="@color/color4text" />-->
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/order_purpose"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-                    <TextView
-                        android:id="@+id/notification_item_purpose"
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/order_purpose"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
-                        android:textColor="@color/color4text" />
+                        android:orientation="vertical"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginLeft="5dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/order_purpose"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/order_comment"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
+                        <TextView
+                            android:id="@+id/notification_item_purpose"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/order_purpose"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionBar.Subtitle"
+                            android:textColor="@color/color4text" />
 
-                    <TextView
-                        android:id="@+id/notification_item_comment"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@string/order_comment"
-                        android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionMode.Subtitle"
-                        android:textColor="@color/color4text" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/order_comment"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption" />
 
+                        <TextView
+                            android:id="@+id/notification_item_comment"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/order_comment"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Widget.ActionMode.Subtitle"
+                            android:textColor="@color/color4text" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <Button

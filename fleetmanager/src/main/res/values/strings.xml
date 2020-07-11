@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Fleet management - 25</string>
+    <string name="app_name">Fleet management - 27</string>
     <string name="title_map">Найти авто</string>
     <string name="title_history">История</string>
     <string name="title_notifications">Заявки</string>
@@ -84,5 +84,7 @@
     <string name="action_to">Заявка на ТО</string>
     <string name="action_shina">Шиномонтаж</string>
     <string name="order_state_accepted">Принята водителем</string>
+    <string name="registration_auto_marka">Марка автомобиля</string>
+    <string name="registration_auto_osago_number">ОСАГО</string>
 
 </resources>

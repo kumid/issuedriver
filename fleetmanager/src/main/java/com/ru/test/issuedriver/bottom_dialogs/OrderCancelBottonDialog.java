@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -31,7 +32,7 @@ public class OrderCancelBottonDialog extends BottomSheetDialogFragment implement
     TextView mOrder_distance_bottom, mOrder_fuel_bottom;
     View mCancel_action_standard_group, mCancel_action_other_group;
     CheckBox mCancel_action_other_check;
-    TextInputEditText mCancel_sheet_reason_other_input_value;
+    EditText mCancel_sheet_reason_other_input_value;
 
     String cancel_sheet_reason1, cancel_sheet_reason2, cancel_sheet_reason3, cancel_sheet_reason4;
 

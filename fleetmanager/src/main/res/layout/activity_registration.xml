@@ -69,12 +69,12 @@
                         android:maxLength="18"/>
                 </LinearLayout>
 
-                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/registration_photo"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:src="@drawable/avatar"/>
-             </LinearLayout>
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/registration_photo"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@drawable/avatar"/>
+            </LinearLayout>
 
 
             <com.google.android.material.textfield.TextInputLayout
@@ -113,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginTop="15dp"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -127,12 +127,27 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" >
                     <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/registration_auto_marka"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/registration_auto_marka"
+                        android:inputType="text"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" >
+                    <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/registration_auto_model"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/registration_auto_model"
                         android:inputType="text"/>
                 </com.google.android.material.textfield.TextInputLayout>
+
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" >
@@ -140,9 +155,13 @@
                         android:id="@+id/registration_auto_vin"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/registration_auto_vin"
-                        android:inputType="text"/>
+                        android:digits="QWERTYUIOPASDFGHJKLZXCVBNM1234567890"
+                        android:inputType="text|textCapCharacters"
+                        android:hint="@string/registration_auto_vin"/>
                 </com.google.android.material.textfield.TextInputLayout>
+
+
+
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" >
@@ -150,11 +169,113 @@
                         android:id="@+id/registration_auto_number"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:textAllCaps="true"
+                        android:inputType="text|textCapCharacters"
+                        android:hint="@string/registration_auto_number"
                         android:layout_marginVertical="5dp"
                         app:mask="A999AA 999"
                         />
                 </com.google.android.material.textfield.TextInputLayout>
 
+
+                <LinearLayout
+                    android:id="@+id/registration_osago_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/registration_auto_osago_number"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:digits="QWERTYUIOPASDFGHJKLZXCVBNM1234567890"
+                            android:inputType="text|textCapCharacters"
+                            android:hint="@string/registration_auto_osago_number"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+                        <com.msa.dateedittext.DateEditText
+                            android:id="@+id/registration_auto_osago_start_date"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="5dp"
+                            android:imeOptions="actionNext"
+                            app:autoCorrect="false"
+                            android:hint="Дата"
+                            app:dateFormat="ddMMyyyy"
+                            app:dividerCharacter="slash"
+                            app:maxDate="01/12/2100"
+                            app:minDate="01/12/2000"
+                            />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+                        <com.msa.dateedittext.DateEditText
+                            android:id="@+id/registration_auto_osago_expire_date"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="5dp"
+                            android:imeOptions="actionNext"
+                            app:autoCorrect="false"
+                            android:hint="Дата окончания"
+                            app:dateFormat="ddMMyyyy"
+                            app:dividerCharacter="slash"
+                            app:maxDate="01/12/2100"
+                            app:minDate="01/12/2000"
+                            />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/registration_texservice_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+                        <com.msa.dateedittext.DateEditText
+                            android:id="@+id/registration_auto_texservice_start_date"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="5dp"
+                            android:imeOptions="actionNext"
+                            app:autoCorrect="false"
+                            android:hint="Дата техобслуживания"
+                            app:dateFormat="ddMMyyyy"
+                            app:dividerCharacter="slash"
+                            app:maxDate="01/12/2100"
+                            app:minDate="01/12/2000"
+                            />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" >
+                        <com.msa.dateedittext.DateEditText
+                            android:id="@+id/registration_auto_texservice_expire_date"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginVertical="5dp"
+                            android:imeOptions="actionNext"
+                            app:autoCorrect="false"
+                            android:hint="Дата окончания техобслуживания"
+                            app:dateFormat="ddMMyyyy"
+                            app:dividerCharacter="slash"
+                            app:maxDate="01/12/2100"
+                            app:minDate="01/12/2000"
+                            />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
 
 
             </LinearLayout>

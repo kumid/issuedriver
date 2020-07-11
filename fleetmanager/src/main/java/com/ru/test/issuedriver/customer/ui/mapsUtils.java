@@ -554,7 +554,7 @@ public class mapsUtils {
                 intent.putExtra("performer_photo", markerMap.get(item)._user.photoPath);
                 intent.putExtra("performer_email", markerMap.get(item)._user.email);
                 intent.putExtra("performer_token", markerMap.get(item)._user.fcmToken);
-                intent.putExtra("performer_car", markerMap.get(item)._user.automodel);
+                intent.putExtra("performer_car",  String.format("%s %s", markerMap.get(item)._user.automarka,  markerMap.get(item)._user.automodel).trim());
                 intent.putExtra("performer_car_number", markerMap.get(item)._user.autonumber);
                 if(fromPlace != null)
                     intent.putExtra("from_place", fromPlace);

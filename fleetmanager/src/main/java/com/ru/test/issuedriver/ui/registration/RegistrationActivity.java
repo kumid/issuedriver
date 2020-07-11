@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +31,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
+import com.msa.dateedittext.DateEditText;
 import com.redmadrobot.inputmask.MaskedTextChangedListener;
 import com.redmadrobot.inputmask.helper.AffinityCalculationStrategy;
 import com.ru.test.issuedriver.MyActivity;
@@ -52,13 +54,15 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
 
 
     private RegistrationViewModel registrationViewModel;
-    TextInputEditText mFio, mStaff, mEmail, mCorp, mAutomodel, mAutovin;
+    TextInputEditText mFio, mStaff, mEmail, mCorp, mRegistration_auto_marka, mAutomodel, mAutovin, mRegistration_auto_osago_number;
     EditText mTel;
     MaskedEditText mAutonumber;
     Button mRegistrationButton, mRegistration_btn_logout;
     ImageView  mRegistration_photo;
     RadioButton mCustomer, mPerformer;
     View mRegistration_performer_groupe, mRegistration_radio_group;
+    DateEditText mRegistration_auto_osago_date, mRegistration_auto_osago_expire_date, mRegistration_auto_texservice_start_date, mRegistration_auto_texservice_expire_date;
+
     FirebaseFirestore db;
     private ActionBar actionBar;
 
@@ -77,6 +81,7 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
         mStaff = findViewById(R.id.registration_staff);
         mEmail = findViewById(R.id.registration_email);
         mCorp = findViewById(R.id.registration_corp_email);
+        mRegistration_auto_marka = findViewById(R.id.registration_auto_marka);
         mAutomodel = findViewById(R.id.registration_auto_model);
         mAutovin = findViewById(R.id.registration_auto_vin);
         mAutonumber = findViewById(R.id.registration_auto_number);
@@ -85,6 +90,18 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
         mTel = findViewById(R.id.registration_tel);
         mRegistration_radio_group = findViewById(R.id.registration_radio_group);
         mRegistration_performer_groupe = findViewById(R.id.registration_performer_groupe);
+
+        mRegistration_auto_osago_number = findViewById(R.id.registration_auto_osago_number);
+        mRegistration_auto_osago_date = findViewById(R.id.registration_auto_osago_start_date);
+        mRegistration_auto_osago_expire_date = findViewById(R.id.registration_auto_osago_expire_date);
+        mRegistration_auto_texservice_start_date = findViewById(R.id.registration_auto_texservice_start_date);
+        mRegistration_auto_texservice_expire_date = findViewById(R.id.registration_auto_texservice_expire_date);
+
+        mRegistration_auto_osago_date.listen();
+        mRegistration_auto_osago_expire_date.listen();
+        mRegistration_auto_texservice_start_date.listen();
+        mRegistration_auto_texservice_expire_date.listen();
+
         mCustomer = findViewById(R.id.radio_customer);
         mPerformer = findViewById(R.id.radio_performer);
         mRegistration_photo  = findViewById(R.id.registration_photo);
@@ -172,12 +189,19 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
                         mStaff.getText().toString(),
                         mEmail.getText().toString(),
                         mCorp.getText().toString(),
+                        mRegistration_auto_marka.getText().toString(),
                         mAutomodel.getText().toString(),
                         mAutovin.getText().toString(),
                         mAutonumber.getText().toString(),
                         mTel.getText().toString(),
                         mPerformer.isChecked(),
-                        currentUser == null? false : currentUser.accept
+                        currentUser == null? false : currentUser.accept ,
+                        mRegistration_auto_osago_number.getText().toString(),
+                        mRegistration_auto_osago_date.getText().toString(),
+                        mRegistration_auto_osago_expire_date.getText().toString(),
+                        mRegistration_auto_texservice_start_date.getText().toString(),
+                        mRegistration_auto_texservice_expire_date.getText().toString()
+
                 );
         if(currentUser != null)
             current.UUID = currentUser.UUID;
@@ -241,11 +265,20 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
                                     mStaff.setText(currentUser.staff);
                                     mEmail.setText(currentUser.email);
                                     mCorp.setText(currentUser.corp);
+                                    mRegistration_auto_marka.setText(currentUser.automarka);
                                     mAutomodel.setText(currentUser.automodel);
                                     mAutovin.setText(currentUser.autovin);
                                     mAutonumber.setText(currentUser.autonumber);
                                     mCustomer.setChecked(!currentUser.is_performer);
                                     mPerformer.setChecked(currentUser.is_performer);
+
+                                    mRegistration_auto_osago_number.setText(currentUser.osago_number);
+                                    mRegistration_auto_osago_date.setText(currentUser.osago_start_date);
+                                    mRegistration_auto_osago_expire_date.setText(currentUser.osago_expire_date);
+                                    mRegistration_auto_texservice_start_date.setText(currentUser.texservice_start_date);
+                                    mRegistration_auto_texservice_expire_date.setText(currentUser.texservice_expire_date);
+
+
                                     if(currentUser.photoPath != null && currentUser.photoPath.length() > 0) {
 //                                        mRegistration_photo.setImageURI(Uri.parse(currentUser.photoPath));
                                         Picasso.get().load(currentUser.photoPath)

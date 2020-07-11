@@ -137,6 +137,15 @@
         android:layout_margin="10dp"
         android:visibility="gone">
 
+
+        <EditText
+            android:id="@+id/cancel_sheet_reason_other_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:nextFocusUp="@id/cancel_sheet_reason_other"
+            android:maxLines="1"/>
+
         <androidx.cardview.widget.CardView
             android:id="@+id/cancel_sheet_reason_other"
             android:layout_width="match_parent"
@@ -154,12 +163,6 @@
                 android:layout_margin="5dp" />
         </androidx.cardview.widget.CardView>
 
-
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/cancel_sheet_reason_other_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 
