@@ -100,7 +100,7 @@ public class order implements Parcelable {
         this.state = 0;
         this.cancel_reason = "";
 
-        start_distance = 0;
+        start_distance = 1;
         end_distance = 0;
 
         setOrderActiveTime();

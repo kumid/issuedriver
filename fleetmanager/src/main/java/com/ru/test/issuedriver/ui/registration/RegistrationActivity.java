@@ -203,10 +203,10 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
                         mRegistration_auto_texservice_expire_date.getText().toString()
 
                 );
-        if(currentUser != null)
+        if(currentUser != null) {
             current.UUID = currentUser.UUID;
-
-        current.photoPath = currentUser.photoPath;
+            current.photoPath = currentUser.photoPath;
+        }
 
         current.fcmToken = mysettings.GetFCMToken().getToken();
 
@@ -278,6 +278,8 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
                                     mRegistration_auto_texservice_start_date.setText(currentUser.texservice_start_date);
                                     mRegistration_auto_texservice_expire_date.setText(currentUser.texservice_expire_date);
 
+                                    mCustomer.setEnabled(false);
+                                    mPerformer.setEnabled(false);
 
                                     if(currentUser.photoPath != null && currentUser.photoPath.length() > 0) {
 //                                        mRegistration_photo.setImageURI(Uri.parse(currentUser.photoPath));

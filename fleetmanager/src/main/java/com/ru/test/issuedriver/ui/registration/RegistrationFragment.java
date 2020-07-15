@@ -264,6 +264,8 @@ public class RegistrationFragment extends Fragment {
         mRegistration_auto_texservice_start_date.setText(curr.texservice_start_date);
         mRegistration_auto_texservice_expire_date.setText(curr.texservice_expire_date);
 
+        mCustomer.setEnabled(false);
+        mPerformer.setEnabled(false);
 
         registrationViewModel.currentUser.postValue(curr);
         if(curr.photoPath != null && curr.photoPath.length() > 0) {

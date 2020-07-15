@@ -192,7 +192,7 @@ public class PerformerBackgroundService extends Service {
                 Looper.myLooper()); // Looper.myLooper tells this to repeat forever until thread is destroyed
     }
 
-    /// mode = 1 = send position to activity
+    /// mode = 2 = send position to activity
     /// mode = 1 = send onlineState
     private void sendMyBroadcastMessage(Location location, int mode) {
         Intent intent = new Intent();
@@ -267,12 +267,14 @@ public class PerformerBackgroundService extends Service {
                         Log.d(TAG, "onComplete: \ninserted user location into database." +
                                 "\n latitude: " + userLocation.getLatitude() +
                                 "\n longitude: " + userLocation.getLongitude());
-                        sendMyBroadcastMessage(location, 2);
+//                        sendMyBroadcastMessage(location, 2);
                     } else {
 
                     }
                 }
             });
+            sendMyBroadcastMessage(location, 2);
+
         }catch (NullPointerException e){
             Log.e(TAG, "saveUserLocation: User instance is null, stopping location service.");
             Log.e(TAG, "saveUserLocation: NullPointerException: "  + e.getMessage() );

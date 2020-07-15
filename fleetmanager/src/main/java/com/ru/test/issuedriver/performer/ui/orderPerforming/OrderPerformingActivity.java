@@ -131,9 +131,10 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
         mOrder_navigation.setOnClickListener(this);
         mOrder_performing_call.setOnClickListener(this);
 
-        if(orderViewModel.getCurrentOrder().start_distance == 0)
-            orderViewModel.getCurrentOrder().start_distance = mysettings.GetDistance();
-
+        if(orderViewModel.getCurrentOrder().start_distance == 1) {
+            orderViewModel.getCurrentOrder().start_distance =
+                orderViewModel.getCurrentOrder().end_distance = mysettings.GetDistance();
+        }
         distanse =  mysettings.GetDistance() - orderViewModel.getCurrentOrder().start_distance;
         mOrder_distance.setText(convertMetr2km(distanse));
         mOrder_distance_bottom.setText(convertMetr2km(distanse));
@@ -247,17 +248,21 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
                 Log.d(TAG, String.format("Form update: %.1f м", newDist));
 
                 if (newDist > 50f) {
-                    distanse += newDist;
+//                    distanse += newDist;
                     lastLocation = position;
 
-                    String rast;
-                    rast = convertMetr2km(distanse);
-                    String fuelStr = getFuel(distanse);
-
-                    mOrder_distance.setText(rast);
-                    mOrder_distance_bottom.setText(rast);
-                    mOrder_fuel_bottom.setText(fuelStr);
+//                    String rast;
+//                    rast = convertMetr2km(distanse);
+//                    String fuelStr = getFuel(distanse);
+//
+//                    mOrder_distance.setText(rast);
+//                    mOrder_distance_bottom.setText(rast);
+//                    mOrder_fuel_bottom.setText(fuelStr);
                 }
+                distanse =  mysettings.GetDistance() - orderViewModel.getCurrentOrder().start_distance;
+                mOrder_distance.setText(convertMetr2km(distanse));
+                mOrder_distance_bottom.setText(convertMetr2km(distanse));
+                mOrder_fuel_bottom.setText(getFuel(distanse));
             }
         };
     }
