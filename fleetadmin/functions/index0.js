@@ -6,7 +6,7 @@ const express = require('express');
 const app = express();
 
 app.engine('ejs', require("ejs"));
-app.set('views', './ejs');
+app.set('views', './views');
 app.set('view engine', 'ejs');
 
 

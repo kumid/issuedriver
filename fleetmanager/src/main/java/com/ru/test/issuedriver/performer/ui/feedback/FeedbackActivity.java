@@ -12,6 +12,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.redmadrobot.inputmask.MaskedTextChangedListener;
 import com.redmadrobot.inputmask.helper.AffinityCalculationStrategy;
+import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.performer.PerformerActivity;
 
@@ -22,7 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class FeedbackActivity extends AppCompatActivity {
+public class FeedbackActivity extends MyActivity {
 
     EditText mFeedback_msg, mFeedback_callme_phone;
     @Override
@@ -60,7 +61,7 @@ public class FeedbackActivity extends AppCompatActivity {
     private void sendFeedback(String msg, String phone) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("feedbacks").document().set(new feedback(msg, phone))
+        db.collection("feedbacks").document().set(new feedback(CurrentUser.fio, CurrentUser.email, CurrentUser.photoPath, msg, phone))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

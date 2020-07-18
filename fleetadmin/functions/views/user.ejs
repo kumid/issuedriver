@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Fleet management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <style>
+        .center {
+            width: 200px; /* Ширина элемента в пикселах */
+            padding: 10px; /* Поля вокруг текста */
+            margin: auto; /* Выравниваем по центру */
+            background: #fafafa; /* Цвет фона */
+        }
+    </style>
+</head>
+<body>
+
+
+<%if(current_user.photoPath.length == 0)
+    current_user.photoPath = 'https://firebasestorage.googleapis.com/v0/b/fleet-management-8dfc9.appspot.com/o/placeholder-man.png?alt=media&token=04920483-9eb3-4f69-8637-0543d75e5aec';
+%>
+                <form method="post" action="/users">
+
+
+                    <div class="container" >
+                        <div class="row">
+                            <div class="col-2">
+                                <img src="<%=current_user.photoPath%>" class="img-fluid" alt="..." height="200px" width="150px">
+                            </div>
+                            <div class="col-8">
+                                <div class="container" >
+                                    <div class="row">
+                                        <div class="col">
+                                            11111
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group form-check">
+                                                <%if(current_user.accept){%>
+                                                    <input type="checkbox" class="form-check-input" id="acceptCheck" name="accept" checked>
+                                                <%} else {%>
+                                                    <input type="checkbox" class="form-check-input" id="acceptCheck" name="accept">
+                                                <%}%>
+
+                                                <label class="form-check-label" for="acceptCheck">Профиль подтвержден</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label for="inputFIO">ФИО</label>
+                                                <input type="text" class="form-control" id="inputFIO" name="fio" value="<%=current_user.fio%>" aria-describedby="inputFIOHelp">
+                                                <small id="inputFIOHelp" class="form-text text-muted">Имя пользователя</small>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label for="inputEmail">Email</label>
+                                                <input type="email" class="form-control" id="inputEmail" name="email" value="<%=current_user.email%>" aria-describedby="emailHelp">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col">
+                                            <button type="submit" class="btn btn-primary" >Сохранить</button>
+                                        </div>
+                                        <div class="col">
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </form>
+    </body>
+</html>
+
+
