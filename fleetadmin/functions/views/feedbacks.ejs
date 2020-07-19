@@ -2,7 +2,7 @@
 <html lang="en" dir="ltr">
 <head>
     <meta charset="utf-8">
-    <title>Fleet management</title>
+    <title>Fleet management. Сообщения.</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 </head>
 <body>
@@ -29,30 +29,31 @@
 <div class="album py-5 bg-light">
     <div class="container">
 
-        <div class="row row-cols-4">
+        <div class="row row-cols-3">
             <%feedbacks.forEach(function(childSnapshot) {
+                var key = childSnapshot.id;
                 var item = childSnapshot.data();
                 if(item.owner_photo.length == 0)
                     item.owner_photo = 'https://firebasestorage.googleapis.com/v0/b/fleet-management-8dfc9.appspot.com/o/placeholder-man.png?alt=media&token=04920483-9eb3-4f69-8637-0543d75e5aec';
                 %>
 
 
-            <div class="col">
-                <div class="card mb-4 shadow-sm">
-                    <img src="<%=item.owner_photo%>" class="img-fluid" alt="..." width="100%" height="225">
-                    <div class="card-body">
-                        <h5 class="card-title"><%=item.owner_fio%></h5>
-                        <small class="text-muted"><%=item.owner_email%></small>
-                        <p class="card-text"><%=item.message%></p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-                                <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-                            </div>
+            <div class="card mb-3" style="max-width: 540px;">
+                <div class="row no-gutters">
+                    <div class="col-md-4">
+                        <img src="<%=item.owner_photo%>" class="card-img" alt="...">
+                        <a href="/feedbacks/accept/<%=key%>" class="btn btn-sm btn-outline-secondary">В архив</a>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title"><%=item.owner_fio%></h5>
+                            <p class="card-text"><%=item.message%></p>
+                            <p class="card-text"><small class="text-muted"><%=item.owner_email%></small></p>
                         </div>
                     </div>
                 </div>
             </div>
+
 
             <%});%>
 

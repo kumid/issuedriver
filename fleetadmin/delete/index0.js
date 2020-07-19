@@ -18,7 +18,28 @@ const firebaseApp = firebase.initializeApp(
 //   // functions.config().firebase
 );
 
+app.get('/users/:id', function(req, res){
+    getUser(req.params.id).then((doc) =>{
+        if (!doc.exists) {
+            res.send('404');
+        } else {
+            res.render('user', {current_user: doc.data()});
+        }
+    });
+})
 
+function getLocalUsers(){
+    var o1 = {fio: 'Курбанов Умид', email: 'kumid@inbox.ru', UUID: '1234567890',
+        photoPath: "https://firebasestorage.googleapis.com/v0/b/fleet-management-8dfc9.appspot.com/o/20200714%2FJPEG_20200714_104138833.jpg?alt=media&token=56ff1cdd-7bce-46c5-8e6a-27b89d49e1f4"};
+    var o2 = {fio: 'Кадиров Рафик', email: 'kazanokcentre@mail.ru', UUID: '789789789',
+        photoPath: 'https://firebasestorage.googleapis.com/v0/b/fleet-management-8dfc9.appspot.com/o/1.jpg?alt=media&token=e6341e13-9b80-4b53-98cf-7bbc5dff5a8a'};
+    var o3 = {fio: 'Кадиров Шох', email: 'kumid@inbox.ru', UUID: '123123123',
+        photoPath: 'https://firebasestorage.googleapis.com/v0/b/fleet-management-8dfc9.appspot.com/o/image1.jpg?alt=media&token=a72d5186-4bb4-42dc-828e-a47bc4174dc3'};
+
+    var lst = {o1, o2, o3};
+
+    return lst;
+}
 
 app.get('/', (request, response) => {
   response.set('Cash-control', 'public', 'max-age=300, s-maxage=600');

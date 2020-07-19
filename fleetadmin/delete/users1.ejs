@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Fleet management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+</head>
+<body>
+<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <h5 class="my-0 mr-md-auto font-weight-normal">Fleet management</h5>
+    <nav class="my-2 my-md-0 mr-md-3">
+        <a class="btn btn-outline-primary" href="/users">Пользователи</a>
+        <a class="p-2 text-dark" href="/feedbacks">Сообщения</a>
+        <a class="p-2 text-dark" href="/texservice">ТО</a>
+        <a class="p-2 text-dark" href="/shina">Шины</a>
+    </nav>
+    <a class="btn btn-outline-primary" href="#">Sign up</a>
+</div>
+
+
+
+<div class="album py-5 bg-light">
+    <div class="container">
+
+        <div class="row">
+
+
+
+            <%emails.forEach(function(childSnapshot) {
+                var item = childSnapshot.data();
+                if(item.photoPath.length == 0)
+                    item.photoPath = 'https://firebasestorage.googleapis.com/v0/b/fleet-management-8dfc9.appspot.com/o/placeholder-man.png?alt=media&token=04920483-9eb3-4f69-8637-0543d75e5aecn';
+
+                %>
+
+
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <img src="<%=item.photoPath%>" class="img-fluid" alt="..." width="100%" height="225">
+                    <div class="card-body">
+                        <h5 class="card-title"><%=item.fio%></h5>
+                        <p class="card-text"><%=item.email%></p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="btn-group">
+                                <a href="/users/<%=item.UUID%>" class="btn btn-sm btn-outline-secondary">Подробнее...</a>
+                            </div>
+                            <small class="text-muted"><%=item.staff%></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <%});%>
+
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+
+

@@ -11,31 +11,38 @@
             margin: auto; /* Выравниваем по центру */
             background: #fafafa; /* Цвет фона */
         }
+
     </style>
+
 </head>
 <body>
 
+<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <h5 class="my-0 mr-md-auto font-weight-normal">Fleet management</h5>
+    <nav class="my-2 my-md-0 mr-md-3">
+        <a class="p-2 text-dark" href="/users">Пользователи</a>
+        <a class="p-2 text-dark" href="/feedbacks">Сообщения</a>
+        <a class="p-2 text-dark" href="/texservice">ТО</a>
+        <a class="p-2 text-dark" href="/shina">Шины</a>
+    </nav>
+    <a class="btn btn-outline-primary" href="#">Sign up</a>
+</div>
 
 <%if(current_user.photoPath.length == 0)
     current_user.photoPath = 'https://firebasestorage.googleapis.com/v0/b/fleet-management-8dfc9.appspot.com/o/placeholder-man.png?alt=media&token=04920483-9eb3-4f69-8637-0543d75e5aec';
 %>
                 <form method="post" action="/users">
-
-
                     <div class="container" >
                         <div class="row">
-                            <div class="col-2">
+                            <div>
                                 <img src="<%=current_user.photoPath%>" class="img-fluid" alt="..." height="200px" width="150px">
                             </div>
                             <div class="col-8">
                                 <div class="container" >
                                     <div class="row">
                                         <div class="col">
-                                            11111
-                                        </div>
-                                        <div class="col">
                                             <div class="form-group form-check">
-                                                <%if(current_user.accept){%>
+                                                <%if(current_user.accept == 'ДА'){%>
                                                     <input type="checkbox" class="form-check-input" id="acceptCheck" name="accept" checked>
                                                 <%} else {%>
                                                     <input type="checkbox" class="form-check-input" id="acceptCheck" name="accept">
@@ -44,28 +51,77 @@
                                                 <label class="form-check-label" for="acceptCheck">Профиль подтвержден</label>
                                             </div>
                                         </div>
+
+
+                                        <div class="col">
+                                            <div class="form-group form-check">
+                                                <%if(current_user.is_performer == 'ДА'){%>
+                                                    <input type="checkbox" class="form-check-input" id="inputIs_performer" name="is_performer" checked>
+                                                <%} else {%>
+                                                    <input type="checkbox" class="form-check-input" id="inputIs_performer" name="is_performer">
+                                                <%}%>
+
+                                                <label class="form-check-label" for="inputIs_performer">Водитель</label>
+                                            </div>
+                                        </div>
+
+
                                     </div>
                                     <div class="row">
                                         <div class="col">
                                             <div class="form-group">
                                                 <label for="inputFIO">ФИО</label>
                                                 <input type="text" class="form-control" id="inputFIO" name="fio" value="<%=current_user.fio%>" aria-describedby="inputFIOHelp">
-                                                <small id="inputFIOHelp" class="form-text text-muted">Имя пользователя</small>
+                                                <small id="inputFIOHelp" class="form-text text-muted"><%=current_user.email%></small>
                                             </div>
                                         </div>
                                         <div class="col">
                                             <div class="form-group">
-                                                <label for="inputEmail">Email</label>
-                                                <input type="email" class="form-control" id="inputEmail" name="email" value="<%=current_user.email%>" aria-describedby="emailHelp">
+                                                <input hidden type="email" class="form-control" id="inputEmail" name="email" value="<%=current_user.email%>" aria-describedby="emailHelp">
                                             </div>
                                         </div>
                                     </div>
+
+
                                     <div class="row">
                                         <div class="col">
-                                            <button type="submit" class="btn btn-primary" >Сохранить</button>
+                                            <div class="form-group">
+                                                <label for="inputStaff">Должность</label>
+                                                <input type="text" class="form-control" id="inputStaff" name="staff" value="<%=current_user.staff%>">
+                                            </div>
                                         </div>
                                         <div class="col">
+                                            <div class="form-group">
+                                                <label for="inputСorp">Корпорптивная почта</label>
+                                                <input type="email" class="form-control" id="inputСorp" name="corp" value="<%=current_user.corp%>">
+                                            </div>
+                                        </div>
+                                    </div>
 
+
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label for="inputTel">Телефон</label>
+                                                <input type="text" class="form-control" id="inputTel" name="tel" value="<%=current_user.tel%>" placeholder="Номер телефона" required>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+
+                                             </div>
+                                        </div>
+                                    </div>
+
+
+
+
+                                    <div class="row">
+                                        <div class="col">
+                                            <button type="submit" class="btn btn-primary" name="action" value="Update">Сохранить</button>
+                                        </div>
+                                        <div class="col">
+                                            <button type="submit" class="btn btn-primary" name="action" value="Delete">Удалить</button>
                                         </div>
                                     </div>
                                 </div>
@@ -73,9 +129,8 @@
                         </div>
                     </div>
 
-
-
                 </form>
+
     </body>
 </html>
 
