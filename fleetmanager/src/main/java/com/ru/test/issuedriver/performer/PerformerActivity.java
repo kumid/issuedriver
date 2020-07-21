@@ -186,7 +186,9 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
             @Override
             public void onChanged(user user) {
                 MyActivity.CurrentUser = user;
-                if(onlineStateItem != null)
+                if(user == null)
+                    googleAuthManager.signOut();
+                else if(onlineStateItem != null)
                     setUserStateIcon();
             }
         });

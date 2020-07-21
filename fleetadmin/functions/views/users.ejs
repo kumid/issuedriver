@@ -4,20 +4,23 @@
     <meta charset="utf-8">
     <title>Fleet management</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
 </head>
 <body>
 <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
     <h5 class="my-0 mr-md-auto font-weight-normal">Fleet management</h5>
     <nav class="my-2 my-md-0 mr-md-3">
-        <a class="btn btn-outline-primary" href="/users">Пользователи</a>
-        <a class="p-2 text-dark" href="/feedbacks">Сообщения</a>
-        <a class="p-2 text-dark" href="/texservice">ТО</a>
-        <a class="p-2 text-dark" href="/shina">Шины</a>
+        <%if(accept) {%>
+            <a class="btn btn-outline-primary" href="/users">Работающие</a>
+            <a class="p-2 text-dark" href="/users/unconfirmed">Неподтвержденные</a>
+        <%} else {%>
+                <a class="p-2 text-dark" href="/users">Работающие</a>
+                <a class="btn btn-outline-primary" href="/users/unconfirmed">Неподтвержденные</a>
+            <%}%>
+            <a class="btn btn-outline-primary" href="/users">Пользователи</a>
     </nav>
-    <a class="btn btn-outline-primary" href="#">Sign up</a>
+    <a class="btn btn-outline-primary" href="/">Назад</a>
 </div>
-
-
 
 
 <table class="table table-striped">
@@ -47,14 +50,31 @@
         <td><%=item.accept%></td>
         <td>
             <a href="/users?id=<%=item.key%>">
-                <img src="img/edit.png" class="img-fluid" alt="..." height="50px" width="50px">
+                <img src="/img/edit.png" class="img-fluid" alt="..." height="50px" width="50px">
             </a>
         </td>
     </tr>
 
     <%});%>
 
+    <tr>
+        <td colspan="7" align="center">
+            <nav aria-label="...">
+                <ul class="pagination">
+                    <li class="page-item">
+                        <%if(accept) {%>
+                                <a class="page-link" href="/users?paging=next" style="width:100%" >Ещё</a>
+                        <%} else {%>
+                                <a class="page-link" href="/users/unconfirmed?paging=next" style="width:100%" >Ещё</a>
+                        <%}%>
+                    </li>
+                </ul>
+            </nav>
+        </td>
+    </tr>
+
     </tbody>
+
 </table>
 
 </body>

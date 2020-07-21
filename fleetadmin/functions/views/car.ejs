@@ -28,41 +28,54 @@
     </nav>
     <a class="btn btn-outline-primary" href="#">Sign up</a>
 </div>
-
-<%if(current_user.photoPath.length == 0)
-    current_user.photoPath = 'https://firebasestorage.googleapis.com/v0/b/fleet-management-8dfc9.appspot.com/o/placeholder-man.png?alt=media&token=04920483-9eb3-4f69-8637-0543d75e5aec';
-%>
-                <form method="post" action="/users">
+                <%if(current_car.key == '') {%>
+                        <form method="post" action="/cars/newcar">
+                    <%} else {%>
+                            <form method="post" action="/cars">
+                    <%}%>
                     <div class="container" >
                         <div class="row">
-                            <div>
-                                <img src="<%=current_user.photoPath%>" class="img-fluid" alt="..." height="200px" width="150px">
-                            </div>
                             <div class="col-8">
                                 <div class="container" >
+                                            <div class="row">
+                                                <div class="col">
+                                                    <h2><%=(current_car.key == '' ? 'Новая автомашина' : 'Изменение данных автомашины')%></h2>
+                                                </div>
+                                            </div>
+
                                     <div class="row">
                                         <div class="col">
-                                            <div class="form-group form-check">
-                                                <%if(current_user.accept == 'ДА'){%>
-                                                    <input type="checkbox" class="form-check-input" id="acceptCheck" name="accept" checked>
-                                                <%} else {%>
-                                                    <input type="checkbox" class="form-check-input" id="acceptCheck" name="accept">
-                                                <%}%>
+                                            <div class="form-group">
+                                                <label for="inputGos_number">Госномер</label>
+                                                <%if(current_car.key == '') {%>
+                                                <input type="text" class="form-control" id="inputGos_number" name="gos_number" value="<%=current_car.gos_number%>">
+                                                     <%} else {%>
+                                                <input type="text" class="form-control" id="inputGos_number" name="gos_number" value="<%=current_car.gos_number%>" disabled>
+                                                        <%}%>
 
-                                                <label class="form-check-label" for="acceptCheck">Профиль подтвержден</label>
+
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label for="inputVIN">ВИН</label>
+                                                <input type="text" class="form-control" id="inputVIN" name="vin" value="<%=current_car.vin%>">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label for="inputMarka">Марка</label>
+                                                <input type="text" class="form-control" id="inputMarka" name="marka" value="<%=current_car.marka%>">
                                             </div>
                                         </div>
 
-
                                         <div class="col">
-                                            <div class="form-group form-check">
-                                                <%if(current_user.is_performer == 'ДА'){%>
-                                                    <input type="checkbox" class="form-check-input" id="inputIs_performer" name="is_performer" checked>
-                                                <%} else {%>
-                                                    <input type="checkbox" class="form-check-input" id="inputIs_performer" name="is_performer">
-                                                <%}%>
-
-                                                <label class="form-check-label" for="inputIs_performer">Водитель</label>
+                                            <div class="form-group">
+                                                <label for="inputModel">Модель</label>
+                                                <input type="text" class="form-control" id="inputModel" name="model" value="<%=current_car.model%>">
                                             </div>
                                         </div>
 
@@ -71,52 +84,39 @@
                                     <div class="row">
                                         <div class="col">
                                             <div class="form-group">
-                                                <label for="inputFIO">ФИО</label>
-                                                <input type="text" class="form-control" id="inputFIO" name="fio" value="<%=current_user.fio%>" aria-describedby="inputFIOHelp">
-                                                <small id="inputFIOHelp" class="form-text text-muted"><%=current_user.email%></small>
+                                                <label for="inputOsago_number">ОСАГО</label>
+                                                <input type="text" class="form-control" id="inputOsago_number" name="osago_number" value="<%=current_car.osago_number%>">
                                             </div>
                                         </div>
                                         <div class="col">
                                             <div class="form-group">
-                                                <input hidden type="email" class="form-control" id="inputEmail" name="email" value="<%=current_user.email%>" aria-describedby="emailHelp">
+                                                <label for="inputOsago_start_date">Дата ОСАГО</label>
+                                                <input type="date" class="form-control" id="inputOsago_start_date" name="osago_start_date" value="<%=current_car.osago_start_date%>">
+                                            </div>
+                                        </div>
+
+                                        <div class="col">
+                                            <div class="form-group">
+                                                <label for="inputOsago_expire_date">Дата истечения ОСАГО</label>
+                                                <input type="date" class="form-control" id="inputOsago_expire_date" name="osago_expire_date" value="<%=current_car.osago_expire_date%>">
                                             </div>
                                         </div>
                                     </div>
-
-
                                     <div class="row">
                                         <div class="col">
                                             <div class="form-group">
-                                                <label for="inputStaff">Должность</label>
-                                                <input type="text" class="form-control" id="inputStaff" name="staff" value="<%=current_user.staff%>">
+                                                <label for="inputTexservice_start_date">Дата техосмотра</label>
+                                                <input type="date" class="form-control" id="inputTexservice_start_date" name="texservice_start_date" value="<%=current_car.texservice_start_date%>">
                                             </div>
                                         </div>
+
                                         <div class="col">
                                             <div class="form-group">
-                                                <label for="inputСorp">Корпорптивная почта</label>
-                                                <input type="email" class="form-control" id="inputСorp" name="corp" value="<%=current_user.corp%>">
+                                                <label for="inputTexservice_expire_date">Дата истечения техосмотра</label>
+                                                <input type="date" class="form-control" id="inputTexservice_expire_date" name="texservice_expire_date" value="<%=current_car.texservice_expire_date%>">
                                             </div>
                                         </div>
                                     </div>
-
-
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <label for="inputTel">Телефон</label>
-                                                <input type="text" class="form-control" id="inputTel" name="tel" value="<%=current_user.tel%>" placeholder="Номер телефона" required>
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <div class="form-group">
-
-                                             </div>
-                                        </div>
-                                    </div>
-
-
-
-
                                     <div class="row">
                                         <div class="col">
                                             <button type="submit" class="btn btn-primary" name="action" value="Update">Сохранить</button>
@@ -126,6 +126,7 @@
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </div>

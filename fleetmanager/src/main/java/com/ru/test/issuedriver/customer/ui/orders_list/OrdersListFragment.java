@@ -54,6 +54,9 @@ public class OrdersListFragment extends Fragment {
 
         View root = inflater.inflate(R.layout.fragment_orders_list, container, false);
 
+        if(MyActivity.CurrentUser == null)
+            return root;
+
         initViews(root);
 
         callback4goToNavigate = new callBacks.goToNavigateInterface() {

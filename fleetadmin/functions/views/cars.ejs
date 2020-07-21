@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Fleet management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+</head>
+<body>
+<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <h5 class="my-0 mr-md-auto font-weight-normal">Fleet management</h5>
+    <nav class="my-2 my-md-0 mr-md-3">
+        <a class="p-2 text-dark" href="/cars/newcar">Дабавить автомобиль</a>
+        <a class="btn btn-outline-primary" href="/cars">Автомашины</a>
+    </nav>
+    <a class="btn btn-outline-primary" href="/">Назад</a>
+</div>
+
+
+
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Госномер</th>
+        <th scope="col">Марка</th>
+        <th scope="col">Модель</th>
+        <th scope="col">ВИН</th>
+        <th scope="col">ОСАГО</th>
+        <th scope="col">Техобслуживание</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <%let i = 0;
+        cars.forEach(function(item) {
+            i = i + 1;
+    %>
+
+    <tr>
+        <th scope="row"><%=i%></th>
+        <td><%=item.gos_number%></td>
+        <td><%=item.marka%></td>
+        <td><%=item.model%></td>
+        <td><%=item.vin%></td>
+        <td><%=item.osago_number%><br><%=item.osago_expire_date%></td>
+        <td><%=item.texservice_expire_date%></td>
+        <td>
+            <a href="/cars?id=<%=item.key%>">
+                <img src="img/edit.png" class="img-fluid" alt="..." height="40px" width="40px">
+            </a>
+        </td>
+    </tr>
+
+    <%});%>
+
+    </tbody>
+</table>
+
+</body>
+</html>
+
+
