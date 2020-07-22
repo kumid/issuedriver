@@ -4,6 +4,8 @@ const express = require('express');
 const bodyParser = require('body-parser')
 const cors = require('cors')({origin: true});
 
+const feedback = require('./feedback');
+const userUtils = require('./userUtils');
 
 const app = express();
 app.engine('ejs', require('ejs-locals'))
@@ -26,10 +28,6 @@ const firebaseApp = firebase.initializeApp(
 const db = firebase.firestore();
 
 
-async function getFeedbacks(accepted) {
-    const snapshot = await db.collection('feedbacks').where('accept', '==', accepted).get();
-    return snapshot;
-}
 async function setFeedbackAccept(id) {
     await db.collection('feedbacks').doc(id).update('accept', true);
 }
@@ -136,133 +134,6 @@ async function updateCar(body) {
 
 
 
-let usersLocalCollection = []
-let usersLocalCollectionMode = true;
-let listeners = []    // list of listeners
-let start = null      // start position of listener
-let end = null        // end position of listener
-const rowsInPage = 3;
-
-async function getUsers(accept, next) {
-    if(usersLocalCollectionMode != accept) {
-        usersLocalCollection = [];
-        start = null;
-    }
-
-    usersLocalCollectionMode = accept;
-    let query = db.collection('users').where('accept', '==', accept);
-    let index = 0;
-    if(next) {
-        query = query.startAt(start);
-    } else {
-        usersLocalCollection = [];
-        index = 1;
-    }
-
-
-    const snapshots = await query.limit(rowsInPage).get();
-    // // save startAt snapshot
-    let newPagesEnd = snapshots.docs[snapshots.docs.length - 1]
-    if(newPagesEnd == start)
-        return null;
-
-    start = newPagesEnd;
-    snapshots.forEach(function(childSnapshot) {
-        if(index != 0) {
-            let obj = getObjectFromUserSnapshot(childSnapshot);
-            usersLocalCollection.push(obj);
-        }
-        index++;
-    });
-
-    return usersLocalCollection;
-    // return snapshots;
-}
-
-
-
-
-async function getUser(id) {
-    const snapshot = await db.collection('users').doc(id).get();
-    return snapshot;
-}
-async function setUserReturnAccept(body) {
-    let is_performer = body.is_performer === 'on' ? true : false;
-    let accept = body.accept === 'on' ? true : false;
-
-    await db.collection('users').doc(body.email).update(
-        'fio', body.fio,
-        'staff', body.staff,
-        'corp', body.corp,
-        'is_performer', is_performer,
-        'tel', body.tel,
-        'accept', accept);
-}
-async function deleteUser(id) {
-    await db.collection('users').doc(id).delete();
-}
-function getObjectFromUserSnapshot(childSnapshot) {
-    let obj;
-    try {
-        var item = childSnapshot.data();
-
-        if (item.photoPath.length == 0)
-            item.photoPath = 'https://firebasestorage.googleapis.com/v0/b/fleet-management-8dfc9.appspot.com/o/placeholder-man.png?alt=media&token=04920483-9eb3-4f69-8637-0543d75e5aec';
-
-        let accepted = item.accept ? 'ДА' : 'НЕТ';
-        let isperformer = item.is_performer ? 'ДА' : 'НЕТ';
-
-        obj = {
-            'key': childSnapshot.id,
-            'fio': item.fio,
-            'staff': item.staff,
-            'email': childSnapshot.id,
-            'corp': item.corp,
-            'tel': item.tel,
-            'accept': accepted,
-            'is_performer': isperformer,
-            'UUID': item.UUID,
-            'photoPath': item.photoPath
-        };
-
-    } catch (err) {
-
-        obj = {
-            'key': childSnapshot.id,
-            'fio': 'Ошибка в данных',
-            'staff': '',
-            'email': childSnapshot.id,
-            'corp': '',
-            'tel': '',
-            'accept': '',
-            'is_performer': '',
-            'UUID': '',
-            'photoPath': 'https://firebasestorage.googleapis.com/v0/b/fleet-management-8dfc9.appspot.com/o/placeholder-man.png?alt=media&token=04920483-9eb3-4f69-8637-0543d75e5aec'
-        };
-    }
-    return obj;
-}
-function getDataFromUsersCollection(emails) {
-
-    const lst = [];
-
-    emails.forEach(function(childSnapshot) {
-
-        let obj = getObjectFromUserSnapshot(childSnapshot);
-
-        lst.push(obj);
-
-    });
-
-    return lst;
-}
-
-
-
-
-
-
-
 app.get('/', function(req, res){
     res.render('index', {someinfo: 'hello'});
 })
@@ -272,16 +143,16 @@ app.get('/users', function(req, res) {
     const id = req.query.id;
     const paging = req.query.paging;
     if(id) {
-        getUser(id).then((doc) =>{
+        userUtils.getUser(db, id).then((doc) =>{
             if (!doc.exists) {
                 res.sendStatus(404);
             } else {
-                res.render('user', {current_user: getObjectFromUserSnapshot(doc)});
+                res.render('user', {current_user: userUtils.getObjectFromUserSnapshot(doc)});
             }
         });
     } if(paging){
         if(paging == 'next') {
-            getUsers(true, paging).then((emails) => {
+            userUtils.getUsers(db,true, paging).then((emails) => {
                 if(emails)
                     res.render('users', {emails: emails, 'accept': true});
                 // res.render('users', {emails: getDataFromUsersCollection(emails), 'accept': true});
@@ -291,30 +162,76 @@ app.get('/users', function(req, res) {
         }
     }
     else { // нет GET аргумента - выдать весь список
-        getUsers(true, null).then((emails) => {
+        userUtils.getUsers(db, true, null).then((emails) => {
             res.render('users', {emails: emails, 'accept': true});
             // res.render('users', {emails: getDataFromUsersCollection(emails), 'accept': true});
         });
     }
 });
-
-
 app.get('/users/unconfirmed', function(req, res){
     const id = req.query.id;
     const paging = req.query.paging;
     if(id) {
-        getUser(id).then((doc) =>{
+        userUtils.getUser(db, id).then((doc) =>{
             if (!doc.exists) {
                 res.sendStatus(404);
             } else {
-                res.render('user', {current_user: getObjectFromUserSnapshot(doc)});
+                res.render('user', {current_user: userUtils.getObjectFromUserSnapshot(doc)});
             }
         });
     }if(paging) {
         if (paging == 'next') {
-            getUsers(false, paging).then((emails) => {
+            userUtils.getUsers(db,false, paging).then((emails) => {
                 if (emails)
                     res.render('users', {emails: emails, 'accept': false});
+                // res.render('users', {emails: userUtils.getDataFromUsersCollection(emails), 'accept': true});
+            });
+        } else {
+
+        }
+    }
+    else { // нет GET аргумента - выдать весь список
+        userUtils.getUsers(db,false, null).then((emails) => {
+            // res.render('users', {emails: emails}); //, id: req.params.id
+            res.render('users', {emails: emails, 'accept': false}); //, id: req.params.id
+        });
+    }
+});
+app.post('/users', urlencodedParser, function (req, res) {
+    if(!req.body) return res.sendStatus(400);
+
+    if(req.body.action == 'Update') {
+        userUtils.setUserReturnAccept(db, req.body).then(r => {
+            if(req.body.accept === 'on')
+                res.redirect('/users');
+            else
+                res.redirect('/users/unconfirmed');
+        });
+    } else {
+        userUtils.deleteUser(db, req.body.email).then(r => {
+            res.redirect('/users');
+        });
+    }
+})
+
+
+
+app.get('/feedback', function(req, res) {
+    const id = req.query.id;
+    const paging = req.query.paging;
+    if(id) {
+        feedback.getfeedback(db, id).then((doc) =>{
+            if (!doc.exists) {
+                res.sendStatus(404);
+            } else {
+                res.render('feedback', {current_feedback: feedback.getObjectFromfeedbackSnapshot(doc)});
+            }
+        });
+    } if(paging){
+        if(paging == 'next') {
+            feedback.getfeedbacks(db,true, paging).then((emails) => {
+                if(emails)
+                    res.render('feedback_collection', {emails: emails, 'accept': true});
                 // res.render('users', {emails: getDataFromUsersCollection(emails), 'accept': true});
             });
         } else {
@@ -322,12 +239,58 @@ app.get('/users/unconfirmed', function(req, res){
         }
     }
     else { // нет GET аргумента - выдать весь список
-        getUsers(false, null).then((emails) => {
-            // res.render('users', {emails: emails}); //, id: req.params.id
-            res.render('users', {emails: emails, 'accept': false}); //, id: req.params.id
+        feedback.getfeedbacks(db, true, null).then((emails) => {
+            res.render('feedback_collection', {emails: emails, 'accept': true});
+            // res.render('users', {emails: getDataFromUsersCollection(emails), 'accept': true});
         });
     }
 });
+app.get('/feedback/archive', function(req, res){
+    const id = req.query.id;
+    const paging = req.query.paging;
+    if(id) {
+        feedback.getfeedback(db, id).then((doc) =>{
+            if (!doc.exists) {
+                res.sendStatus(404);
+            } else {
+                res.render('feedback', {current_user: feedback.getObjectFromfeedbackSnapshot(doc)});
+            }
+        });
+    }if(paging) {
+        if (paging == 'next') {
+            feedback.getfeedbacks(db,false, paging).then((emails) => {
+                if (emails)
+                    res.render('feedback_collection', {emails: emails, 'accept': false});
+            });
+        } else {
+
+        }
+    }
+    else { // нет GET аргумента - выдать весь список
+        feedback.getfeedbacks(db,false, null).then((emails) => {
+            // res.render('users', {emails: emails}); //, id: req.params.id
+            res.render('feedback_collection', {emails: emails, 'accept': false}); //, id: req.params.id
+        });
+    }
+});
+app.post('/feedback', urlencodedParser, function (req, res) {
+    if(!req.body) return res.sendStatus(400);
+
+    if(req.body.action == 'Update') {
+        feedback.setfeedbackReturnAccept(db, req.body).then(r => {
+            if(req.body.accept === 'on')
+                res.redirect('/feedback');
+            else
+                res.redirect('/feedback/archive');
+        });
+    } else {
+        feedback.deletefeedback(db, req.body.email).then(r => {
+            res.redirect('/feedback');
+        });
+    }
+})
+
+
 
 app.get('/cars', function(req, res){
     const id = req.query.id;
@@ -341,55 +304,15 @@ app.get('/cars', function(req, res){
         });
     }
     else { // нет GET аргумента - выдать весь список
+        // userUtils.
         getCars().then((cars) => {
             res.render('cars', {cars: getDataFromCarsCollection(cars)});
         });
     }
 });
-
 app.get('/cars/newcar', function(req, res){
      res.render('car', {current_car: createCarData()});
 });
-
-
-
-
-app.get('/feedbacks/accept/:id', async function(req, res){
-    setFeedbackAccept(req.params.id).then(r => {
-        getFeedbacks(false).then((messages) =>{
-            res.redirect('/feedbacks');
-        });
-    });
-});
-app.get('/feedbacks', async function(req, res){
-    getFeedbacks(false).then((messages) =>{
-        res.render('feedbacks', {feedbacks: messages, mode: 'new'}); //, id: req.params.id
-    });
-});
-app.get('/feedbacks/archive', async function(req, res){
-    getFeedbacks(true).then((messages) =>{
-        res.render('feedbacks', {feedbacks: messages, mode: 'archive'}); //, id: req.params.id
-    });
-});
-
-
-
-app.post('/users', urlencodedParser, function (req, res) {
-    if(!req.body) return res.sendStatus(400);
-
-    if(req.body.action == 'Update') {
-        setUserReturnAccept(req.body).then(r => {
-            if(req.body.accept === 'on')
-                res.redirect('/users');
-            else
-                res.redirect('/users/unconfirmed');
-        });
-    } else {
-        deleteUser(req.body.email).then(r => {
-            res.redirect('/users');
-        });
-    }
-})
 
 
 
@@ -400,8 +323,6 @@ app.post('/cars/newcar', urlencodedParser, function (req, res) {
          res.redirect('/cars');
      });
 })
-
-
 app.post('/cars', urlencodedParser, function (req, res) {
     if(!req.body) return res.sendStatus(400);
 

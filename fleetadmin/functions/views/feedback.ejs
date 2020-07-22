@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Fleet management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <style>
+        .center {
+            width: 200px; /* Ширина элемента в пикселах */
+            padding: 10px; /* Поля вокруг текста */
+            margin: auto; /* Выравниваем по центру */
+            background: #fafafa; /* Цвет фона */
+        }
+
+    </style>
+
+</head>
+<body>
+
+<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <h5 class="my-0 mr-md-auto font-weight-normal">Fleet management</h5>
+    <nav class="my-2 my-md-0 mr-md-3">
+        <a class="p-2 text-dark" href="/users">Пользователи</a>
+        <a class="p-2 text-dark" href="/cars">Автомашины</a>
+        <a class="p-2 text-dark" href="/feedback">Сообщения</a>
+        <a class="p-2 text-dark" href="/texservice">ТО</a>
+        <a class="p-2 text-dark" href="/shina">Шины</a>
+    </nav>
+    <a class="btn btn-outline-primary" href="#">Sign up</a>
+</div>
+
+<%if(current_feedback.owner_photo.length == 0)
+    current_feedback.owner_photo = 'https://firebasestorage.googleapis.com/v0/b/fleet-management-8dfc9.appspot.com/o/placeholder-man.png?alt=media&token=04920483-9eb3-4f69-8637-0543d75e5aec';
+%>
+<form method="post" action="/feedback">
+    <div class="container" >
+        <div class="row">
+            <div>
+                <img src="<%=current_feedback.owner_photo%>" class="img-fluid" alt="..." height="200px" width="150px">
+            </div>
+            <div class="col-8">
+                <div class="container" >
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group form-check">
+                                <%if(current_feedback.accept == 'ДА'){%>
+                                    <input type="checkbox" class="form-check-input" id="acceptCheck" name="accept" checked>
+                                <%} else {%>
+                                    <input type="checkbox" class="form-check-input" id="acceptCheck" name="accept">
+                                <%}%>
+
+                                <label class="form-check-label" for="acceptCheck">Принят</label>
+                            </div>
+                        </div>
+
+
+                        <div class="col">
+                            <div class="form-group">
+                                <small class="form-text text-muted"><%=current_feedback.owner_fio%></small>
+                                <small class="form-text text-muted"><%=current_feedback.owner_email%></small>
+                                <small class="form-text text-muted"><%=current_feedback.phone%></small>
+                                <small class="form-text text-muted"><%=current_feedback.open_timestamp%></small>
+                                <input hidden type="key" class="form-control" id="inputEmail" name="email" value="<%=current_feedback.key%>">
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col"  aria-rowspan="2">
+                            <div class="form-group">
+                                <small class="form-text text-muted">Сообщение</small>
+                                <p><%=current_feedback.message%></p>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="row">
+                        <div class="col">
+                            <button type="submit" class="btn btn-primary" name="action" value="Update">Сохранить</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+</body>
+</html>
+
+

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Fleet management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+</head>
+<body>
+<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+    <h5 class="my-0 mr-md-auto font-weight-normal">Fleet management</h5>
+    <nav class="my-2 my-md-0 mr-md-3">
+        <%if(accept) {%>
+            <a class="btn btn-outline-primary" href="/feedback">Работающие</a>
+            <a class="p-2 text-dark" href="/feedback/archive">Архив</a>
+        <%} else {%>
+            <a class="p-2 text-dark" href="/feedback">Работающие</a>
+            <a class="btn btn-outline-primary" href="/feedback/archive">Архив</a>
+        <%}%>
+        <a class="btn btn-outline-primary" href="/feedback">Пользователи</a>
+    </nav>
+    <a class="btn btn-outline-primary" href="/">Назад</a>
+</div>
+
+
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Фото</th>
+        <th scope="col">ФИО</th>
+        <th scope="col">email</th>
+        <th scope="col">Телефон</th>
+        <th scope="col">Сообщение</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    <%let i = 0;
+    emails.forEach(function(item) {
+        i = i + 1;
+    %>
+
+    <tr>
+        <th scope="row"><%=i%></th>
+        <td><img src="<%=item.owner_photo%>" class="img-fluid" alt="..." height="50px" width="50px"></td>
+        <td><%=item.owner_fio%></td>
+        <td><%=item.owner_email%></td>
+        <td><%=item.phone%></td>
+        <td><%=item.message%></td>
+        <td>
+            <a href="/feedback?id=<%=item.key%>">
+                <img src="/img/edit.png" class="img-fluid" alt="..." height="50px" width="50px">
+            </a>
+        </td>
+    </tr>
+
+    <%});%>
+
+    <tr>
+        <td colspan="7" align="center">
+            <nav aria-label="...">
+                <ul class="pagination">
+                    <li class="page-item">
+                        <%if(accept) {%>
+                            <a class="page-link" href="/feedback?paging=next" style="width:100%" >Ещё</a>
+                        <%} else {%>
+                            <a class="page-link" href="/feedback/archive?paging=next" style="width:100%" >Ещё</a>
+                        <%}%>
+                    </li>
+                </ul>
+            </nav>
+        </td>
+    </tr>
+
+    </tbody>
+
+</table>
+
+</body>
+</html>
+
+
