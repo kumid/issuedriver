@@ -1,28 +1,31 @@
 
 let feedbacksLocalCollection = []
-let feedbacksLocalCollectionMode = true;
-let listeners = []    // list of listeners
+let feedbacksLocalCollectionMode;
 let start = null      // start position of listener
-let end = null        // end position of listener
 const rowsInPage = 3;
 
 
-module.exports.getfeedbacks = async function getfeedbacks(db, accept, next) {
+async function getfeedbacks(db, accept, next) {
+    if(next && !start)
+        next = null;
+
     if(feedbacksLocalCollectionMode != accept) {
         feedbacksLocalCollection = [];
         start = null;
+        next = null;
     }
 
     feedbacksLocalCollectionMode = accept;
-    let query = db.collection('feedbacks').where('accept', '==', accept);
+    let query = db.collection('feedbacks').where('accept', '==', accept).orderBy('open_timestamp');
     let index = 0;
     if(next) {
         query = query.startAt(start);
-    } else {
+    }
+     else {
         feedbacksLocalCollection = [];
         index = 1;
+        start = null;
     }
-
 
     const snapshots = await query.limit(rowsInPage).get();
     // // save startAt snapshot
@@ -96,15 +99,12 @@ module.exports.setfeedbackReturnAccept = async function setfeedbackReturnAccept(
     let accept = body.accept === 'on' ? true : false;
 
     await db.collection('feedbacks').doc(body.email).update(
-        'close_timestamp', item.close_timestamp,
         'accept', accept);
 }
 
 module.exports.deletefeedback = async function deletefeedback(db, id) {
     await db.collection('feedbacks').doc(id).delete();
 }
-
-module.exports.getObjectFromfeedbackSnapshot = getObjectFromFeedbackSnapshot;
 
 module.exports.getDataFromfeedbacksCollection = function getDataFromfeedbacksCollection(emails) {
 
@@ -120,3 +120,6 @@ module.exports.getDataFromfeedbacksCollection = function getDataFromfeedbacksCol
 
     return lst;
 }
+
+    module.exports.getObjectFromfeedbackSnapshot = getObjectFromFeedbackSnapshot;
+    module.exports.getfeedbacks = getfeedbacks;

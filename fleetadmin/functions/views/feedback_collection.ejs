@@ -4,26 +4,58 @@
     <meta charset="utf-8">
     <title>Fleet management</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <style>
+        p { word-break: break-all }
 
+        table {
+            width: 100%;
+            table-layout: fixed;
+        }
+        .three {
+            width: 3%;
+        }
+        .five {
+            width: 5%;
+        }
+        .seven {
+            width: 7%;
+        }
+        .fifteen {
+            width: 15%;
+        }
+        .message {
+            width: 40%;
+        }
+    </style>
 </head>
 <body>
 <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
     <h5 class="my-0 mr-md-auto font-weight-normal">Fleet management</h5>
     <nav class="my-2 my-md-0 mr-md-3">
         <%if(accept) {%>
-            <a class="btn btn-outline-primary" href="/feedback">Работающие</a>
-            <a class="p-2 text-dark" href="/feedback/archive">Архив</a>
-        <%} else {%>
-            <a class="p-2 text-dark" href="/feedback">Работающие</a>
+            <a class="p-2 text-dark" href="/feedback">Новые</a>
             <a class="btn btn-outline-primary" href="/feedback/archive">Архив</a>
+        <%} else {%>
+            <a class="btn btn-outline-primary" href="/feedback">Новые</a>
+            <a class="p-2 text-dark" href="/feedback/archive">Архив</a>
+
         <%}%>
-        <a class="btn btn-outline-primary" href="/feedback">Пользователи</a>
+        <a class="btn btn-outline-primary" href="/feedback">Сообщения</a>
     </nav>
     <a class="btn btn-outline-primary" href="/">Назад</a>
 </div>
 
 
 <table class="table table-striped">
+    <colgroup>
+        <col class="three" />
+        <col class="seven" />
+        <col class="fifteen" />
+        <col class="fifteen" />
+        <col class="fifteen" />
+        <col class="message" />
+        <col class="five" />
+    </colgroup>
     <thead>
     <tr>
         <th scope="col">#</th>
@@ -47,7 +79,9 @@
         <td><%=item.owner_fio%></td>
         <td><%=item.owner_email%></td>
         <td><%=item.phone%></td>
-        <td><%=item.message%></td>
+        <td>
+            <p><%=item.message%></p>
+        </td>
         <td>
             <a href="/feedback?id=<%=item.key%>">
                 <img src="/img/edit.png" class="img-fluid" alt="..." height="50px" width="50px">
@@ -63,9 +97,9 @@
                 <ul class="pagination">
                     <li class="page-item">
                         <%if(accept) {%>
-                            <a class="page-link" href="/feedback?paging=next" style="width:100%" >Ещё</a>
-                        <%} else {%>
                             <a class="page-link" href="/feedback/archive?paging=next" style="width:100%" >Ещё</a>
+                        <%} else {%>
+                            <a class="page-link" href="/feedback?paging=next" style="width:100%" >Ещё</a>
                         <%}%>
                     </li>
                 </ul>

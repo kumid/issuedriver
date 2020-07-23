@@ -229,19 +229,21 @@ app.get('/feedback', function(req, res) {
         });
     } if(paging){
         if(paging == 'next') {
-            feedback.getfeedbacks(db,true, paging).then((emails) => {
+            feedback.getfeedbacks(db,false, paging).then((emails) => {
                 if(emails)
-                    res.render('feedback_collection', {emails: emails, 'accept': true});
+                    res.render('feedback_collection', {emails: emails, 'accept': false});
                 // res.render('users', {emails: getDataFromUsersCollection(emails), 'accept': true});
             });
         } else {
-
+            res.send('/feedback - ' + paging);
         }
     }
     else { // нет GET аргумента - выдать весь список
-        feedback.getfeedbacks(db, true, null).then((emails) => {
-            res.render('feedback_collection', {emails: emails, 'accept': true});
-            // res.render('users', {emails: getDataFromUsersCollection(emails), 'accept': true});
+        feedback.getfeedbacks(db, false, null).then((emails) => {
+            if(emails)
+                res.render('feedback_collection', {emails: emails, 'accept': false});
+            else
+                res.redirect('/');
         });
     }
 });
@@ -258,18 +260,20 @@ app.get('/feedback/archive', function(req, res){
         });
     }if(paging) {
         if (paging == 'next') {
-            feedback.getfeedbacks(db,false, paging).then((emails) => {
+            feedback.getfeedbacks(db,true, paging).then((emails) => {
                 if (emails)
-                    res.render('feedback_collection', {emails: emails, 'accept': false});
+                    res.render('feedback_collection', {emails: emails, 'accept': true});
+                else
+                    res.redirect('/');
             });
         } else {
-
+            res.send('/feedback/archive - ' + paging);
         }
     }
     else { // нет GET аргумента - выдать весь список
-        feedback.getfeedbacks(db,false, null).then((emails) => {
-            // res.render('users', {emails: emails}); //, id: req.params.id
-            res.render('feedback_collection', {emails: emails, 'accept': false}); //, id: req.params.id
+        feedback.getfeedbacks(db,true, null).then((emails) => {
+            if(emails)
+                res.render('feedback_collection', {emails: emails, 'accept': true}); //, id: req.params.id
         });
     }
 });

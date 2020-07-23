@@ -33,7 +33,7 @@ module.exports.getUsers = async function getUsers(db, accept, next) {
     start = newPagesEnd;
     snapshots.forEach(function(childSnapshot) {
         if(index != 0) {
-            let obj = getObjectFromUserSnapshot2(childSnapshot);
+            let obj = getObjectFromUserSnapshot(childSnapshot);
             usersLocalCollection.push(obj);
         }
         index++;
@@ -43,7 +43,7 @@ module.exports.getUsers = async function getUsers(db, accept, next) {
     // return snapshots;
 }
 
-function getObjectFromUserSnapshot2(childSnapshot) {
+function getObjectFromUserSnapshot(childSnapshot) {
     let obj;
     try {
         var item = childSnapshot.data();
@@ -106,7 +106,7 @@ module.exports.deleteUser = async function deleteUser(db, id) {
     await db.collection('users').doc(id).delete();
 }
 
-module.exports.getObjectFromUserSnapshot = getObjectFromUserSnapshot2;
+module.exports.getObjectFromUserSnapshot = getObjectFromUserSnapshot;
 /*
 function getObjectFromUserSnapshot(childSnapshot) {
     let obj;
