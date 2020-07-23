@@ -9,9 +9,6 @@ import kz.nurzhan.maskededittext.MaskedEditText;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.text.Editable;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -31,20 +28,20 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.gson.Gson;
-import com.msa.dateedittext.DateEditText;
 import com.redmadrobot.inputmask.MaskedTextChangedListener;
 import com.redmadrobot.inputmask.helper.AffinityCalculationStrategy;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.customer.CustomerV2Activity;
+import com.ru.test.issuedriver.data.car.car;
 import com.ru.test.issuedriver.data.user;
+import com.ru.test.issuedriver.helpers.callBacks;
 import com.ru.test.issuedriver.helpers.firestoreHelper;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 import com.ru.test.issuedriver.helpers.mysettings;
 import com.ru.test.issuedriver.helpers.storage.fbStorageUploads;
 import com.ru.test.issuedriver.helpers.storage.picturelib;
 import com.ru.test.issuedriver.performer.PerformerActivity;
-import com.ru.test.issuedriver.helpers.MyBroadcastReceiver;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -54,14 +51,14 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
 
 
     private RegistrationViewModel registrationViewModel;
-    TextInputEditText mFio, mStaff, mEmail, mCorp, mRegistration_auto_marka, mAutomodel, mAutovin, mRegistration_auto_osago_number;
+    TextInputEditText mFio, mStaff, mEmail, mCorp, mRegistration_auto_marka, mRegistration_auto_model, mRegistration_auto_vin, mRegistration_auto_osago_number,
+            mRegistration_auto_osago_date, mRegistration_auto_osago_expire_date, mRegistration_auto_texservice_start_date, mRegistration_auto_texservice_expire_date;
     EditText mTel;
-    MaskedEditText mAutonumber;
+    MaskedEditText mRegistration_auto_number;
     Button mRegistrationButton, mRegistration_btn_logout;
-    ImageView  mRegistration_photo;
+    ImageView  mRegistration_photo, mRegistration_auto_search, mRegistration_auto_empty;
     RadioButton mCustomer, mPerformer;
     View mRegistration_performer_groupe, mRegistration_radio_group;
-    DateEditText mRegistration_auto_osago_date, mRegistration_auto_osago_expire_date, mRegistration_auto_texservice_start_date, mRegistration_auto_texservice_expire_date;
 
     FirebaseFirestore db;
     private ActionBar actionBar;
@@ -82,9 +79,9 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
         mEmail = findViewById(R.id.registration_email);
         mCorp = findViewById(R.id.registration_corp_email);
         mRegistration_auto_marka = findViewById(R.id.registration_auto_marka);
-        mAutomodel = findViewById(R.id.registration_auto_model);
-        mAutovin = findViewById(R.id.registration_auto_vin);
-        mAutonumber = findViewById(R.id.registration_auto_number);
+        mRegistration_auto_model = findViewById(R.id.registration_auto_model);
+        mRegistration_auto_vin = findViewById(R.id.registration_auto_vin);
+        mRegistration_auto_number = findViewById(R.id.registration_auto_number);
         mRegistrationButton = findViewById(R.id.registration_btn);
         mRegistration_btn_logout = findViewById(R.id.registration_btn_logout);
         mTel = findViewById(R.id.registration_tel);
@@ -97,10 +94,8 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
         mRegistration_auto_texservice_start_date = findViewById(R.id.registration_auto_texservice_start_date);
         mRegistration_auto_texservice_expire_date = findViewById(R.id.registration_auto_texservice_expire_date);
 
-        mRegistration_auto_osago_date.listen();
-        mRegistration_auto_osago_expire_date.listen();
-        mRegistration_auto_texservice_start_date.listen();
-        mRegistration_auto_texservice_expire_date.listen();
+        mRegistration_auto_search  = findViewById(R.id.registration_auto_search);
+        mRegistration_auto_empty  = findViewById(R.id.registration_auto_empty);
 
         mCustomer = findViewById(R.id.radio_customer);
         mPerformer = findViewById(R.id.radio_performer);
@@ -115,6 +110,8 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
 
         mRegistrationButton.setOnClickListener(click);
         mRegistration_btn_logout.setOnClickListener(click);
+        mRegistration_auto_search.setOnClickListener(click);
+        mRegistration_auto_empty.setOnClickListener(click);
         mRegistration_photo.setOnLongClickListener(longClick);
         init();
         mCustomer.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -162,6 +159,13 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
                 case R.id.registration_btn:
                     addUser();
                     break;
+                case R.id.registration_auto_search: 
+                    setAuto();
+                    break;
+
+                case R.id.registration_auto_empty:
+                    setAutoSearchMode();
+                    break;
 //                case R.id.registration_photo:
                     //if (checkPermissionFromDevice()) {
 //                        picturelib.dispatchTakePictureIntent();
@@ -174,6 +178,51 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
             }
         }
     };
+
+    private void setAutoSearchMode() {
+        mRegistration_auto_number.setEnabled(true);
+        setEmptyAutoInfo();
+    }
+
+    private void setAuto() {
+        String num = mRegistration_auto_number.getText().toString();
+
+        callBacks.callback4autoSearchComplete = new callBacks.autoSearchCompleteInterface() {
+            @Override
+            public void callback(boolean finded, car obj) {
+                if(finded){
+                    mRegistration_auto_marka.setText(obj.marka);
+                    mRegistration_auto_model.setText(obj.model);
+                    mRegistration_auto_vin.setText(obj.vin);
+                    mRegistration_auto_osago_number.setText(obj.osago_number);
+                    mRegistration_auto_osago_date.setText(obj.osago_start_date.replace('-', '/'));
+                    mRegistration_auto_osago_expire_date.setText(obj.osago_expire_date.replace('-', '/'));
+                    mRegistration_auto_texservice_start_date.setText(obj.texservice_start_date.replace('-', '/'));
+                    mRegistration_auto_texservice_expire_date.setText(obj.texservice_expire_date.replace('-', '/'));
+                    mRegistration_auto_search.setVisibility(View.GONE);
+                    mRegistration_auto_empty.setVisibility(View.VISIBLE);
+                    mRegistration_auto_number.setEnabled(false);
+                } else {
+                    setEmptyAutoInfo();
+                }
+            }
+        };
+        firestoreHelper.getAuto(num);
+    }
+
+    private void setEmptyAutoInfo() {
+        mRegistration_auto_number.setText("");
+        mRegistration_auto_marka.setText("");
+        mRegistration_auto_model.setText("");
+        mRegistration_auto_vin.setText("");
+        mRegistration_auto_osago_number.setText("");
+        mRegistration_auto_osago_date.setText("");
+        mRegistration_auto_osago_expire_date.setText("");
+        mRegistration_auto_texservice_start_date.setText("");
+        mRegistration_auto_texservice_expire_date.setText("");
+        mRegistration_auto_search.setVisibility(View.VISIBLE);
+        mRegistration_auto_empty.setVisibility(View.GONE);
+    }
 
     private View.OnLongClickListener longClick = new View.OnLongClickListener() {
         @Override
@@ -190,9 +239,9 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
                         mEmail.getText().toString(),
                         mCorp.getText().toString(),
                         mRegistration_auto_marka.getText().toString(),
-                        mAutomodel.getText().toString(),
-                        mAutovin.getText().toString(),
-                        mAutonumber.getText().toString(),
+                        mRegistration_auto_model.getText().toString(),
+                        mRegistration_auto_vin.getText().toString(),
+                        mRegistration_auto_number.getText().toString(),
                         mTel.getText().toString(),
                         mPerformer.isChecked(),
                         currentUser == null? false : currentUser.accept ,
@@ -266,9 +315,9 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
                                     mEmail.setText(currentUser.email);
                                     mCorp.setText(currentUser.corp);
                                     mRegistration_auto_marka.setText(currentUser.automarka);
-                                    mAutomodel.setText(currentUser.automodel);
-                                    mAutovin.setText(currentUser.autovin);
-                                    mAutonumber.setText(currentUser.autonumber);
+                                    mRegistration_auto_model.setText(currentUser.automodel);
+                                    mRegistration_auto_vin.setText(currentUser.autovin);
+                                    mRegistration_auto_number.setText(currentUser.autonumber);
                                     mCustomer.setChecked(!currentUser.is_performer);
                                     mPerformer.setChecked(currentUser.is_performer);
 
@@ -280,6 +329,9 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
 
                                     mCustomer.setEnabled(false);
                                     mPerformer.setEnabled(false);
+                                    mRegistration_auto_number.setEnabled(false);
+                                    mRegistration_auto_search.setVisibility(View.GONE);
+                                    mRegistration_auto_empty.setVisibility(View.VISIBLE);
 
                                     if(currentUser.photoPath != null && currentUser.photoPath.length() > 0) {
 //                                        mRegistration_photo.setImageURI(Uri.parse(currentUser.photoPath));

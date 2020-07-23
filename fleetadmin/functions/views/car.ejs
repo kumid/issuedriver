@@ -50,10 +50,8 @@
                                                 <%if(current_car.key == '') {%>
                                                 <input type="text" class="form-control" id="inputGos_number" name="gos_number" value="<%=current_car.gos_number%>">
                                                      <%} else {%>
-                                                <input type="text" class="form-control" id="inputGos_number" name="gos_number" value="<%=current_car.gos_number%>" disabled>
+                                                <input type="text" class="form-control" id="inputGos_number" name="gos_number" value="<%=current_car.gos_number%>" readonly>
                                                         <%}%>
-
-
                                             </div>
                                         </div>
                                         <div class="col">
@@ -91,7 +89,7 @@
                                         <div class="col">
                                             <div class="form-group">
                                                 <label for="inputOsago_start_date">Дата ОСАГО</label>
-                                                <input type="date" class="form-control" id="inputOsago_start_date" name="osago_start_date" value="<%=current_car.osago_start_date%>">
+                                                <input  type="date" class="form-control" id="inputOsago_start_date" name="osago_start_date" value="<%=current_car.osago_start_date%>">
                                             </div>
                                         </div>
 

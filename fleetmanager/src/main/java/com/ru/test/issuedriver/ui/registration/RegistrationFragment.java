@@ -30,8 +30,10 @@ import com.redmadrobot.inputmask.helper.AffinityCalculationStrategy;
 import com.ru.test.issuedriver.MainViewModel;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
+import com.ru.test.issuedriver.data.car.car;
 import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.helpers.callBacks;
+import com.ru.test.issuedriver.helpers.firestoreHelper;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
 import com.ru.test.issuedriver.helpers.MyBroadcastReceiver;
 import com.ru.test.issuedriver.helpers.storage.picturelib;
@@ -52,14 +54,14 @@ public class RegistrationFragment extends Fragment {
 
     private RegistrationViewModel registrationViewModel;
     private MainViewModel mainViewModel;
-    TextInputEditText mFio, mStaff, mEmail, mCorp, mRegistration_auto_marka, mAutomodel, mAutovin, mRegistration_auto_osago_number;
+    TextInputEditText mFio, mStaff, mEmail, mCorp, mRegistration_auto_marka, mRegistration_auto_model, mRegistration_auto_vin, mRegistration_auto_osago_number,
+            mRegistration_auto_osago_date, mRegistration_auto_osago_expire_date, mRegistration_auto_texservice_start_date, mRegistration_auto_texservice_expire_date;
     EditText mTel;
-    MaskedEditText mAutonumber;
+    MaskedEditText mRegistration_auto_number;
     Button mRegistrationButton, mRegistration_btn_logout;
-    ImageView mRegistration_photo;
+    ImageView mRegistration_photo, mRegistration_auto_search, mRegistration_auto_empty;
     RadioButton mCustomer, mPerformer;
     View mRegistration_performer_groupe, mRegistration_radio_group;
-    DateEditText mRegistration_auto_osago_date, mRegistration_auto_osago_expire_date, mRegistration_auto_texservice_start_date, mRegistration_auto_texservice_expire_date;
     FirebaseFirestore db;
 
 
@@ -81,9 +83,9 @@ public class RegistrationFragment extends Fragment {
         mEmail = root.findViewById(R.id.registration_email);
         mCorp = root.findViewById(R.id.registration_corp_email);
         mRegistration_auto_marka = root.findViewById(R.id.registration_auto_marka);
-        mAutomodel = root.findViewById(R.id.registration_auto_model);
-        mAutovin = root.findViewById(R.id.registration_auto_vin);
-        mAutonumber = root.findViewById(R.id.registration_auto_number);
+        mRegistration_auto_model = root.findViewById(R.id.registration_auto_model);
+        mRegistration_auto_vin = root.findViewById(R.id.registration_auto_vin);
+        mRegistration_auto_number = root.findViewById(R.id.registration_auto_number);
         mRegistrationButton = root.findViewById(R.id.registration_btn);
         mRegistration_btn_logout = root.findViewById(R.id.registration_btn_logout);
         mTel = root.findViewById(R.id.registration_tel);
@@ -99,10 +101,9 @@ public class RegistrationFragment extends Fragment {
         mRegistration_auto_texservice_start_date = root.findViewById(R.id.registration_auto_texservice_start_date);
         mRegistration_auto_texservice_expire_date = root.findViewById(R.id.registration_auto_texservice_expire_date);
 
-        mRegistration_auto_osago_date.listen();
-        mRegistration_auto_osago_expire_date.listen();
-        mRegistration_auto_texservice_start_date.listen();
-        mRegistration_auto_texservice_expire_date.listen();
+
+        mRegistration_auto_search  = root.findViewById(R.id.registration_auto_search);
+        mRegistration_auto_empty  = root.findViewById(R.id.registration_auto_empty);
 
         mCustomer.setEnabled(false);
         mPerformer.setEnabled(false);
@@ -112,6 +113,8 @@ public class RegistrationFragment extends Fragment {
 
         mRegistrationButton.setOnClickListener(click);
         mRegistration_btn_logout.setOnClickListener(click);
+        mRegistration_auto_search.setOnClickListener(click);
+        mRegistration_auto_empty.setOnClickListener(click);
         mRegistration_photo.setOnLongClickListener(longClick);
         init();
 
@@ -135,13 +138,81 @@ public class RegistrationFragment extends Fragment {
     private View.OnClickListener click = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if(v.getId() == R.id.registration_btn_logout) {
-                googleAuthManager.signOut();
+            switch (v.getId()) {
+                case R.id.registration_btn_logout:
+                    googleAuthManager.signOut();
+                    break;
+                case R.id.registration_btn:
+                    addUser();
+                    break;
+                case R.id.registration_auto_search:
+                    setAuto();
+                    break;
+
+                case R.id.registration_auto_empty:
+                    setAutoSearchMode();
+                    break;
+//                case R.id.registration_photo:
+                //if (checkPermissionFromDevice()) {
+//                        picturelib.dispatchTakePictureIntent();
+                //photolib.getPhotoFromCamera(true);
+                //}
+//                    else {
+//                        requestPermission();
+//                    }
+//                    break;
             }
-            if(v.getId() == R.id.registration_btn)
-                addUser();
         }
     };
+
+
+    private void setAutoSearchMode() {
+        mRegistration_auto_number.setEnabled(true);
+        setEmptyAutoInfo();
+    }
+
+    private void setAuto() {
+        String num = mRegistration_auto_number.getText().toString();
+
+        callBacks.callback4autoSearchComplete = new callBacks.autoSearchCompleteInterface() {
+            @Override
+            public void callback(boolean finded, car obj) {
+                if(finded){
+                    mRegistration_auto_marka.setText(obj.marka);
+                    mRegistration_auto_model.setText(obj.model);
+                    mRegistration_auto_vin.setText(obj.vin);
+                    mRegistration_auto_osago_number.setText(obj.osago_number);
+                    mRegistration_auto_osago_date.setText(obj.osago_start_date.replace('-', '/'));
+                    mRegistration_auto_osago_expire_date.setText(obj.osago_expire_date.replace('-', '/'));
+                    mRegistration_auto_texservice_start_date.setText(obj.texservice_start_date.replace('-', '/'));
+                    mRegistration_auto_texservice_expire_date.setText(obj.texservice_expire_date.replace('-', '/'));
+                    mRegistration_auto_search.setVisibility(View.GONE);
+                    mRegistration_auto_empty.setVisibility(View.VISIBLE);
+                    mRegistration_auto_number.setEnabled(false);
+                } else {
+                    setEmptyAutoInfo();
+                }
+            }
+        };
+        firestoreHelper.getAuto(num);
+    }
+
+    private void setEmptyAutoInfo() {
+        mRegistration_auto_number.setText("");
+        mRegistration_auto_marka.setText("");
+        mRegistration_auto_model.setText("");
+        mRegistration_auto_vin.setText("");
+        mRegistration_auto_osago_number.setText("");
+        mRegistration_auto_osago_date.setText("");
+        mRegistration_auto_osago_expire_date.setText("");
+        mRegistration_auto_texservice_start_date.setText("");
+        mRegistration_auto_texservice_expire_date.setText("");
+        mRegistration_auto_search.setVisibility(View.VISIBLE);
+        mRegistration_auto_empty.setVisibility(View.GONE);
+    }
+
+
+
     private View.OnLongClickListener longClick = new View.OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
@@ -157,9 +228,9 @@ public class RegistrationFragment extends Fragment {
                         mEmail.getText().toString(),
                         mCorp.getText().toString(),
                         mRegistration_auto_marka.getText().toString(),
-                        mAutomodel.getText().toString(),
-                        mAutovin.getText().toString(),
-                        mAutonumber.getText().toString(),
+                        mRegistration_auto_model.getText().toString(),
+                        mRegistration_auto_vin.getText().toString(),
+                        mRegistration_auto_number.getText().toString(),
                         mTel.getText().toString(),
                         mPerformer.isChecked(),
                         true,
@@ -199,9 +270,9 @@ public class RegistrationFragment extends Fragment {
                         mStaff.getText().toString(),
                         mEmail.getText().toString(),
                         mCorp.getText().toString(),
-                        mAutomodel.getText().toString(),
-                        mAutovin.getText().toString(),
-                        mAutonumber.getText().toString(),
+                        mRegistration_auto_model.getText().toString(),
+                        mRegistration_auto_vin.getText().toString(),
+                        mRegistration_auto_number.getText().toString(),
                         mTel.getText().toString())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -249,10 +320,10 @@ public class RegistrationFragment extends Fragment {
         mStaff.setText(curr.staff);
         mEmail.setText(curr.email);
         mCorp.setText(curr.corp);
-        mAutomodel.setText(curr.automodel);
+        mRegistration_auto_model.setText(curr.automodel);
         mRegistration_auto_marka.setText(curr.automarka);
-        mAutovin.setText(curr.autovin);
-        mAutonumber.setText(curr.autonumber);
+        mRegistration_auto_vin.setText(curr.autovin);
+        mRegistration_auto_number.setText(curr.autonumber);
         mCustomer.setChecked(!curr.is_performer);
         mPerformer.setChecked(curr.is_performer);
         mTel.setText(curr.tel);
@@ -266,7 +337,10 @@ public class RegistrationFragment extends Fragment {
 
         mCustomer.setEnabled(false);
         mPerformer.setEnabled(false);
-
+        mRegistration_auto_number.setEnabled(false);
+        mRegistration_auto_search.setVisibility(View.GONE);
+        mRegistration_auto_empty.setVisibility(View.VISIBLE);
+        
         registrationViewModel.currentUser.postValue(curr);
         if(curr.photoPath != null && curr.photoPath.length() > 0) {
 //                                        mRegistration_photo.setImageURI(Uri.parse(currentUser.photoPath));

@@ -3,8 +3,11 @@ const firebase = require('firebase-admin');
 const express = require('express');
 const bodyParser = require('body-parser')
 const cors = require('cors')({origin: true});
+//
+// const myFunctions = require('./fbFunctions');
 
-const feedback = require('./feedback');
+
+const feedback = require('./feedbackUtils');
 const userUtils = require('./userUtils');
 
 const app = express();
@@ -26,7 +29,6 @@ const firebaseApp = firebase.initializeApp(
 );
 
 const db = firebase.firestore();
-
 
 async function setFeedbackAccept(id) {
     await db.collection('feedbacks').doc(id).update('accept', true);
@@ -346,3 +348,125 @@ app.post('/cars', urlencodedParser, function (req, res) {
 })
 
 exports.app = functions.https.onRequest(app);
+
+
+// Create a new function which is triggered on changes to /status/{uid}
+// Note: This is a Realtime Database trigger, *not* Cloud Firestore.
+exports.onUserStatusChanged = functions.firestore
+    .document('/users/{uid}')
+    .onUpdate((change, context) => {
+
+        // Retrieve the current and previous value
+        const data = change.after.data();
+        const previousData = change.before.data();
+
+        if(data.email != "kazanokcentre@gmail.com")
+            return 0;
+
+        // We'll only update if the name has changed.
+        // This is crucial to prevent infinite loops.
+        if (data.state == previousData.state) {
+            return 0;
+        }
+
+
+        // Then return a promise of a set operation to update the count
+        data.staff = "водитель";
+
+        return  change.after.ref.set(data);
+
+        // Retrieve the current count of name changes
+        // let count = data.name_change_count;
+        // if (!count) {
+        //   count = 0;
+        // }
+        //
+        // // Then return a promise of a set operation to update the count
+        // return change.after.ref.set({
+        //   name_change_count: count + 1
+        // }, {merge: true});
+
+    });
+
+// Create a new function which is triggered on changes to /status/{uid}
+// Note: This is a Realtime Database trigger, *not* Cloud Firestore.
+exports.onOrderStateChanged = functions.firestore
+    .document('/orders/{uid}')
+    .onUpdate((change, context) => {
+
+        // Retrieve the current and previous value
+        const newdata = change.after.data();
+        const previousData = change.before.data();
+
+        if(newdata.customer_email != "progmaservice@gmail.com"
+            || newdata.customer_email != "progmaservice@gmail.com"
+            || newdata.performer_email != "kazanokcentre@gmail.com"
+            || newdata.performer_email != "kazanokcentre@gmail.com")
+            return 0;
+
+        // новое состояние заявки - заявка закрыта
+        // или старое состояние - принята водителем
+        if(newdata.completed == true
+            || previousData.accept == true)
+            return 0;
+
+
+        const docRef = db.collection('waybill').doc();
+
+        docRef.set({
+            fio: newdata.performer_fio,
+            address_from: newdata.from,
+            address_to: newdata.to,
+            car: newdata.car
+        });
+
+
+        require('dotenv').config()
+
+        const {SENDER_EMAIL,SENDER_PASSWORD} = process.env;
+
+        var nodemailer = require('nodemailer');
+
+        let authData = nodemailer.createTransport({
+            host:'smtp.gmail.com',
+            port: 465,
+            security: true,
+
+            auth: {
+                user: SENDER_EMAIL,
+                pass: SENDER_PASSWORD
+            }
+        });
+
+
+
+        authData.sendMail({
+            from: 'kazanokcentre@gmail.com',
+            to: 'umidkurbanov75@gmail.com',
+            subject: 'Sending Email using Node.js',
+            text: 'That was easy!',
+            html: '<h1>Welcome</h1><p>That was easy!</p>'
+        }).then(res=>console.log('successfully sent email'))
+            .catch(err=>console.log(err));
+
+
+
+// tyofzzclkrhqucfe
+        //  const send = require('gmail-send')({
+        //    user: 'kazanokcentre@gmail.com',
+        //    pass: '1qasw23ed',
+        //    to:   'umidkurbanov75@gmail.com',
+        //    subject: 'test subject',
+        //  });
+        //
+        //  send({
+        //   text:    'gmail-send example 1',
+        // }, (error, result, fullResult) => {
+        //   if (error) console.error(error);
+        //   console.log(result);
+        // });
+
+        return  0;
+
+    });
+

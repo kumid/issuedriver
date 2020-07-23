@@ -1,11 +1,11 @@
 package com.ru.test.issuedriver.helpers;
 
+import com.ru.test.issuedriver.data.car.car;
 import com.ru.test.issuedriver.data.order;
 
 // изменение состояния водителя
 public class callBacks {
     public static userStateChanged userStateChangedCalback;
-
     public interface userStateChanged {
         void callback(int state);
     }
@@ -46,6 +46,12 @@ public class callBacks {
     public static orderListChangedInterface callback4orderListChangedInterface;
     public interface  orderListChangedInterface {
         void callback();
+    }
+
+     // список заказов с изменениями загружен
+    public static autoSearchCompleteInterface callback4autoSearchComplete;
+    public interface  autoSearchCompleteInterface {
+        void callback(boolean finded, car obj);
     }
 }
 

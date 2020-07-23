@@ -122,7 +122,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -131,6 +131,45 @@
                     android:text="@string/registration_auto"
                     android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                     android:textStyle="bold" />
+
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                    <kz.nurzhan.maskededittext.MaskedEditText
+                        android:id="@+id/registration_auto_number"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginVertical="5dp"
+                        android:hint="@string/registration_auto_number"
+                        android:inputType="text|textCapCharacters"
+                        android:textAllCaps="true"
+                        app:mask="A999AA999" />
+
+                        <ImageView
+                            android:id="@+id/registration_auto_search"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_search_24dp"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@+id/registration_auto_number"
+                            app:layout_constraintTop_toTopOf="parent"
+                            android:visibility="gone"
+                            />
+                        <ImageView
+                            android:id="@+id/registration_auto_empty"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@android:drawable/ic_menu_delete"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="@+id/registration_auto_number"
+                            app:layout_constraintTop_toTopOf="parent"
+                            />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
@@ -141,7 +180,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/registration_auto_marka"
-                        android:inputType="text" />
+                        android:inputType="text"
+                        android:enabled="false"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -154,7 +194,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/registration_auto_model"
-                        android:inputType="text" />
+                        android:inputType="text"
+                        android:enabled="false"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -168,24 +209,12 @@
                         android:layout_height="wrap_content"
                         android:digits="QWERTYUIOPASDFGHJKLZXCVBNM1234567890"
                         android:hint="@string/registration_auto_vin"
-                        android:inputType="text|textCapCharacters" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <kz.nurzhan.maskededittext.MaskedEditText
-                        android:id="@+id/registration_auto_number"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginVertical="5dp"
-                        android:hint="@string/registration_auto_number"
                         android:inputType="text|textCapCharacters"
-                        android:textAllCaps="true"
-                        app:mask="A999AA 999" />
+                        android:enabled="false"/>
                 </com.google.android.material.textfield.TextInputLayout>
+
+
+
 
 
                 <LinearLayout
@@ -193,7 +222,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:visibility="gone">
+                    android:visibility="visible">
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
@@ -205,7 +234,8 @@
                             android:layout_height="wrap_content"
                             android:digits="QWERTYUIOPASDFGHJKLZXCVBNM1234567890"
                             android:hint="@string/registration_auto_osago_number"
-                            android:inputType="text|textCapCharacters" />
+                            android:inputType="text|textCapCharacters"
+                            android:enabled="false"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -213,36 +243,26 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <com.msa.dateedittext.DateEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/registration_auto_osago_start_date"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginVertical="5dp"
                             android:hint="Дата"
-                            android:imeOptions="actionNext"
-                            app:autoCorrect="false"
-                            app:dateFormat="ddMMyyyy"
-                            app:dividerCharacter="slash"
-                            app:maxDate="01/12/2100"
-                            app:minDate="01/12/2000" />
+                            android:enabled="false"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
-                        <com.msa.dateedittext.DateEditText
+                        <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/registration_auto_osago_expire_date"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginVertical="5dp"
                             android:hint="Дата окончания"
-                            android:imeOptions="actionNext"
-                            app:autoCorrect="false"
-                            app:dateFormat="ddMMyyyy"
-                            app:dividerCharacter="slash"
-                            app:maxDate="01/12/2100"
-                            app:minDate="01/12/2000" />
+                            android:enabled="false"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
@@ -263,12 +283,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginVertical="5dp"
                             android:hint="Дата техобслуживания"
-                            android:imeOptions="actionNext"
-                            app:autoCorrect="false"
-                            app:dateFormat="ddMMyyyy"
-                            app:dividerCharacter="slash"
-                            app:maxDate="01/12/2100"
-                            app:minDate="01/12/2000" />
+                            android:enabled="false" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -281,12 +296,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginVertical="5dp"
                             android:hint="Дата окончания техобслуживания"
-                            android:imeOptions="actionNext"
-                            app:autoCorrect="false"
-                            app:dateFormat="ddMMyyyy"
-                            app:dividerCharacter="slash"
-                            app:maxDate="01/12/2100"
-                            app:minDate="01/12/2000" />
+                            android:enabled="false"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 

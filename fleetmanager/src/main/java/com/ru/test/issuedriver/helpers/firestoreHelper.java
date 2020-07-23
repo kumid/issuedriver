@@ -18,6 +18,7 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ru.test.issuedriver.MyActivity;
+import com.ru.test.issuedriver.data.car.car;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.data.user;
 
@@ -218,6 +219,32 @@ public class firestoreHelper {
                     @Override
                     public void onFailure(@NonNull Exception e) {
 
+                        Log.w(TAG, "Error getting documents.");
+                    }
+                });
+    }
+
+    public static void getAuto(String num) {
+        db.collection("cars").document(num)
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        DocumentSnapshot snapshot = task.getResult();
+                        if(callBacks.callback4autoSearchComplete != null) {
+                            if(snapshot.exists()) {
+                                car obj = snapshot.toObject(car.class);
+                                callBacks.callback4autoSearchComplete.callback(true, obj);
+                            } else callBacks.callback4autoSearchComplete.callback(false, null);
+                        }
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        if(callBacks.callback4autoSearchComplete != null) {
+                            callBacks.callback4autoSearchComplete.callback(false, null);
+                        }
                         Log.w(TAG, "Error getting documents.");
                     }
                 });
