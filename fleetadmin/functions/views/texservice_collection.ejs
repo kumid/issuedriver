@@ -33,14 +33,14 @@
     <h5 class="my-0 mr-md-auto font-weight-normal">Fleet management</h5>
     <nav class="my-2 my-md-0 mr-md-3">
         <%if(accept) {%>
-            <a class="p-2 text-dark" href="/feedback">Новые</a>
-            <a class="btn btn-outline-primary" href="/feedback/archive">Архив</a>
+            <a class="p-2 text-dark" href="/texservice">Новые заявки</a>
+            <a class="btn btn-outline-primary" href="/texservice/archive">Архив</a>
         <%} else {%>
-            <a class="btn btn-outline-primary" href="/feedback">Новые</a>
-            <a class="p-2 text-dark" href="/feedback/archive">Архив</a>
+            <a class="btn btn-outline-primary" href="/texservice">Новые заявки</a>
+            <a class="p-2 text-dark" href="/texservice/archive">Архив</a>
 
         <%}%>
-        <a class="btn btn-outline-primary" href="/feedback">Сообщения</a>
+        <a class="btn btn-outline-primary" href="/texservice">Шиномонтаж</a>
     </nav>
     <a class="btn btn-outline-primary" href="/">Назад</a>
 </div>
@@ -83,7 +83,7 @@
             <p><%=item.message%></p>
         </td>
         <td>
-            <a href="/feedback?id=<%=item.key%>">
+            <a href="/texservice?id=<%=item.key%>">
                 <img src="/img/edit.png" class="img-fluid" alt="..." height="50px" width="50px">
             </a>
         </td>
@@ -94,23 +94,23 @@
 
     </tbody>
     <tfoot>
-        <%if(emails.length > 0) {%>
-            <tr>
+    <%if(emails.length > 0) {%>
+    <tr>
         <td align="center">
             <nav aria-label="...">
                 <ul class="pagination">
                     <li class="page-item">
                         <%if(accept) {%>
-                            <a class="page-link" href="/feedback/archive?paging=next" style="width:100%" >Ещё</a>
+                            <a class="page-link" href="/texservice/archive?paging=next" style="width:100%" >Ещё</a>
                         <%} else {%>
-                            <a class="page-link" href="/feedback?paging=next" style="width:100%" >Ещё</a>
+                            <a class="page-link" href="/texservice?paging=next" style="width:100%" >Ещё</a>
                         <%}%>
                     </li>
                 </ul>
             </nav>
         </td>
     </tr>
-        <%}%>
+    <%}%>
     </tfoot>
 </table>
 

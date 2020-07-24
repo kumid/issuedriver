@@ -1,32 +1,57 @@
 let carsLocalCollection = []
-let carsLocalCollectionMode = true;
 let listeners = []    // list of listeners
 let start = null      // start position of listener
 let end = null        // end position of listener
 const rowsInPage = 3;
 
-module.exports.getCars = async function getCars(db) {
-    const snapshot = await db.collection('cars').get();
-    return snapshot;
+module.exports.getCars = async function getCars(db, next) {
+    // const snapshot = await db.collection('cars').get();
+    // return snapshot;
+
+    let query = db.collection('cars').orderBy('gos_number');
+    let index = 0;
+    if(next) {
+        query = query.startAt(start);
+    } else {
+        carsLocalCollection = [];
+        index = 1;
+    }
+
+
+    const snapshots = await query.limit(rowsInPage).get();
+    // // save startAt snapshot
+    let newPagesEnd = snapshots.docs[snapshots.docs.length - 1]
+    if(newPagesEnd == start)
+        return [];
+
+    start = newPagesEnd;
+    snapshots.forEach(function(childSnapshot) {
+        if(index != 0) {
+            let obj = getObjectFromCarSnapshot(childSnapshot);
+            carsLocalCollection.push(obj);
+        }
+        index++;
+    });
+
+    return carsLocalCollection;
+    // return snapshots;
 }
 
 module.exports.getDataFromCarsCollection = function getDataFromCarsCollection(cars) {
 
     const lst = [];
-
+    let iii = 0;
     cars.forEach(function(childSnapshot) {
 
-        let obj = getObjectFromCarSnapshot(childSnapshot);
+        if(iii == 0) {
+            let obj = getObjectFromCarSnapshot(childSnapshot);
 
-        lst.push(obj);
-
+            lst.push(obj);
+        }
+        iii++;
     });
 
     return lst;
-}
-module.exports.getCar = async function getCar(db, id) {
-    const snapshot = await db.collection('cars').doc(id).get();
-    return snapshot;
 }
 
 function getObjectFromCarSnapshot(childSnapshot) {
@@ -38,7 +63,7 @@ function getObjectFromCarSnapshot(childSnapshot) {
             'marka': item.marka,
             'model': item.model,
             'vin': item.vin,
-            'gos_number': item.gos_number,
+            'gos_number': childSnapshot.id,
             'osago_number': item.osago_number,
             'osago_start_date': item.osago_start_date,
             'osago_expire_date': item.osago_expire_date,
@@ -47,24 +72,28 @@ function getObjectFromCarSnapshot(childSnapshot) {
         };
 
     } catch (err) {
-
         obj = {
             'key': childSnapshot.id,
-            'marka': item.marka ? item.marka : '',
-            'model': item.model ? item.model : '',
-            'vin': item.vin ? item.vin : '',
-            'gos_number': item.gos_number ? item.gos_number : '',
-            'osago_number': item.osago_number ? item.osago_number : '',
-            'osago_start_date': item.osago_start_date ? item.osago_start_date : '',
-            'osago_expire_date': item.osago_expire_date ? item.osago_expire_date : '',
-            'texservice_start_date': item.texservice_start_date ? item.texservice_start_date : '',
-            'texservice_expire_date': item.texservice_expire_date ? item.texservice_expire_date : ''
+            'marka': childSnapshot.id + ': Ошибка данных',
+            'model': '',
+            'vin': '',
+            'gos_number': childSnapshot.id,
+            'osago_number': '',
+            'osago_start_date': '',
+            'osago_expire_date':  '',
+            'texservice_start_date':'',
+            'texservice_expire_date': ''
         };
     }
     return obj;
 }
 
-module.exports.createCarData = function createCarData(body) {
+
+module.exports.getCar = async function getCar(db, id) {
+    const snapshot = await db.collection('cars').doc(id).get();
+    return snapshot;
+}
+function createCarData(body) {
     if(body)
         return {
             'marka': body.marka.trim(),
@@ -111,3 +140,4 @@ module.exports.deleteCar = async function deleteCar(db, id) {
 }
 
 module.exports.getObjectFromCarSnapshot = getObjectFromCarSnapshot;
+module.exports.createCarData = createCarData;

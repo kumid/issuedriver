@@ -14,7 +14,7 @@ module.exports.getUsers = async function getUsers(db, accept, next) {
     }
 
     usersLocalCollectionMode = accept;
-    let query = db.collection('users').where('accept', '==', accept);
+    let query = db.collection('users').where('accept', '==', accept).orderBy('fio');
     let index = 0;
     if(next) {
         query = query.startAt(start);
@@ -28,7 +28,7 @@ module.exports.getUsers = async function getUsers(db, accept, next) {
     // // save startAt snapshot
     let newPagesEnd = snapshots.docs[snapshots.docs.length - 1]
     if(newPagesEnd == start)
-        return null;
+        return [];
 
     start = newPagesEnd;
     snapshots.forEach(function(childSnapshot) {

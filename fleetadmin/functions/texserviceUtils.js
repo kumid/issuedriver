@@ -1,28 +1,28 @@
 
-let feedbacksLocalCollection = []
-let feedbacksLocalCollectionMode;
+let texservicesLocalCollection = []
+let texservicesLocalCollectionMode;
 let start = null      // start position of listener
 const rowsInPage = 3;
 
 
-async function getfeedbacks(db, accept, next) {
+async function gettexservices(db, accept, next) {
     if(next && !start)
         next = null;
 
-    if(feedbacksLocalCollectionMode != accept) {
-        feedbacksLocalCollection = [];
+    if(texservicesLocalCollectionMode != accept) {
+        texservicesLocalCollection = [];
         start = null;
         next = null;
     }
 
-    feedbacksLocalCollectionMode = accept;
-    let query = db.collection('feedbacks').where('accept', '==', accept).orderBy('open_timestamp');
+    texservicesLocalCollectionMode = accept;
+    let query = db.collection('texservice').where('accept', '==', accept).orderBy('open_timestamp');
     let index = 0;
     if(next) {
         query = query.startAt(start);
     }
      else {
-        feedbacksLocalCollection = [];
+        texservicesLocalCollection = [];
         index = 1;
         start = null;
     }
@@ -36,17 +36,17 @@ async function getfeedbacks(db, accept, next) {
     start = newPagesEnd;
     snapshots.forEach(function(childSnapshot) {
         if(index != 0) {
-            let obj = getObjectFromFeedbackSnapshot(childSnapshot);
-            feedbacksLocalCollection.push(obj);
+            let obj = getObjectFromtexserviceSnapshot(childSnapshot);
+            texservicesLocalCollection.push(obj);
         }
         index++;
     });
 
-    return feedbacksLocalCollection;
+    return texservicesLocalCollection;
     // return snapshots;
 }
 
-function getObjectFromFeedbackSnapshot(childSnapshot) {
+function getObjectFromtexserviceSnapshot(childSnapshot) {
     let obj;
     try {
         var item = childSnapshot.data();
@@ -90,29 +90,29 @@ function getObjectFromFeedbackSnapshot(childSnapshot) {
     return obj;
 }
 
-module.exports.getfeedback = async function getfeedback(db, id) {
-    const snapshot = await db.collection('feedbacks').doc(id).get();
+module.exports.gettexservice = async function gettexservice(db, id) {
+    const snapshot = await db.collection('texservice').doc(id).get();
     return snapshot;
 }
-module.exports.setfeedbackReturnAccept = async function setfeedbackReturnAccept(db, body) {
+module.exports.settexserviceReturnAccept = async function settexserviceReturnAccept(db, body) {
     // let is_performer = body.is_performer === 'on' ? true : false;
     let accept = body.accept === 'on' ? true : false;
 
-    await db.collection('feedbacks').doc(body.email).update(
+    await db.collection('texservice').doc(body.email).update(
         'accept', accept);
 }
 
-module.exports.deletefeedback = async function deletefeedback(db, id) {
-    await db.collection('feedbacks').doc(id).delete();
+module.exports.deletetexservice = async function deletetexservice(db, id) {
+    await db.collection('texservice').doc(id).delete();
 }
 
-module.exports.getDataFromfeedbacksCollection = function getDataFromfeedbacksCollection(emails) {
+module.exports.getDataFromtexservicesCollection = function getDataFromtexservicesCollection(emails) {
 
     const lst = [];
 
     emails.forEach(function(childSnapshot) {
 
-        let obj = getObjectFromfeedbackSnapshot(childSnapshot);
+        let obj = getObjectFromtexserviceSnapshot(childSnapshot);
 
         lst.push(obj);
 
@@ -121,5 +121,5 @@ module.exports.getDataFromfeedbacksCollection = function getDataFromfeedbacksCol
     return lst;
 }
 
-    module.exports.getObjectFromfeedbackSnapshot = getObjectFromFeedbackSnapshot;
-    module.exports.getfeedbacks = getfeedbacks;
+    module.exports.getObjectFromtexserviceSnapshot = getObjectFromtexserviceSnapshot;
+    module.exports.gettexservices = gettexservices;

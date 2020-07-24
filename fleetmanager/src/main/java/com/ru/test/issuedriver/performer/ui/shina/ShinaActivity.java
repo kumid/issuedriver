@@ -22,6 +22,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import static com.ru.test.issuedriver.MyActivity.CurrentUser;
+
 public class ShinaActivity extends AppCompatActivity {
 
     EditText mShina_msg, mShina_callme_phone;
@@ -60,7 +62,7 @@ public class ShinaActivity extends AppCompatActivity {
     private void sendMessage(String msg, String phone) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("shina").document().set(new shina(msg, phone))
+        db.collection("shina").document().set(new shina(CurrentUser.fio, CurrentUser.email, CurrentUser.photoPath, msg, phone))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

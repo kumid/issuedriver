@@ -4,7 +4,10 @@ const express = require('express');
 const bodyParser = require('body-parser')
 const cors = require('cors')({origin: true});
 
+
 const feedback = require('./feedbackUtils');
+const texservice = require('./texserviceUtils');
+const shina = require('./shinaUtils');
 const userUtils = require('./userUtils');
 const carUtils = require('./carUtils');
 
@@ -127,7 +130,7 @@ app.get('/feedback', function(req, res) {
                 res.render('feedback', {current_feedback: feedback.getObjectFromfeedbackSnapshot(doc)});
             }
         });
-    } if(paging){
+    } else if(paging){
         if(paging == 'next') {
             feedback.getfeedbacks(db,false, paging).then((emails) => {
                 if(emails)
@@ -195,9 +198,170 @@ app.post('/feedback', urlencodedParser, function (req, res) {
 })
 
 
+app.get('/shina', function(req, res) {
+    const id = req.query.id;
+    const paging = req.query.paging;
+    if(id) {
+        shina.getshina(db, id).then((doc) =>{
+            if (!doc.exists) {
+                res.sendStatus(404);
+            } else {
+                res.render('shina', {current_shina: shina.getObjectFromshinaSnapshot(doc)});
+            }
+        });
+    } else if(paging){
+        if(paging == 'next') {
+            shina.getshinas(db,false, paging).then((emails) => {
+                if(emails)
+                    res.render('shina_collection', {emails: emails, 'accept': false});
+                // res.render('users', {emails: getDataFromUsersCollection(emails), 'accept': true});
+            });
+        } else {
+            res.send('/shina - ' + paging);
+        }
+    }
+    else { // нет GET аргумента - выдать весь список
+        shina.getshinas(db, false, null).then((emails) => {
+            if(emails)
+                res.render('shina_collection', {emails: emails, 'accept': false});
+            else
+                res.redirect('/');
+        });
+    }
+});
+app.get('/shina/archive', function(req, res){
+    const id = req.query.id;
+    const paging = req.query.paging;
+    if(id) {
+        shina.getshina(db, id).then((doc) =>{
+            if (!doc.exists) {
+                res.sendStatus(404);
+            } else {
+                res.render('shina', {current_shina: shina.getObjectFromshinaSnapshot(doc)});
+            }
+        });
+    } else if(paging) {
+        if (paging == 'next') {
+            shina.getshinas(db,true, paging).then((emails) => {
+                if (emails)
+                    res.render('shina_collection', {emails: emails, 'accept': true});
+                else
+                    res.redirect('/');
+            });
+        } else {
+            res.send('/shina/archive - ' + paging);
+        }
+    }
+    else { // нет GET аргумента - выдать весь список
+        shina.getshinas(db,true, null).then((emails) => {
+            if(emails)
+                res.render('shina_collection', {emails: emails, 'accept': true}); //, id: req.params.id
+        });
+    }
+});
+app.post('/shina', urlencodedParser, function (req, res) {
+    if(!req.body) return res.sendStatus(400);
+
+    if(req.body.action == 'Update') {
+        shina.setshinaReturnAccept(db, req.body).then(r => {
+            if(req.body.accept === 'on')
+                res.redirect('/shina');
+            else
+                res.redirect('/shina/archive');
+        });
+    } else {
+        shina.deleteshina(db, req.body.email).then(r => {
+            res.redirect('/shina');
+        });
+    }
+})
+
+
+
+
+app.get('/texservice', function(req, res) {
+    const id = req.query.id;
+    const paging = req.query.paging;
+    if(id) {
+        texservice.gettexservice(db, id).then((doc) =>{
+            if (!doc.exists) {
+                res.sendStatus(404);
+            } else {
+                res.render('texservice', {current_texservice: texservice.getObjectFromtexserviceSnapshot(doc)});
+            }
+        });
+    } else if(paging){
+        if(paging == 'next') {
+            texservice.gettexservices(db,false, paging).then((emails) => {
+                if(emails)
+                    res.render('texservice_collection', {emails: emails, 'accept': false});
+                // res.render('users', {emails: getDataFromUsersCollection(emails), 'accept': true});
+            });
+        } else {
+            res.send('/texservice - ' + paging);
+        }
+    }
+    else { // нет GET аргумента - выдать весь список
+        texservice.gettexservices(db, false, null).then((emails) => {
+            if(emails)
+                res.render('texservice_collection', {emails: emails, 'accept': false});
+            else
+                res.redirect('/');
+        });
+    }
+});
+app.get('/texservice/archive', function(req, res){
+    const id = req.query.id;
+    const paging = req.query.paging;
+    if(id) {
+        texservice.gettexservice(db, id).then((doc) =>{
+            if (!doc.exists) {
+                res.sendStatus(404);
+            } else {
+                res.render('texservice', {current_texservice: shina.getObjectFromtexserviceSnapshot(doc)});
+            }
+        });
+    } else if(paging) {
+        if (paging == 'next') {
+            texservice.gettexservices(db,true, paging).then((emails) => {
+                if (emails)
+                    res.render('texservice_collection', {emails: emails, 'accept': true});
+                else
+                    res.redirect('/');
+            });
+        } else {
+            res.send('/texservice/archive - ' + paging);
+        }
+    }
+    else { // нет GET аргумента - выдать весь список
+        texservice.gettexservices(db,true, null).then((emails) => {
+            if(emails)
+                res.render('texservice_collection', {emails: emails, 'accept': true}); //, id: req.params.id
+        });
+    }
+});
+app.post('/texservice', urlencodedParser, function (req, res) {
+    if(!req.body) return res.sendStatus(400);
+
+    if(req.body.action == 'Update') {
+        texservice.settexserviceReturnAccept(db, req.body).then(r => {
+            if(req.body.accept === 'on')
+                res.redirect('/texservice');
+            else
+                res.redirect('/texservice/archive');
+        });
+    } else {
+        texservice.deletetexservice(db, req.body.email).then(r => {
+            res.redirect('/texservice');
+        });
+    }
+})
+
+
 
 app.get('/cars', function(req, res){
     const id = req.query.id;
+    const paging = req.query.paging;
     if(id) {
         carUtils.getCar(db, id).then((doc) =>{
             if (!doc.exists) {
@@ -206,20 +370,25 @@ app.get('/cars', function(req, res){
                 res.render('car', {current_car: carUtils.getObjectFromCarSnapshot(doc)});
             }
         });
+    } else  if (paging){
+        if(paging == 'next') {
+            carUtils.getCars(db, paging).then((cars) => {
+                    res.render('cars', {cars: cars});
+            });
+        } else {
+            res.send('/cars - ' + paging);
+        }
     }
     else { // нет GET аргумента - выдать весь список
         // userUtils.
-        carUtils.getCars(db).then((cars) => {
-            res.render('cars', {cars: carUtils.getDataFromCarsCollection(cars)});
+        carUtils.getCars(db, null).then((cars) => {
+                res.render('cars', {cars: cars});
         });
     }
 });
 app.get('/cars/newcar', function(req, res){
-     res.render('car', {current_car: carUtils.createCarData(req.body)});
+     res.render('car', {current_car: carUtils.createCarData(null)});
 });
-
-
-
 app.post('/cars/newcar', urlencodedParser, function (req, res) {
     if(!req.body) return res.sendStatus(400);
 
@@ -229,8 +398,6 @@ app.post('/cars/newcar', urlencodedParser, function (req, res) {
 })
 app.post('/cars', urlencodedParser, function (req, res) {
     if(!req.body) return res.sendStatus(400);
-
-
 
     if(req.body.action == 'Update') {
         carUtils.updateCar(db, req.body).then(r => {
