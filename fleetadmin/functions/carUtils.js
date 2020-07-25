@@ -45,7 +45,6 @@ module.exports.getDataFromCarsCollection = function getDataFromCarsCollection(ca
 
         if(iii == 0) {
             let obj = getObjectFromCarSnapshot(childSnapshot);
-
             lst.push(obj);
         }
         iii++;
@@ -63,6 +62,8 @@ function getObjectFromCarSnapshot(childSnapshot) {
             'marka': item.marka,
             'model': item.model,
             'vin': item.vin,
+            'pts': item.pts,
+            'sts': item.sts,
             'gos_number': childSnapshot.id,
             'osago_number': item.osago_number,
             'osago_start_date': item.osago_start_date,
@@ -77,6 +78,8 @@ function getObjectFromCarSnapshot(childSnapshot) {
             'marka': childSnapshot.id + ': Ошибка данных',
             'model': '',
             'vin': '',
+            'pts': '',
+            'sts': '',
             'gos_number': childSnapshot.id,
             'osago_number': '',
             'osago_start_date': '',
@@ -99,6 +102,8 @@ function createCarData(body) {
             'marka': body.marka.trim(),
             'model': body.model.trim(),
             'vin': body.vin.trim(),
+            'pts': body.pts.trim(),
+            'sts': body.sts.trim(),
             'gos_number': body.gos_number.trim(),
             'osago_number': body.osago_number.trim(),
             'osago_start_date': body.osago_start_date,
@@ -112,6 +117,8 @@ function createCarData(body) {
         'marka': '',
         'model': '',
         'vin': '',
+        'pts': '',
+        'sts': '',
         'gos_number': '',
         'osago_number': '',
         'osago_start_date': '',
@@ -128,6 +135,8 @@ module.exports.updateCar =async function updateCar(db, body) {
     await db.collection('cars').doc(body.gos_number).update('marka', body.marka,
         'model', body.model,
         'vin', body.vin,
+        'pts', body.pts,
+        'sts', body.sts,
         'gos_number', body.gos_number,
         'osago_number', body.osago_number,
         'osago_start_date', body.osago_start_date,

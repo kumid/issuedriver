@@ -52,7 +52,8 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
 
     private RegistrationViewModel registrationViewModel;
     TextInputEditText mFio, mStaff, mEmail, mCorp, mRegistration_auto_marka, mRegistration_auto_model, mRegistration_auto_vin, mRegistration_auto_osago_number,
-            mRegistration_auto_osago_date, mRegistration_auto_osago_expire_date, mRegistration_auto_texservice_start_date, mRegistration_auto_texservice_expire_date;
+            mRegistration_auto_osago_date, mRegistration_auto_osago_expire_date, mRegistration_auto_texservice_start_date, mRegistration_auto_texservice_expire_date,
+            mRegistration_auto_pts, mRegistration_auto_sts;
     EditText mTel;
     MaskedEditText mRegistration_auto_number;
     Button mRegistrationButton, mRegistration_btn_logout;
@@ -81,12 +82,15 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
         mRegistration_auto_marka = findViewById(R.id.registration_auto_marka);
         mRegistration_auto_model = findViewById(R.id.registration_auto_model);
         mRegistration_auto_vin = findViewById(R.id.registration_auto_vin);
+        mRegistration_auto_pts = findViewById(R.id.registration_auto_pts);
+        mRegistration_auto_sts = findViewById(R.id.registration_auto_sts);
         mRegistration_auto_number = findViewById(R.id.registration_auto_number);
         mRegistrationButton = findViewById(R.id.registration_btn);
         mRegistration_btn_logout = findViewById(R.id.registration_btn_logout);
         mTel = findViewById(R.id.registration_tel);
         mRegistration_radio_group = findViewById(R.id.registration_radio_group);
         mRegistration_performer_groupe = findViewById(R.id.registration_performer_groupe);
+        mRegistration_performer_groupe.setVisibility(View.GONE);
 
         mRegistration_auto_osago_number = findViewById(R.id.registration_auto_osago_number);
         mRegistration_auto_osago_date = findViewById(R.id.registration_auto_osago_start_date);
@@ -194,6 +198,8 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
                     mRegistration_auto_marka.setText(obj.marka);
                     mRegistration_auto_model.setText(obj.model);
                     mRegistration_auto_vin.setText(obj.vin);
+                    mRegistration_auto_pts.setText(obj.pts);
+                    mRegistration_auto_sts.setText(obj.sts);
                     mRegistration_auto_osago_number.setText(obj.osago_number);
                     mRegistration_auto_osago_date.setText(obj.osago_start_date.replace('-', '/'));
                     mRegistration_auto_osago_expire_date.setText(obj.osago_expire_date.replace('-', '/'));
@@ -215,6 +221,8 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
         mRegistration_auto_marka.setText("");
         mRegistration_auto_model.setText("");
         mRegistration_auto_vin.setText("");
+        mRegistration_auto_pts.setText("");
+        mRegistration_auto_sts.setText("");
         mRegistration_auto_osago_number.setText("");
         mRegistration_auto_osago_date.setText("");
         mRegistration_auto_osago_expire_date.setText("");
@@ -241,6 +249,8 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
                         mRegistration_auto_marka.getText().toString(),
                         mRegistration_auto_model.getText().toString(),
                         mRegistration_auto_vin.getText().toString(),
+                        mRegistration_auto_pts.getText().toString(),
+                        mRegistration_auto_sts.getText().toString(),
                         mRegistration_auto_number.getText().toString(),
                         mTel.getText().toString(),
                         mPerformer.isChecked(),
@@ -317,6 +327,8 @@ public class RegistrationActivity extends MyActivity implements fbStorageUploads
                                     mRegistration_auto_marka.setText(currentUser.automarka);
                                     mRegistration_auto_model.setText(currentUser.automodel);
                                     mRegistration_auto_vin.setText(currentUser.autovin);
+                                    mRegistration_auto_pts.setText(currentUser.autopts);
+                                    mRegistration_auto_sts.setText(currentUser.autosts);
                                     mRegistration_auto_number.setText(currentUser.autonumber);
                                     mCustomer.setChecked(!currentUser.is_performer);
                                     mPerformer.setChecked(currentUser.is_performer);

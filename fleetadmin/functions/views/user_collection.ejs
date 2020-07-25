@@ -4,12 +4,40 @@
     <meta charset="utf-8">
     <title>Fleet management</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script>
+        let searchMode = false;
+        function swichSearchMode() {
+            const searchRow = document.getElementById("searchRow");
+            searchMode = !searchMode;
+            searchRow.hidden = searchMode;
 
+        }
+
+        function search() {
+            const searchElement = document.getElementById("searchInput");
+            alert(searchElement.value);
+            request("/shina")
+        }
+    </script>
+    <style>
+        label {
+            display: block;
+            font: 1rem 'Fira Sans', sans-serif;
+        }
+
+        input,
+        label {
+            display: block;
+            margin: .4rem 0;
+        }
+
+    </style>
 </head>
 <body>
 <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
     <h5 class="my-0 mr-md-auto font-weight-normal">Fleet management</h5>
     <nav class="my-2 my-md-0 mr-md-3">
+
         <%if(accept) {%>
             <a class="btn btn-outline-primary" href="/users">Работающие</a>
             <a class="p-2 text-dark" href="/users/unconfirmed">Неподтвержденные</a>
@@ -23,16 +51,34 @@
 </div>
 
 
+
 <table class="table table-striped">
     <thead>
-    <tr>
-        <th scope="col">#</th>
-        <th scope="col">Фото</th>
-        <th scope="col">ФИО</th>
-        <th scope="col">email</th>
-        <th scope="col">Должность</th>
-        <th scope="col">Активирован</th>
-    </tr>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Фото</th>
+            <th scope="col">
+                <div style="width: 70%; display: inline-block">ФИО</div>
+                 <img src="/img/filter_off.png" alt="..." onclick="swichSearchMode()" width="15px" height="15px">
+            </th>
+            <th scope="col">email</th>
+            <th scope="col">Должность</th>
+            <th scope="col">Активирован</th>
+        </tr>
+        <tr id="searchRow" hidden>
+            <td></th>
+            <td></td>
+            <td>
+                <div style="width: 70%; display: inline-block;">
+                    <input type="search" id="searchInput" name="search" aria-label="Search through site content">
+                </div>
+                <button onclick="search()">Поиск</button>
+            </td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
     </thead>
     <tbody>
 

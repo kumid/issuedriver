@@ -57,8 +57,7 @@ app.get('/users', function(req, res) {
         if(paging == 'next') {
             userUtils.getUsers(db,true, paging).then((emails) => {
                 if(emails)
-                    res.render('users', {emails: emails, 'accept': true});
-                // res.render('users', {emails: getDataFromUsersCollection(emails), 'accept': true});
+                    res.render('user_collection', {emails: emails, 'accept': true});
             });
         } else {
 
@@ -66,8 +65,7 @@ app.get('/users', function(req, res) {
     }
     else { // нет GET аргумента - выдать весь список
         userUtils.getUsers(db, true, null).then((emails) => {
-            res.render('users', {emails: emails, 'accept': true});
-            // res.render('users', {emails: getDataFromUsersCollection(emails), 'accept': true});
+            res.render('user_collection', {emails: emails, 'accept': true});
         });
     }
 });
@@ -86,8 +84,7 @@ app.get('/users/unconfirmed', function(req, res){
         if (paging == 'next') {
             userUtils.getUsers(db,false, paging).then((emails) => {
                 if (emails)
-                    res.render('users', {emails: emails, 'accept': false});
-                // res.render('users', {emails: userUtils.getDataFromUsersCollection(emails), 'accept': true});
+                    res.render('user_collection', {emails: emails, 'accept': false});
             });
         } else {
 
@@ -95,8 +92,7 @@ app.get('/users/unconfirmed', function(req, res){
     }
     else { // нет GET аргумента - выдать весь список
         userUtils.getUsers(db,false, null).then((emails) => {
-            // res.render('users', {emails: emails}); //, id: req.params.id
-            res.render('users', {emails: emails, 'accept': false}); //, id: req.params.id
+            res.render('user_collection', {emails: emails, 'accept': false}); //, id: req.params.id
         });
     }
 });

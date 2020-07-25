@@ -55,7 +55,8 @@ public class RegistrationFragment extends Fragment {
     private RegistrationViewModel registrationViewModel;
     private MainViewModel mainViewModel;
     TextInputEditText mFio, mStaff, mEmail, mCorp, mRegistration_auto_marka, mRegistration_auto_model, mRegistration_auto_vin, mRegistration_auto_osago_number,
-            mRegistration_auto_osago_date, mRegistration_auto_osago_expire_date, mRegistration_auto_texservice_start_date, mRegistration_auto_texservice_expire_date;
+            mRegistration_auto_osago_date, mRegistration_auto_osago_expire_date, mRegistration_auto_texservice_start_date, mRegistration_auto_texservice_expire_date,
+            mRegistration_auto_pts, mRegistration_auto_sts;
     EditText mTel;
     MaskedEditText mRegistration_auto_number;
     Button mRegistrationButton, mRegistration_btn_logout;
@@ -85,6 +86,8 @@ public class RegistrationFragment extends Fragment {
         mRegistration_auto_marka = root.findViewById(R.id.registration_auto_marka);
         mRegistration_auto_model = root.findViewById(R.id.registration_auto_model);
         mRegistration_auto_vin = root.findViewById(R.id.registration_auto_vin);
+        mRegistration_auto_pts = root.findViewById(R.id.registration_auto_pts);
+        mRegistration_auto_sts = root.findViewById(R.id.registration_auto_sts);
         mRegistration_auto_number = root.findViewById(R.id.registration_auto_number);
         mRegistrationButton = root.findViewById(R.id.registration_btn);
         mRegistration_btn_logout = root.findViewById(R.id.registration_btn_logout);
@@ -181,6 +184,8 @@ public class RegistrationFragment extends Fragment {
                     mRegistration_auto_marka.setText(obj.marka);
                     mRegistration_auto_model.setText(obj.model);
                     mRegistration_auto_vin.setText(obj.vin);
+                    mRegistration_auto_pts.setText(obj.pts);
+                    mRegistration_auto_sts.setText(obj.sts);
                     mRegistration_auto_osago_number.setText(obj.osago_number);
                     mRegistration_auto_osago_date.setText(obj.osago_start_date.replace('-', '/'));
                     mRegistration_auto_osago_expire_date.setText(obj.osago_expire_date.replace('-', '/'));
@@ -202,6 +207,8 @@ public class RegistrationFragment extends Fragment {
         mRegistration_auto_marka.setText("");
         mRegistration_auto_model.setText("");
         mRegistration_auto_vin.setText("");
+        mRegistration_auto_pts.setText("");
+        mRegistration_auto_sts.setText("");
         mRegistration_auto_osago_number.setText("");
         mRegistration_auto_osago_date.setText("");
         mRegistration_auto_osago_expire_date.setText("");
@@ -230,6 +237,8 @@ public class RegistrationFragment extends Fragment {
                         mRegistration_auto_marka.getText().toString(),
                         mRegistration_auto_model.getText().toString(),
                         mRegistration_auto_vin.getText().toString(),
+                        mRegistration_auto_pts.getText().toString(),
+                        mRegistration_auto_sts.getText().toString(),
                         mRegistration_auto_number.getText().toString(),
                         mTel.getText().toString(),
                         mPerformer.isChecked(),
@@ -272,6 +281,8 @@ public class RegistrationFragment extends Fragment {
                         mCorp.getText().toString(),
                         mRegistration_auto_model.getText().toString(),
                         mRegistration_auto_vin.getText().toString(),
+                        mRegistration_auto_pts.getText().toString(),
+                        mRegistration_auto_sts.getText().toString(),
                         mRegistration_auto_number.getText().toString(),
                         mTel.getText().toString())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -323,6 +334,8 @@ public class RegistrationFragment extends Fragment {
         mRegistration_auto_model.setText(curr.automodel);
         mRegistration_auto_marka.setText(curr.automarka);
         mRegistration_auto_vin.setText(curr.autovin);
+        mRegistration_auto_pts.setText(curr.autopts);
+        mRegistration_auto_sts.setText(curr.autosts);
         mRegistration_auto_number.setText(curr.autonumber);
         mCustomer.setChecked(!curr.is_performer);
         mPerformer.setChecked(curr.is_performer);

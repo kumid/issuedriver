@@ -217,6 +217,33 @@
 
 
 
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/registration_auto_pts"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/registration_auto_pts"
+                        android:enabled="false"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/registration_auto_sts"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/registration_auto_sts"
+                        android:enabled="false"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
                 <LinearLayout
                     android:id="@+id/registration_osago_group"
                     android:layout_width="match_parent"

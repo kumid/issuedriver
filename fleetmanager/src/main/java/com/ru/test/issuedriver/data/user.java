@@ -14,6 +14,8 @@ public class user {
     public String automarka;
     public String automodel;
     public String autovin;
+    public String autopts;
+    public String autosts;
     public String autonumber;
     public String tel;
     public boolean accept;
@@ -37,7 +39,9 @@ public class user {
     public boolean is_busy() { return state != 0; }
     public user() {}
 
-    public user(String fio, String staff, String email, String corp, String automarka, String automodel, String autovin, String autonumber, String tel, boolean is_performer, boolean isAccepted,
+    public user(String fio, String staff, String email, String corp, String automarka, String automodel, String autovin,
+                String autopts, String autosts,
+                String autonumber, String tel, boolean is_performer, boolean isAccepted,
                 String osago_number, String osago_start_date, String osago_expire_date, String  texservice_start_date, String texservice_expire_date) {
         this.fio = fio;
         this.staff = staff;
@@ -46,6 +50,8 @@ public class user {
         this.automarka = automarka;
         this.automodel = automodel;
         this.autovin = autovin;
+        this.autopts = autopts;
+        this.autosts = autosts;
         this.autonumber = autonumber;
         this.tel = tel;
         this.accept = false;

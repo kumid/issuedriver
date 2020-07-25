@@ -12,5 +12,8 @@ public class car {
     public String texservice_start_date;
     public String texservice_expire_date;
 
+    public String pts;
+    public String sts;
+
     public car(){}
 }

@@ -86,5 +86,7 @@
     <string name="order_state_accepted">Принята водителем</string>
     <string name="registration_auto_marka">Марка автомобиля</string>
     <string name="registration_auto_osago_number">ОСАГО</string>
+    <string name="registration_auto_pts">ПТС</string>
+    <string name="registration_auto_sts">СТС</string>
 
 </resources>

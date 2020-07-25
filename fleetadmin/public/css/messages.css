@@ -1,0 +1,25 @@
+p { word-break: break-all }
+
+table {
+    width: 100%;
+    table-layout: fixed;
+}
+.three {
+    width: 3%;
+}
+.five {
+    width: 5%;
+}
+.seven {
+    width: 7%;
+}
+.fifteen {
+    width: 15%;
+}
+.message {
+    width: 40%;
+}
+span {
+    display:block;
+    word-wrap:break-word;
+}

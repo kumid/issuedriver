@@ -22,6 +22,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import static com.ru.test.issuedriver.MyActivity.CurrentUser;
+
 public class TOActivity extends AppCompatActivity {
 
     EditText mTo_msg, mTo_callme_phone;
@@ -60,11 +62,12 @@ public class TOActivity extends AppCompatActivity {
     private void sendMessage(String msg, String phone) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("texservice").document().set(new to(msg, phone))
+        db.collection("texservice").document().set(new to(CurrentUser.fio, CurrentUser.email, CurrentUser.photoPath, msg, phone))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
                         PerformerActivity.showToast("Сообщение успешно отправлено", Toast.LENGTH_SHORT);
+                        TOActivity.this.finish();
                         mTo_msg.setText("");
                         mTo_callme_phone.setText("");
                     }
