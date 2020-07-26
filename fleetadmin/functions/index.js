@@ -491,6 +491,7 @@ exports.onOrderStateChanged = functions.firestore
 
 
         require('dotenv').config()
+        // npm install dotenv --save
 
         const {SENDER_EMAIL,SENDER_PASSWORD} = process.env;
 

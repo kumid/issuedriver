@@ -131,7 +131,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
         mOrder_navigation.setOnClickListener(this);
         mOrder_performing_call.setOnClickListener(this);
 
-        if(orderViewModel.getCurrentOrder().start_distance == 1) {
+        if(orderViewModel.getCurrentOrder().start_distance == 0) {
             orderViewModel.getCurrentOrder().start_distance =
                 orderViewModel.getCurrentOrder().end_distance = mysettings.GetDistance();
         }
