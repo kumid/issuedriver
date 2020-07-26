@@ -164,3 +164,19 @@ module.exports.getDataFromUsersCollection = function getDataFromUsersCollection(
 
     return lst;
 }
+
+
+
+module.exports.getFilteredUsers = async function getFilteredUsers(db, filter) {
+    let query = db.collection('users').where('fio', '==', filter);
+
+    const filteredUsersLocalCollection = [];
+
+    const snapshots = await query.get();
+     snapshots.forEach(function(childSnapshot) {
+             let obj = getObjectFromUserSnapshot(childSnapshot);
+         filteredUsersLocalCollection.push(obj);
+    });
+
+    return filteredUsersLocalCollection;
+}
