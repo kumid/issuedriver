@@ -78,7 +78,6 @@ app.get('/users', function(req, res) {
         });
     }
 });
-
 app.get('/users/unconfirmed', function(req, res){
     const id = req.query.id;
     const paging = req.query.paging;
@@ -122,6 +121,45 @@ app.post('/users', urlencodedParser, function (req, res) {
         });
     }
 })
+
+
+app.get('/userorders', function(req, res) {
+    res.send('HELLO JQUERY');
+    // const id = req.query.id;
+    // const paging = req.query.paging;
+    // const filter = req.query.filter;
+    // if(id) {
+    //     userUtils.getUser(db, id).then((doc) =>{
+    //         if (!doc.exists) {
+    //             res.sendStatus(404);
+    //         } else {
+    //             res.render('user', {current_user: userUtils.getObjectFromUserSnapshot(doc)});
+    //         }
+    //     });
+    // } else if(paging){
+    //     if(paging == 'next') {
+    //         userUtils.getUsers(db,true, paging, filter).then((emails) => {
+    //             if(emails)
+    //                 res.render('user_collection', {emails: emails, 'accept': true, searchMode: null});
+    //         });
+    //     } else {
+    //
+    //     }
+    // } else if(filter){
+    //     userUtils.getFilteredUsers(db, filter).then((emails) => {
+    //         if(emails)
+    //             res.render('user_collection', {emails: emails, 'accept': true, searchMode: true});
+    //         else
+    //             res.send('user_collection');
+    //     });
+    //
+    // }
+    // else { // нет GET аргумента - выдать весь список
+    //     userUtils.getUsers(db, true, null, null).then((emails) => {
+    //         res.render('user_collection', {emails: emails, 'accept': true, searchMode: null});
+    //     });
+    // }
+});
 
 
 
