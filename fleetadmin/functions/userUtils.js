@@ -1,4 +1,5 @@
 
+
 let usersLocalCollection = []
 let usersLocalCollectionMode = true;
 let listeners = []    // list of listeners
@@ -41,6 +42,35 @@ module.exports.getUsers = async function getUsers(db, accept, next) {
 
     return usersLocalCollection;
     // return snapshots;
+}
+
+module.exports.getUserOrders = async function getUserOrders(admin, db, id, dateStart, dateEnd) {
+    const firstDate = new Date(dateStart);
+    const timestamp1 = admin.firestore.Timestamp.fromDate(firstDate);
+    const lastDate = new Date(dateEnd);
+    lastDate.setDate(lastDate.getDate() + 1);
+
+    const timestamp2 = admin.firestore.Timestamp.fromDate(lastDate);
+    let query = db.collection('orders')
+        .where('performer_email', '==', id)
+        .where('accept_timestamp', '>=', firstDate)
+        .where('accept_timestamp', '<=', lastDate)
+        .orderBy('accept_timestamp');
+    let res = await query.get();
+    let orders = [];
+    res.docs.forEach(function (doc) {
+        orders.push({
+            accept_timestamp: doc.data().accept_timestamp.toDate().toLocaleDateString('ru-RU'),
+            from: doc.data().from,
+            to: doc.data().to,
+            customer_fio: doc.data().customer_fio,
+            distance: doc.data().distance,
+            spent_time: doc.data().spent_time,
+            fuel: doc.data().fuel
+        });
+    })
+
+    return orders;
 }
 
 function getObjectFromUserSnapshot(childSnapshot) {
