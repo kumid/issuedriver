@@ -89,7 +89,7 @@ public class OrderCloseBottonDialog extends BottomSheetDialogFragment implements
         switch (v.getId()){
             case R.id.bottom_sheet_btn:
                 //PersonInfoActivity.getInstance().summaFromDialog = mPiBonusSumma.getText().toString();
-                mListener.onCloseBottomButtonClicked(id, time, distStr, fuelStr);
+                mListener.onCloseBottomButtonClicked(id, time, dist, distStr, fuel, fuelStr);
                 dismiss();
                 break;
          }
@@ -101,16 +101,16 @@ public class OrderCloseBottonDialog extends BottomSheetDialogFragment implements
         mOrder_chronometr_bottom.setBase(time);
         this.dist = distance;
         long fuel_consumption = FirebaseRemoteConfig.getInstance().getLong("fuel_consumption");
-        fuel = dist * fuel_consumption / 100f;
-
+        fuel = Math.round(dist * fuel_consumption / 100f);
+        dist = Math.round(dist);
         if (dist < 1000) {
-            distStr = String.format("%d м", Math.round(dist));
+            distStr = String.format("%d м", dist);
 
         } else {
             distStr = String.format("%.1f км", dist / 1000f);
         }
         if (fuel < 1000) {
-            fuelStr = String.format("%d гр.", Math.round(fuel));
+            fuelStr = String.format("%d гр.", fuel);
 
         } else {
             fuelStr = String.format("%.1f л.", fuel / 1000f);
@@ -125,7 +125,7 @@ public class OrderCloseBottonDialog extends BottomSheetDialogFragment implements
     }
 
     public interface CloseBottomSheetListener {
-        void onCloseBottomButtonClicked(int id, String time, String distance, String fuel);
+        void onCloseBottomButtonClicked(int id, String time, double distance, String distanceStr, double fuel, String fuelStr);
     }
 
     @Override

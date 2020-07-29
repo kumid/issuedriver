@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
-import com.ru.test.issuedriver.customer.CustomerV2Activity;
 import com.ru.test.issuedriver.data.order;
 import com.squareup.picasso.Picasso;
 
@@ -18,7 +17,6 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
@@ -70,8 +68,8 @@ public class historyAdapter extends RecyclerView.Adapter<historyAdapter.VH> {
         holder.mHistory_item_comment.setText(item.comment);
 
         holder.mHistory_time.setText(item.spent_time);
-        holder.mHistory_distance.setText(String.valueOf(item.distance));
-        holder.mHistory_fuel.setText(String.valueOf(item.fuel));
+        holder.mHistory_distance.setText(item.distanceDisplay);
+        holder.mHistory_fuel.setText(item.fuelDisplay);
 
         holder.mHistory_item_extra.setVisibility(View.GONE);
 

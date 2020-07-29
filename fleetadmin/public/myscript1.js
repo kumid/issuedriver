@@ -6,12 +6,16 @@ function getOrders() {
     console.log(start);
 
     let end = document.getElementById('inputDataEnd').value;
+    let orders = document.getElementById('ordersBody');
     console.log(end);
      $.ajax({
         url: '/userorders',
         data:{ id: key, start: start, end: end},
         success: function(data){
+            orders.innerText = '';
+
             console.log(data);
+            let distanceSummary = 0.0, fuelSummary = 0.0;
             let index = 0;
             let lines =[];
             data.forEach(function (row) {
@@ -23,14 +27,29 @@ function getOrders() {
                     "<td scope='col'>" + row.accept_timestamp + '</td>' +
                     "<td scope='col'>" + row.from + '<br>' + row.to + '</td>' +
                     "<td scope='col'>" + row.customer_fio + '</td>' +
-                    "<td scope='col'>" + row.distance + '</td>' +
+                    "<td scope='col'>" + row.distanceDisplay + '</td>' +
                     "<td scope='col'>" + row.spent_time + '</td>' +
-                    "<td scope='col'>" + row.fuel + '</td>' +
+                    "<td scope='col'>" + row.fuelDisplay + '</td>' +
                     '</tr>');
+
+                distanceSummary += row.distance / 1000.00;
+                fuelSummary += row.fuel;
 
                 $('table> tbody:last').append($row);
 
             });
+
+            let $row = $('<tr>' +
+                '<td scope="col"></td>' +
+                '<td scope="col"></td>' +
+                '<td scope="col"></td>' +
+                '<td scope="col">ИТОГО:</td>' +
+                "<td scope='col'>" + distanceSummary.toFixed(2)+ ' км.</td>' +
+                '<td scope="col"></td>' +
+                "<td scope='col'>" + fuelSummary.toFixed(2) + ' л.</td>' +
+                '</tr>');
+
+            $('table> tfoot').append($row);
 
         }
     });

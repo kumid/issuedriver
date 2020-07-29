@@ -179,7 +179,7 @@ private void notifycateIt(order curr, DocumentSnapshot snapshot) {
 
         DocumentReference orderRef = db.collection("orders").document(item.id);
         orderRef.update("start_timestamp", FieldValue.serverTimestamp(),
-                                "start_distance", dist)
+                                    "start_distance", dist)
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {

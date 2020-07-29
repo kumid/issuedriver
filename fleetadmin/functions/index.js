@@ -93,7 +93,7 @@ app.get('/users/unconfirmed', function(req, res){
         if (paging == 'next') {
             userUtils.getUsers(db,false, paging).then((emails) => {
                 if (emails)
-                    res.render('user_collection', {emails: emails, 'accept': false});
+                    res.render('user_collection', {emails: emails, 'accept': false, searchMode: null});
             });
         } else {
 
@@ -101,7 +101,7 @@ app.get('/users/unconfirmed', function(req, res){
     }
     else { // нет GET аргумента - выдать весь список
         userUtils.getUsers(db,false, null).then((emails) => {
-            res.render('user_collection', {emails: emails, 'accept': false}); //, id: req.params.id
+            res.render('user_collection', {emails: emails, 'accept': false, searchMode: null}); //, id: req.params.id
         });
     }
 });

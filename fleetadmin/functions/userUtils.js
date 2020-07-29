@@ -65,8 +65,10 @@ module.exports.getUserOrders = async function getUserOrders(admin, db, id, dateS
             to: doc.data().to,
             customer_fio: doc.data().customer_fio,
             distance: doc.data().distance,
+            distanceDisplay: doc.data().distanceDisplay,
             spent_time: doc.data().spent_time,
-            fuel: doc.data().fuel
+            fuel: doc.data().fuel,
+            fuelDisplay: doc.data().fuelDisplay
         });
     })
 

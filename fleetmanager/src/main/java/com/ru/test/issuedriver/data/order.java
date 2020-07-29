@@ -3,12 +3,15 @@ package com.ru.test.issuedriver.data;
 import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.GeoPoint;
+import com.ru.test.issuedriver.helpers.utils;
 
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 
 import java.util.Date;
@@ -52,8 +55,10 @@ public class order implements Parcelable {
     public Date order_active_time;
 
     public String spent_time;
-    public String distance;
-    public String fuel;
+    public double distance;
+    public String distanceDisplay;
+    public double fuel;
+    public String fuelDisplay;
 
     public String id;
     /// 0 - норм, 1 - отменен
@@ -136,8 +141,10 @@ public class order implements Parcelable {
         end_timestamp = in.readParcelable(Timestamp.class.getClassLoader());
         order_active_timestamp = in.readParcelable(Timestamp.class.getClassLoader());
         spent_time = in.readString();
-        distance = in.readString();
-        fuel = in.readString();
+        distance = in.readDouble();
+        distanceDisplay = in.readString();
+        fuel = in.readDouble();
+        fuelDisplay = in.readString();
         id = in.readString();
         state = in.readInt();
         cancel_reason = in.readString();
@@ -214,8 +221,10 @@ public class order implements Parcelable {
         dest.writeParcelable(end_timestamp, flags);
         dest.writeParcelable(order_active_timestamp, flags);
         dest.writeString(spent_time);
-        dest.writeString(distance);
-        dest.writeString(fuel);
+        dest.writeDouble(distance);
+        dest.writeString(distanceDisplay);
+        dest.writeDouble(fuel);
+        dest.writeString(fuelDisplay);
         dest.writeString(id);
         dest.writeInt(state);
         dest.writeString(cancel_reason);
@@ -248,4 +257,5 @@ public class order implements Parcelable {
 //        this.car_number = car_number;
 //
 //    }
+
 }

@@ -1,8 +1,5 @@
 package com.ru.test.issuedriver.performer.ui.orderPerforming;
 
-import android.app.DatePickerDialog;
-import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,11 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Chronometer;
-import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
@@ -25,17 +20,16 @@ import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
 import com.ru.test.issuedriver.MyActivity;
 import com.ru.test.issuedriver.R;
-import com.ru.test.issuedriver.bottom_dialogs.OrderCloseBottonDialog;
 import com.ru.test.issuedriver.customer.ui.order.OrderViewModel;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.helpers.MyBroadcastReceiver;
 import com.ru.test.issuedriver.helpers.mysettings;
+import com.ru.test.issuedriver.helpers.utils;
 import com.ru.test.issuedriver.performer.PerformerActivity;
 
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 import androidx.appcompat.app.ActionBar;
@@ -138,7 +132,7 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
         distanse =  mysettings.GetDistance() - orderViewModel.getCurrentOrder().start_distance;
         mOrder_distance.setText(convertMetr2km(distanse));
         mOrder_distance_bottom.setText(convertMetr2km(distanse));
-        mOrder_fuel_bottom.setText(getFuel(distanse));
+        mOrder_fuel_bottom.setText(getFuelStr(distanse));
 
         mOrder_chronometr.setOnChronometerTickListener(new Chronometer.OnChronometerTickListener() {
             @Override
@@ -262,31 +256,29 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
                 distanse =  mysettings.GetDistance() - orderViewModel.getCurrentOrder().start_distance;
                 mOrder_distance.setText(convertMetr2km(distanse));
                 mOrder_distance_bottom.setText(convertMetr2km(distanse));
-                mOrder_fuel_bottom.setText(getFuel(distanse));
+                mOrder_fuel_bottom.setText(getFuelStr(distanse));
             }
         };
     }
 
-    private String getFuel(double distanse) {
-        double fuel = distanse * fuel_consumption / 100f;
-        return  String.format("%.1f л.", fuel / 1000f);
+    private double getFuel(double distanse) {
+        return distanse * fuel_consumption / 100f / 1000f;
+    }
+
+    private String getFuelStr(double distanse) {
+        return  String.format("%s л.", utils.getDoubleString(getFuel(distanse)));
     }
 
     @NotNull
     private String convertMetr2km(double dist) {
         String rast;
-//        if (distanse < 1000) {
-//            rast = String.format("%d м", Math.round(distanse));
-//            Log.d(TAG, rast);
-//        } else {
-            rast = String.format("%.1f км", dist / 1000f);
+            rast = String.format("%s км", utils.getDoubleString(dist / 1000f));
             Log.d(TAG, rast);
-//        }
         return rast;
     }
 
 //    @Override
-    public void onCloseBottomButtonClicked(String time, String dist, String fuel) {
+    public void onCloseBottomButtonClicked(String time, String distStr, String fuelStr) {
         OrderViewModel.orderCompletedCalback = new OrderViewModel.orderCompleted() {
             @Override
             public void callback(boolean pass) {
@@ -296,7 +288,14 @@ public class OrderPerformingActivity extends MyActivity implements View.OnClickL
                     MyActivity.showToast("Ошибка передачи данных", Toast.LENGTH_SHORT);
             }
         };
-        orderViewModel.setOrderComleted(orderViewModel.getCurrentOrder().id, orderViewModel.getCurrentOrder().performer_email, time, dist, fuel);
+
+        orderViewModel.getCurrentOrder().spent_time = time;
+        orderViewModel.getCurrentOrder().distance = distanse;
+        orderViewModel.getCurrentOrder().distanceDisplay = String.format("%s км.", utils.getDoubleString(distanse / 1000.0));
+        orderViewModel.getCurrentOrder().fuel = getFuel(distanse);
+        orderViewModel.getCurrentOrder().fuelDisplay = String.format("%s л.", utils.getDoubleString(getFuel(distanse)));
+        orderViewModel.setOrderComleted(orderViewModel.getCurrentOrder());
+//        orderViewModel.setOrderComleted(orderViewModel.getCurrentOrder().id, orderViewModel.getCurrentOrder().performer_email, time, distanse, getFuel(distanse));
 
         Log.d(TAG, "Close order");
     }
