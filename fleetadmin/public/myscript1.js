@@ -7,6 +7,8 @@ function getOrders() {
 
     let end = document.getElementById('inputDataEnd').value;
     let orders = document.getElementById('ordersBody');
+    let mDistanceSummary = document.getElementById('distanceSummary');
+    let mFuelSummary = document.getElementById('fuelSummary');
     console.log(end);
      $.ajax({
         url: '/userorders',
@@ -39,17 +41,8 @@ function getOrders() {
 
             });
 
-            let $row = $('<tr>' +
-                '<td scope="col"></td>' +
-                '<td scope="col"></td>' +
-                '<td scope="col"></td>' +
-                '<td scope="col">ИТОГО:</td>' +
-                "<td scope='col'>" + distanceSummary.toFixed(2)+ ' км.</td>' +
-                '<td scope="col"></td>' +
-                "<td scope='col'>" + fuelSummary.toFixed(2) + ' л.</td>' +
-                '</tr>');
-
-            $('table> tfoot').append($row);
+            mDistanceSummary.innerText = distanceSummary.toFixed(2) + ' км.'
+            mFuelSummary.innerText = fuelSummary.toFixed(2) + ' л.';
 
         }
     });
