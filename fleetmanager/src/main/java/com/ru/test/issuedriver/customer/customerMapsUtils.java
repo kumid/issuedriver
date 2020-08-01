@@ -1,4 +1,4 @@
-package com.ru.test.issuedriver.customer.ui;
+package com.ru.test.issuedriver.customer;
 
 import android.Manifest;
 import android.content.Intent;
@@ -31,13 +31,12 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.firestore.GeoPoint;
 import com.ru.test.issuedriver.R;
-import com.ru.test.issuedriver.customer.CustomerV2Activity;
 import com.ru.test.issuedriver.customer.ui.map.MapViewModel;
 import com.ru.test.issuedriver.customer.ui.map.imHere;
 import com.ru.test.issuedriver.customer.ui.map.mapGeofireViewModel;
 import com.ru.test.issuedriver.customer.ui.order.OrderActivity;
 import com.ru.test.issuedriver.customer.ui.orders_list.OrdersListViewModel;
-import com.ru.test.issuedriver.data.order;
+import com.ru.test.issuedriver.customer.ui.placesUtils;
 import com.ru.test.issuedriver.data.place;
 import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.geofire.geofireCallBacks;
@@ -47,21 +46,21 @@ import com.ru.test.issuedriver.helpers.mysettings;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.lifecycle.Observer;
 
-public class mapsUtils {
+public class customerMapsUtils {
     // показывать маркер в центре экрана
-    private static boolean isImgLocationPinUpOn = false;
+    public static boolean isImgLocationPinUpOn = false;
+
+    //
     private static boolean isDriversClickable = false;
 
     private static final String TAG = "myLogs";
-    private static CustomerV2Activity mapActivity;
+    private static AppCompatActivity mapActivity;
     private static GoogleMap googleMap;
     private static ImageView mImgLocationPinUp;
     private static Marker markerPin;
@@ -76,7 +75,6 @@ public class mapsUtils {
 
     private static MarkerOptions markerOptionIm;
     private static Marker ImMarker;
-    private static List<user> actualUserList;
 
     public static LatLng getMarkerPinPosition() {
         return markerPin.getPosition();
@@ -96,8 +94,7 @@ public class mapsUtils {
 
     private static Map<String, markerPair> markerMap = new HashMap<>();
     static LatLng cameraPos;
-
-    public static void Init(CustomerV2Activity activity, MapView mMapView, mapGeofireViewModel _mapViewModel, ImageView imgLocationPinUp) {
+    public static void Init(AppCompatActivity activity, MapView mMapView, mapGeofireViewModel _mapViewModel, ImageView imgLocationPinUp) {
 
         mapActivity = activity;
         mapViewModel = _mapViewModel;
@@ -110,14 +107,14 @@ public class mapsUtils {
         try {
             Location lastPos = mysettings.GetPosition();
             if (lastPos != null
-                    && lastPos.getLatitude() > 0)
+                && lastPos.getLatitude() > 0)
                 cameraPos = new LatLng(lastPos.getLatitude(), lastPos.getLongitude());
-        } catch (Exception ex) {
+        } catch (Exception ex){
             Log.e("myError", "0");
         }
 
         try {
-            MapsInitializer.initialize(mapActivity);
+            MapsInitializer.initialize( mapActivity);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -126,29 +123,8 @@ public class mapsUtils {
         mMapView.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap mMap) {
-                Log.e("myError", "1");
                 googleMap = mMap;
-                mMapView.onResume();
 
-                geofireHelper.init(googleMap);
-
-                placesUtils.Init(mapActivity, googleMap, true);
-
-                googleMap.setOnMarkerClickListener(mapActivity);
-                googleMap.setMinZoomPreference(16f);
-                googleMap.setMaxZoomPreference(17f);
-
-                if (ActivityCompat.checkSelfPermission(mapActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mapActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
-                googleMap.setMyLocationEnabled(true);
                 try {
                     CameraPosition cameraPosition = new CameraPosition.Builder()
                             .target(cameraPos).zoom(carZoomLevel).build();
@@ -160,42 +136,48 @@ public class mapsUtils {
 
                 googleMap.getUiSettings().setCompassEnabled(false);
 
+                if(true)
+                    return;
+
+                geofireHelper.init(googleMap);
+                placesUtils.Init(mapActivity, googleMap, true);
+
+                GoogleMap.OnMarkerClickListener markerClickListener = (GoogleMap.OnMarkerClickListener) mapActivity;
+                if (markerClickListener != null)
+                    googleMap.setOnMarkerClickListener(markerClickListener);
+                googleMap.setMinZoomPreference(9f);
+                googleMap.setMaxZoomPreference(17f);
+
+
+
                 imHere.myPositionChanged = new imHere.OnMyPositionChanged() {
                     @Override
                     public void callBack(Location location) {
-                        setMyPosition(location);
                         googleMap.setMinZoomPreference(5f);
-
+                        if (ActivityCompat.checkSelfPermission(mapActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                                && ActivityCompat.checkSelfPermission(mapActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            return;
+                        }
+                        googleMap.setMyLocationEnabled(true);
+                        setMyPosition(location);
                         mapViewModel.getCarAround(location);
                     }
                 };
                 imHere.init(mapActivity);
-                Log.e("myError", "1-1");
 
                 observe2performers();
-
-//                View locationButton = ((View) mMapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
-//                RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
-//                // position on right bottom
-//                rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
-//                rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
-//                rlp.setMargins(0, 180, 180, 0);
-
-                Log.e("myError", "1-2");
 
                 googleMap.setOnCameraMoveListener(new GoogleMap.OnCameraMoveListener() {
                     @Override
                     public void onCameraMove() {
                         if(!isImgLocationPinUpOn)
                             return;
-                        Log.e("myError", "1-2-1");
 
                         mImgLocationPinUp.setVisibility(View.VISIBLE);
                         if(markerPin!=null)
                             markerPin.remove();
                     }
                 });
-                Log.e("myError", "1-3");
 
                 googleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
                     @Override
@@ -207,7 +189,6 @@ public class mapsUtils {
                         if (isImgLocationPinUpOn) {
                             mImgLocationPinUp.setVisibility(View.GONE);
                             MarkerOptions markerOptions = new MarkerOptions().position(googleMap.getCameraPosition().target)
-                                    .flat(true)
                                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.pin))
                                     .title("Я");
                             // adding marker
@@ -237,7 +218,7 @@ public class mapsUtils {
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(imHere.getLatitude(),
                             imHere.getLongitude())).zoom(zoom).build();
-            try {
+try {
                 googleMap.animateCamera(CameraUpdateFactory
                         .newCameraPosition(cameraPosition));
             } catch (Exception ex) {
@@ -345,8 +326,8 @@ public class mapsUtils {
                 markerMap.get(item.email).marker = BusMarkerOK;
                 markerMap.get(item.email)._user = item;
             } else {
+
                 if (pos != null) {
-                    markerMap.get(item.email).markerOption.position(new LatLng(pos.getLatitude(), pos.getLongitude()));
                     animateMarker(item, markerMap.get(item.email).marker,
                             new LatLng(pos.getLatitude(), pos.getLongitude()),
                             false,
@@ -381,7 +362,7 @@ public class mapsUtils {
 
                     break;
             }
-            if(zoom != 0f) {
+if(zoom != 0f) {
                 try {
                     googleMap.animateCamera(CameraUpdateFactory
                             .newCameraPosition(cameraPosition));
@@ -460,7 +441,7 @@ public class mapsUtils {
     }
 
     private static void setPerformerPosition(user item, GeoPoint pos) {
-        if (googleMap == null
+if (googleMap == null
                 || item.position == null) {
             return;
         }
@@ -473,19 +454,11 @@ public class mapsUtils {
         BitmapDescriptor car = getBitmapDescriptor(item);
         markerBus.icon(car);
 
-        //        markerBus.icon(BitmapDescriptorFactory
-//                .fromResource(car)); //).defaultMarker(BitmapDescriptorFactory.HUE_ROSE));
-
         // adding marker
         Marker BusMarker = googleMap.addMarker(markerBus);
 
         markerMap.put(item.email, new markerPair(markerBus, BusMarker, item));
 
-//        CameraPosition cameraPosition = new CameraPosition.Builder()
-//                .target(new LatLng(Double.parseDouble("45.058403"), Double.parseDouble("38.983933"))).zoom(15).build();
-////               .target(new LatLng(item.position.getLatitude(), item.position.getLongitude())).zoom(15).build();
-//        googleMap.animateCamera(CameraUpdateFactory
-//                .newCameraPosition(cameraPosition));
         Log.e("MapsLog", "googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));");
 
     }
@@ -506,8 +479,6 @@ public class mapsUtils {
         if(isRotation) {
             marker.setAnchor(0.5f, 0.5f);
             double bearing = getBearing(marker.getPosition(), toPosition);
-            Log.d("bearing", String.valueOf(bearing));
-
             marker.setRotation((float) bearing);
         }
 
@@ -533,13 +504,12 @@ public class mapsUtils {
                     float zoom = googleMap.getCameraPosition().zoom;
                     CameraPosition cameraPosition = new CameraPosition.Builder()
                             .target(toPosition).zoom(zoom).build();
-                    try {
+try {
                         googleMap.animateCamera(CameraUpdateFactory
                                 .newCameraPosition(cameraPosition));
                     }catch (Exception ex) {
                         Log.e("myError", "Error 2");
                     }
-
                 }
                 if (t < 1.0) {
                     // Post again 16ms later.
@@ -555,10 +525,10 @@ public class mapsUtils {
         });
     }
 
-
     public static boolean onMarkerClick(Marker marker, place fromPlace, place toPlace) {
-if(!isDriversClickable)
+        if(!isDriversClickable)
             return false;
+
         for (String item : markerMap.keySet()) {
             if (markerMap.get(item).marker.equals(marker)) {
                 if (markerMap.get(item)._user.is_busy())
@@ -593,19 +563,6 @@ if(!isDriversClickable)
     }
 
     private static double getBearing(LatLng begin, LatLng end) {
-//        double lat = Math.abs(begin.latitude - end.latitude);
-//        double lng = Math.abs(begin.longitude - end.longitude);
-//
-//        if (begin.latitude < end.latitude && begin.longitude < end.longitude)
-//            return (float) (Math.toDegrees(Math.atan(lng / lat)));
-//        else if (begin.latitude >= end.latitude && begin.longitude < end.longitude)
-//            return (float) ((90 - Math.toDegrees(Math.atan(lng / lat))) + 90);
-//        else if (begin.latitude >= end.latitude && begin.longitude >= end.longitude)
-//            return (float) (Math.toDegrees(Math.atan(lng / lat)) + 180);
-//        else if (begin.latitude < end.latitude && begin.longitude >= end.longitude)
-//            return (float) ((90 - Math.toDegrees(Math.atan(lng / lat))) + 270);
-//        return -1;
-
         double PI = 3.14159;
         double lat1 = begin.latitude * PI / 180;
         double long1 = begin.longitude * PI / 180;
@@ -624,7 +581,5 @@ if(!isDriversClickable)
         brng = (brng + 360) % 360;
 
         return brng;
-
-
     }
 }

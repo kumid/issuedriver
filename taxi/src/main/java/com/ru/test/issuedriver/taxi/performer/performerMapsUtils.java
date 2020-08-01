@@ -1,6 +1,8 @@
 package com.ru.test.issuedriver.taxi.performer;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
@@ -47,6 +49,7 @@ import java.util.List;
 import java.util.Map;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.Observer;
 
 public class performerMapsUtils {
@@ -91,16 +94,16 @@ public class performerMapsUtils {
 
     private static Map<String, markerPair> markerMap = new HashMap<>();
 
-    public static void Init(AppCompatActivity activity, MapView mMapView, MapViewModel _mapViewModel, ImageView imgLocationPinUp, LatLng riderPosition){
+    public static void Init(AppCompatActivity activity, MapView mMapView, MapViewModel _mapViewModel, ImageView imgLocationPinUp, LatLng riderPosition) {
 
         mapActivity = activity;
         mapViewModel = _mapViewModel;
         mImgLocationPinUp = imgLocationPinUp;
-        if(!isImgLocationPinUpOn)
+        if (!isImgLocationPinUpOn)
             mImgLocationPinUp.setVisibility(View.GONE);
 
         try {
-            MapsInitializer.initialize( mapActivity);
+            MapsInitializer.initialize(mapActivity);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -110,12 +113,12 @@ public class performerMapsUtils {
             @Override
             public void onMapReady(GoogleMap mMap) {
                 googleMap = mMap;
-//                geofireHelper.init(googleMap);
+                geofireHelper.init(googleMap);
 
                 //placesUtils.Init(mapActivity, googleMap, true);
 
-                GoogleMap.OnMarkerClickListener markerClickListener = (GoogleMap.OnMarkerClickListener)mapActivity;
-                if(markerClickListener != null)
+                GoogleMap.OnMarkerClickListener markerClickListener = (GoogleMap.OnMarkerClickListener) mapActivity;
+                if (markerClickListener != null)
                     googleMap.setOnMarkerClickListener(markerClickListener);
                 googleMap.setMinZoomPreference(9f);
                 googleMap.setMaxZoomPreference(17f);
@@ -133,6 +136,16 @@ public class performerMapsUtils {
 
                 googleMap.getUiSettings().setCompassEnabled(false);
                 googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+                if (ActivityCompat.checkSelfPermission(mapActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mapActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
                 googleMap.setMyLocationEnabled(true);
                 googleMap.getUiSettings().setMapToolbarEnabled(false);
 
@@ -174,6 +187,7 @@ public class performerMapsUtils {
                         }
                     }
                 });
+
             }
         });
     }
@@ -336,7 +350,7 @@ public class performerMapsUtils {
                 intent.putExtra("performer_fio", markerMap.get(item)._user.fio);
                 intent.putExtra("performer_phone", markerMap.get(item)._user.tel);
                 intent.putExtra("performer_email", markerMap.get(item)._user.email);
-                intent.putExtra("performer_car", String.format("%s %s", markerMap.get(item)._user.automarka,  markerMap.get(item)._user.automodel).trim());
+                intent.putExtra("performer_car", String.format("%s", markerMap.get(item)._user.automodel).trim());
                 intent.putExtra("performer_car_number", markerMap.get(item)._user.autonumber);
                 if(fromPlace != null)
                     intent.putExtra("from_place", fromPlace);

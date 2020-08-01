@@ -35,8 +35,6 @@ async function setFeedbackAccept(id) {
     await db.collection('feedbacks').doc(id).update('accept', true);
 }
 
-
-
 app.get('/', function(req, res){
     res.render('index', {someinfo: 'hello'});
 })
@@ -121,6 +119,27 @@ app.post('/users', urlencodedParser, function (req, res) {
         });
     }
 })
+
+app.get('/maps', function(req, res) {
+        // carUtils.getCars(db, null).then((cars) => {
+        //     res.render('maps', {cars: cars});
+        // });
+
+        userUtils.getUsersWithPosition(db).then((users) => {
+            res.render('maps', { users4map: users });
+        });
+});
+
+
+app.get('/mapsupdate', function(req, res) {
+    // carUtils.getCars(db, null).then((cars) => {
+    //     res.render('maps', {cars: cars});
+    // });
+
+    userUtils.getUsersWithPosition(db).then((users) => {
+        res.send(users);
+    });
+});
 
 
 app.get('/userorders', function(req, res) {

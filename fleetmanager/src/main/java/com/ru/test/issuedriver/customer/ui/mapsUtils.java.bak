@@ -1,14 +1,11 @@
 package com.ru.test.issuedriver.customer.ui;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.View;
@@ -16,7 +13,6 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
-import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -29,19 +25,15 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.firestore.GeoPoint;
 import com.ru.test.issuedriver.R;
 import com.ru.test.issuedriver.customer.CustomerV2Activity;
 import com.ru.test.issuedriver.customer.ui.map.MapViewModel;
 import com.ru.test.issuedriver.customer.ui.map.imHere;
-import com.ru.test.issuedriver.customer.ui.map.mapGeofireViewModel;
 import com.ru.test.issuedriver.customer.ui.order.OrderActivity;
 import com.ru.test.issuedriver.customer.ui.orders_list.OrdersListViewModel;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.data.place;
 import com.ru.test.issuedriver.data.user;
-import com.ru.test.issuedriver.geofire.geofireCallBacks;
-import com.ru.test.issuedriver.geofire.geofireHelper;
 import com.ru.test.issuedriver.helpers.firestoreHelper;
 import com.ru.test.issuedriver.helpers.mysettings;
 
@@ -52,13 +44,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.Observer;
 
 public class mapsUtils {
     // показывать маркер в центре экрана
     private static boolean isImgLocationPinUpOn = false;
-    private static boolean isDriversClickable = false;
 
     private static final String TAG = "myLogs";
     private static CustomerV2Activity mapActivity;
@@ -66,7 +56,7 @@ public class mapsUtils {
     private static ImageView mImgLocationPinUp;
     private static Marker markerPin;
 
-    private static mapGeofireViewModel mapViewModel;
+    private static MapViewModel mapViewModel;
 
     OrdersListViewModel ordersListViewModel;
     private static final float carZoomLevel = 16f;
@@ -96,13 +86,12 @@ public class mapsUtils {
 
     private static Map<String, markerPair> markerMap = new HashMap<>();
     static LatLng cameraPos;
-
-    public static void Init(CustomerV2Activity activity, MapView mMapView, mapGeofireViewModel _mapViewModel, ImageView imgLocationPinUp) {
+    public static void Init(CustomerV2Activity activity, MapView mMapView, MapViewModel _mapViewModel, ImageView imgLocationPinUp){
 
         mapActivity = activity;
         mapViewModel = _mapViewModel;
         mImgLocationPinUp = imgLocationPinUp;
-        if (!isImgLocationPinUpOn)
+        if(!isImgLocationPinUpOn)
             mImgLocationPinUp.setVisibility(View.GONE);
 
         cameraPos = new LatLng(Double.parseDouble("45.058403"), Double.parseDouble("38.983933"));
@@ -110,14 +99,14 @@ public class mapsUtils {
         try {
             Location lastPos = mysettings.GetPosition();
             if (lastPos != null
-                    && lastPos.getLatitude() > 0)
+                && lastPos.getLatitude() > 0)
                 cameraPos = new LatLng(lastPos.getLatitude(), lastPos.getLongitude());
-        } catch (Exception ex) {
+        } catch (Exception ex){
             Log.e("myError", "0");
         }
 
         try {
-            MapsInitializer.initialize(mapActivity);
+            MapsInitializer.initialize( mapActivity);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -130,25 +119,14 @@ public class mapsUtils {
                 googleMap = mMap;
                 mMapView.onResume();
 
-                geofireHelper.init(googleMap);
-
                 placesUtils.Init(mapActivity, googleMap, true);
 
                 googleMap.setOnMarkerClickListener(mapActivity);
                 googleMap.setMinZoomPreference(16f);
                 googleMap.setMaxZoomPreference(17f);
 
-                if (ActivityCompat.checkSelfPermission(mapActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mapActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
-                }
                 googleMap.setMyLocationEnabled(true);
+
                 try {
                     CameraPosition cameraPosition = new CameraPosition.Builder()
                             .target(cameraPos).zoom(carZoomLevel).build();
@@ -165,8 +143,6 @@ public class mapsUtils {
                     public void callBack(Location location) {
                         setMyPosition(location);
                         googleMap.setMinZoomPreference(5f);
-
-                        mapViewModel.getCarAround(location);
                     }
                 };
                 imHere.init(mapActivity);
@@ -253,74 +229,77 @@ public class mapsUtils {
         }
     }
 
-    private static Map<String, GeoLocation> mapGeohash = new HashMap<>();
 
     private static void observe2performers() {
-
-        geofireCallBacks.callback4geofireItemRecieve = new geofireCallBacks.geofireItemRecieveInterface() {
+        mapViewModel.getUsers().observe(mapActivity, new Observer<List<user>>() {
             @Override
-            public void callback(String key, GeoLocation location) {
+            public void onChanged(List<user> users) {
+//                googleMap.clear();
 
-                geofireCallBacks.callback4AvaibleUserAdd = new geofireCallBacks.AvaibleUserAddInterface() {
-                    @Override
-                    public void callback(user addedUser) {
-                        Handler mHandler = new Handler(Looper.getMainLooper());
-                        mHandler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                setUserMarker(addedUser, new GeoPoint(location.latitude, location.longitude));
-                            }
-                        });
-                    }
-                };
-                mapViewModel.addAvaibleUser2List(key);
+                actualUserList = users;
+
+                refreshCarsOnMap();
             }
-        };
-
-        geofireCallBacks.callback4geofireItemExitRecieve = new geofireCallBacks.geofireItemExitRecieveInterface() {
-            @Override
-            public void callback(String key) {
-
-                String email = mapViewModel.removeAvaibleUserFromList(key);
-                if(email == null)
-                    return;
-                Handler mHandler = new Handler(Looper.getMainLooper());
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        removeUserMarker(email);
-                    }
-                });
-
-            }
-        };
-
-
-//        callBacks.callback4geofireFinishRecieve= new callBacks.geofireFinishRecieveInterface() {
-//            @Override
-//            public void callback() {
-//                GeoLocation tmp;
-//                for(user item: mapViewModel.getUsers().getValue()) {
-//                    tmp = mapGeohash.get(item.UUID);
-//                    if (mapGeohash.containsKey(item.UUID)) {
-//                        item.position = new GeoPoint(tmp.latitude, tmp.longitude);
-//                        setUserMarker(item, new GeoPoint(tmp.latitude, tmp.longitude));
-//                    }
-//                }
-//             }
-//        };
+        });
     }
 
-    private static void removeUserMarker(String email) {
-        if (markerMap.containsKey(email)) {
-            markerMap.get(email).marker.setVisible(false);
-            markerMap.get(email).marker.remove();
-            markerMap.remove(email);
+    public static void refreshCarsOnMap() {
+        if(actualUserList == null)
+            return;
+
+        Map<String, String> cars = new HashMap<>();
+        Map<String, String> cars4delete = new HashMap<>();
+
+
+        for (user item : actualUserList) {
+            if (item.position == null)
+                continue;
+
+            if(mapViewModel.isPerformerVisibleToCurrentCustomer(item)) {
+                setUserMarker(item);
+                cars.put(item.email, "");
+            }
+        }
+
+        /// remove not liquid cars from map
+        for (String car: markerMap.keySet()) {
+            if(!cars.containsKey(car)){
+                cars4delete.put(car, "");
+            }
+        }
+
+        for(String car: cars4delete.keySet()){
+            markerMap.get(car).marker.remove();
+            markerMap.remove(car);
+        }
+
+
+
+        // проверяем актуальность Водителей
+        if(markerMap.size() != 0) {
+            for (Object key :  markerMap.keySet().toArray()) {
+                // получаем следующий маркер
+                boolean forDelete = true;
+                // проходим по списку пользователей (Водителей)
+                for (user item : actualUserList) {
+                    if (item.email.equals(markerMap.get(key)._user.email)) {     // если водитель все еще в актуальном состоянии
+                        forDelete = false;
+                        break;
+                    }
+                }
+
+                if (forDelete) {
+//                        markerMap.get(key).markerOption.visible(false);
+//                        markerMap.get(key).marker.setVisible(false);
+                    markerMap.get(key).marker.remove();
+                    markerMap.remove(key);
+                }
+            }
         }
     }
 
     // Визуализация маркеров машин
-    private static void setUserMarker(user item, GeoPoint pos) {
+    private static void setUserMarker(user item) {
         if (markerMap.containsKey(item.email)) {
             // если маркер пользователя есть на карте
             if(zoomLevel <= dotZoomLevel){
@@ -345,10 +324,10 @@ public class mapsUtils {
                 markerMap.get(item.email).marker = BusMarkerOK;
                 markerMap.get(item.email)._user = item;
             } else {
-                if (pos != null) {
-                    markerMap.get(item.email).markerOption.position(new LatLng(pos.getLatitude(), pos.getLongitude()));
+
+                if (item.position != null) {
                     animateMarker(item, markerMap.get(item.email).marker,
-                            new LatLng(pos.getLatitude(), pos.getLongitude()),
+                            new LatLng(item.position.getLatitude(), item.position.getLongitude()),
                             false,
                             mapViewModel.isOrderInActiveState(item.email), true); // order - активный
                 }
@@ -356,7 +335,7 @@ public class mapsUtils {
         }
         else {
             // создать новый маркер
-            setPerformerPosition(item, pos);
+            setPerformerPosition(item);
         }
     }
 
@@ -427,9 +406,9 @@ public class mapsUtils {
                 item.marker.setVisible(false);
                 item.marker.remove();
                 BitmapDescriptor car = getBitmapDescriptor(item._user);
-//                item.markerOption = new MarkerOptions().position(
-//                        new LatLng(item._user.position.getLatitude(), item._user.position.getLongitude()))
-//                        .title(item._user.fio);
+                item.markerOption = new MarkerOptions().position(
+                        new LatLng(item._user.position.getLatitude(), item._user.position.getLongitude()))
+                        .title(item._user.fio);
                 item.markerOption.icon(car);
 
                 Marker BusMarkerOK = googleMap.addMarker(item.markerOption);
@@ -459,14 +438,14 @@ public class mapsUtils {
         return getBitmapDescriptor(carId, size, size);
     }
 
-    private static void setPerformerPosition(user item, GeoPoint pos) {
+    private static void setPerformerPosition(user item) {
         if (googleMap == null
                 || item.position == null) {
             return;
         }
 
         MarkerOptions markerBus = new MarkerOptions().position(
-                new LatLng(pos.getLatitude(), pos.getLongitude()))
+                new LatLng(item.position.getLatitude(), item.position.getLongitude()))
                 .flat(true)
                 .title(item.fio);
 
@@ -557,8 +536,6 @@ public class mapsUtils {
 
 
     public static boolean onMarkerClick(Marker marker, place fromPlace, place toPlace) {
-if(!isDriversClickable)
-            return false;
         for (String item : markerMap.keySet()) {
             if (markerMap.get(item).marker.equals(marker)) {
                 if (markerMap.get(item)._user.is_busy())

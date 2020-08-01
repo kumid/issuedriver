@@ -2,7 +2,7 @@ let carsLocalCollection = []
 let listeners = []    // list of listeners
 let start = null      // start position of listener
 let end = null        // end position of listener
-const rowsInPage = 3;
+const rowsInPage = 10;
 
 module.exports.getCars = async function getCars(db, next) {
     // const snapshot = await db.collection('cars').get();

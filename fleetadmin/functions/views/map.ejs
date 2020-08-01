@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Карта</title>
+    <script>
+        function setmap(userscollection) {
+            var map;
+
+            DG.then(function () {
+                map = DG.map('map', {
+                    center: [53.598290, 34.336078],
+                    zoom: 13
+                });
+                userscollection.forEach(function (obj) {
+                    //console.log(obj.fio);
+                    // DG.marker(obj.position).addTo(map).bindPopup(obj.fio);;
+                    DG.marker([53.598290, 34.336078]).addTo(map).bindPopup(obj);
+                });
+
+            });
+        }
+
+        function setdefaultmap() {
+            var map;
+
+            DG.then(function () {
+                map = DG.map('map', {
+                    center: [53.598290, 34.336078],
+                    zoom: 13
+                });
+            });
+        }
+    </script>
+
+
+</head>
+<body>
+    <% users4map.foreach(function (item) {%>
+        <h1><%item.fio%></h1>
+    <%});%>
+</body>
+</html>
+
+
+
+<%let i = 0;
+cars.forEach(function(item) {
+%>
+<h1><%=item.fio%></h1>
+<р2><%=item.position%></р2>
+
+<%});%>
+
+<%
+users4map.forEach(function (obj) {%>
+    DG.marker([53.275973, 34.317248]).addTo(map).bindPopup('Вы кликнули по мне!');
+<%});%>
+

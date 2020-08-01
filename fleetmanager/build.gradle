@@ -109,4 +109,7 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-database:6.2.1'
 
     implementation 'com.github.salahamassi:android-mask-date-editText:v1.02'
+
+
+    implementation 'com.firebase:geofire-java:3.0.0'
 }

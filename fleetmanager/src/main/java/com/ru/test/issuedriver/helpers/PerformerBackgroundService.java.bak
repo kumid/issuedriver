@@ -38,7 +38,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.ru.test.issuedriver.data.user;
 import com.ru.test.issuedriver.data.user_position;
-import com.ru.test.issuedriver.geofire.geofireHelper;
 import com.ru.test.issuedriver.helpers.mysettings;
 
 import java.sql.Timestamp;
@@ -74,7 +73,7 @@ public class PerformerBackgroundService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        geofireHelper.init(null);
+
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         database = FirebaseDatabase.getInstance();
@@ -255,9 +254,6 @@ public class PerformerBackgroundService extends Service {
 //                            Log.e(TAG, "Error");
 //                        }
 //                    });
-            user user = mysettings.GetUser();
-            if(user != null)
-                geofireHelper.setLocation(user.UUID, userLocation.getLatitude(), userLocation.getLongitude());
 
             DocumentReference locationRef = FirebaseFirestore.getInstance()
                     .collection("users")

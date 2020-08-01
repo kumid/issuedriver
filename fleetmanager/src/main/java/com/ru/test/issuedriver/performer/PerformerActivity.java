@@ -39,6 +39,7 @@ import com.ru.test.issuedriver.customer.ui.orders_list.OrdersListViewModel;
 import com.ru.test.issuedriver.data.order;
 import com.ru.test.issuedriver.data.place;
 import com.ru.test.issuedriver.data.user;
+import com.ru.test.issuedriver.geofire.geofireHelper;
 import com.ru.test.issuedriver.helpers.MyBroadcastReceiver;
 import com.ru.test.issuedriver.helpers.fsm.sender;
 import com.ru.test.issuedriver.helpers.googleAuthManager;
@@ -96,8 +97,9 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
         setupNavigation();
 
         initViewModels();
+        geofireHelper.init(null);
 
-       // setDefaultUserState();
+        // setDefaultUserState();
 
 //        if(getIntent().hasExtra("object")){
 //            String obj = getIntent().getStringExtra("object");

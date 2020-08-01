@@ -28,7 +28,6 @@ import com.google.android.material.navigation.NavigationView;
 import com.ru.test.issuedriver.MainViewModel;
 import com.ru.test.issuedriver.customer.ui.map.mapGeofireViewModel;
 import com.ru.test.issuedriver.customer.ui.map.placesAdapter;
-import com.ru.test.issuedriver.customer.ui.mapsUtils;
 import com.ru.test.issuedriver.data.place;
 import com.ru.test.issuedriver.helpers.callBacks;
 import com.ru.test.issuedriver.helpers.firestoreHelper;
@@ -129,15 +128,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
             }
         });
 
-//        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-//        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
-//        NavigationUI.setupWithNavController(navigationView, navController);
-//        navController.addOnDestinationChangedListener(new NavController.OnDestinationChangedListener() {
-//            @Override
-//            public void onDestinationChanged(@NonNull NavController controller, @NonNull NavDestination destination, @Nullable Bundle arguments) {
-//                Log.d(TAG, "");
-//            }
-//        });
+
         initViewModels();
 
         mMapView = (MapView) findViewById(R.id.mapView);
@@ -145,12 +136,12 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
 
         mImgLocationPinUp = findViewById(R.id.imgLocationPinUp);
 
-        mapsUtils.Init(CustomerV2Activity.this, mMapView, mapViewModel, mImgLocationPinUp);
+        customerMapsUtils.Init(CustomerV2Activity.this, mMapView, mapViewModel, mImgLocationPinUp);
 
         ImageView mMap_plus = findViewById(R.id.map_plus);
         ImageView mMap_minus = findViewById(R.id.map_minus);
-        mMap_plus.setOnClickListener(mapsUtils.clickZoom);
-        mMap_minus.setOnClickListener(mapsUtils.clickZoom);
+        mMap_plus.setOnClickListener(customerMapsUtils.clickZoom);
+        mMap_minus.setOnClickListener(customerMapsUtils.clickZoom);
 
 
             final AutocompleteSupportFragment autocompleteSupportFragment =
@@ -332,24 +323,14 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
             @Override
             public void onChanged(List<order> orders) {
                 mapViewModel.setOrders(orders);
-//                mapsUtils.refreshCarsOnMap();
             }
         });
 
-        mapViewModel.setOrders(ordersListViewModel.getNotifications().getValue());
-        callBacks.callback4orderListChangedInterface = new callBacks.orderListChangedInterface() {
-            @Override
-            public void callback() {
-//                mapsUtils.refreshCarsOnMap();
-            }
-        };
     }
-
-
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        return mapsUtils.onMarkerClick(marker, imHere.getMyPlace(), mainViewModel.currentPlace);
+        return customerMapsUtils.onMarkerClick(marker, imHere.getMyPlace(), mainViewModel.currentPlace);
     }
 
     public static final int PERMISSIONS= 123;

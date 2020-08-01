@@ -1,5 +1,3 @@
-
-
 let usersLocalCollection = []
 let usersLocalCollectionMode = true;
 let listeners = []    // list of listeners
@@ -42,6 +40,35 @@ module.exports.getUsers = async function getUsers(db, accept, next) {
 
     return usersLocalCollection;
     // return snapshots;
+}
+
+module.exports.getUsersWithPosition = async function getUsersWithPosition(db) {
+
+    let users4map = [];
+
+    let query = db.collection('users').where('is_performer', '==', true)
+                                                  .where('accept', '==', true);
+    const snapshots = await query.get();
+    snapshots.forEach(function(childSnapshot) {
+        let obj = getObjectFromUser4MapSnapshot(childSnapshot);
+        users4map.push(obj);
+    });
+
+    return users4map;
+    // // return snapshots;
+}
+function getObjectFromUser4MapSnapshot(childSnapshot) {
+    let item = childSnapshot.data();
+    const obj = {
+        'key': childSnapshot.id,
+        'fio': item.fio,
+        'email': childSnapshot.id,
+        'tel': item.tel,
+        'UUID': item.UUID,
+        'photoPath': item.photoPath,
+        'position': [item.position.latitude, item.position.longitude]
+    };
+    return obj;
 }
 
 module.exports.getUserOrders = async function getUserOrders(admin, db, id, dateStart, dateEnd) {
