@@ -340,7 +340,7 @@ public class CustomerV2Activity extends MyActivity implements NavigationView.OnN
         callBacks.callback4orderListChangedInterface = new callBacks.orderListChangedInterface() {
             @Override
             public void callback() {
-//                mapsUtils.refreshCarsOnMap();
+                mapsUtils.refreshCarsOnMap();
             }
         };
     }

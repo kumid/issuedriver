@@ -3,6 +3,7 @@ package com.ru.test.issuedriver.data;
 import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.Exclude;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import java.util.UUID;
 
@@ -35,6 +36,10 @@ public class user {
     public int state;
     public String fcmToken;
     public String photoPath;
+
+    @Exclude
+    public ListenerRegistration listenerRegistration;
+
     @Exclude
     public boolean is_busy() { return state != 0; }
     public user() {}

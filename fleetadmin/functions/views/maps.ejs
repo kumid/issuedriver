@@ -19,9 +19,9 @@
         function readUserList() {
             $.ajax({
                 url: "/mapsupdate",
-                timeout: 10000,
+                timeout: 3000,
                 success: function(users) {
-
+                    console.log(users);
                     users.forEach(function (item) {
                         if (markers.has(item.key)) {
                             markers.get(item.key).setLatLng(item.position);
@@ -33,7 +33,7 @@
                 },
                 error: function() {
                     clearTimeout(readUserListTimeout)
-                    setTimeout(readUserList, 10000)
+                    setTimeout(readUserList, 3000)
                 }
             });
         }

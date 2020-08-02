@@ -58,7 +58,7 @@ import androidx.lifecycle.Observer;
 public class mapsUtils {
     // показывать маркер в центре экрана
     private static boolean isImgLocationPinUpOn = false;
-    private static boolean isDriversClickable = false;
+    private static boolean isDriversClickable = true;
 
     private static final String TAG = "myLogs";
     private static CustomerV2Activity mapActivity;
@@ -295,6 +295,26 @@ public class mapsUtils {
             }
         };
 
+        geofireCallBacks.callback4UserChangeStateInterface = new geofireCallBacks.UserChangeStateInterface() {
+            @Override
+            public void callback(user changedUser) {
+                if(markerMap.containsKey(changedUser.email)){
+                    markerMap.get(changedUser.email).marker.setVisible(false);
+                    markerMap.get(changedUser.email).marker.remove();
+
+                    BitmapDescriptor car = getBitmapDescriptor(changedUser);
+
+                    markerMap.get(changedUser.email).markerOption = new MarkerOptions().position(
+                            new LatLng(changedUser.position.getLatitude(), changedUser.position.getLongitude()))
+                            .title(changedUser.fio);
+                    markerMap.get(changedUser.email).markerOption.icon(car);
+
+                    Marker BusMarkerOK = googleMap.addMarker(markerMap.get(changedUser.email).markerOption);
+                    markerMap.get(changedUser.email).marker = BusMarkerOK;
+                    markerMap.get(changedUser.email)._user = changedUser;
+                }
+            }
+        };
 
 //        callBacks.callback4geofireFinishRecieve= new callBacks.geofireFinishRecieveInterface() {
 //            @Override
@@ -626,5 +646,63 @@ if(!isDriversClickable)
         return brng;
 
 
+    }
+
+
+//////////////////////////////////
+
+    public static void refreshCarsOnMap() {
+
+        if (true)
+            return;
+
+
+        Map<String, String> cars = new HashMap<>();
+        Map<String, String> cars4delete = new HashMap<>();
+        for (user item : actualUserList) {
+            if (item.position == null)
+                continue;
+//            if(mapViewModel.isPerformerVisibleToCurrentCustomer(item)) {
+//                setUserMarker(item);
+//                cars.put(item.email, "");
+//            }
+        }
+
+        /// remove not liquid cars from map
+        for (String car : markerMap.keySet()) {
+            if (!cars.containsKey(car)) {
+                cars4delete.put(car, "");
+            }
+        }
+
+        for (String car : cars4delete.keySet()) {
+            markerMap.get(car).marker.remove();
+            markerMap.remove(car);
+        }
+// проверяем актуальность Водителей
+        if (markerMap.size() != 0) {
+            for (Object key : markerMap.keySet().toArray()) {
+                // получаем следующий маркер
+                boolean forDelete = true;
+                // проходим по списку пользователей (Водителей)
+                for (user item : actualUserList) {
+                    if (item.email.equals(markerMap.get(key)._user.email)) {     // если водитель все еще в актуальном состоянии
+                        forDelete = false;
+                        break;
+                    }
+                    if (forDelete) {
+//                        markerMap.get(key).markerOption.visible(false);
+//                        markerMap.get(key).marker.setVisible(false);
+                        markerMap.get(key).marker.remove();
+                        markerMap.remove(key);
+                    }
+                }
+
+
+                //////////////////////////////////
+
+
+            }
+        }
     }
 }

@@ -29,6 +29,11 @@ public class geofireCallBacks {
     public interface AvaibleUserAddInterface {
         void callback(user addedUser);
     }
+
+    public static UserChangeStateInterface callback4UserChangeStateInterface;
+    public interface UserChangeStateInterface {
+        void callback(user changedUser);
+    }
 }
 
 

@@ -1,15 +1,18 @@
 package com.ru.test.issuedriver.customer.ui.map;
 
 import android.location.Location;
+import android.os.Message;
 import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.ru.test.issuedriver.data.order;
@@ -168,6 +171,44 @@ public class mapGeofireViewModel extends ViewModel {
                                 if(geofireCallBacks.callback4AvaibleUserAdd!=null)
                                     geofireCallBacks.callback4AvaibleUserAdd.callback(curr);
                                 Log.d(TAG, document.getId() + " => " + document.getData());
+
+                                ListenerRegistration reg = db.collection("users")
+                                        .whereEqualTo("UUID", key)
+                                        .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                                            @Override
+                                            public void onEvent(@Nullable QuerySnapshot snapshots,
+                                                                @Nullable FirebaseFirestoreException e) {
+                                                if (e != null) {
+                                                    Log.w("TAG", "listen:error", e);
+                                                    return;
+                                                }
+
+                                                for (DocumentChange dc : snapshots.getDocumentChanges()) {
+                                                    switch (dc.getType()) {
+                                                        case ADDED:
+                                                            Log.d("TAG", "New Msg: " + dc.getDocument().toObject(Message.class));
+                                                            break;
+                                                        case MODIFIED:
+                                                            Log.d("TAG", "Modified Msg: " + dc.getDocument().toObject(Message.class));
+                                                            user changedUser = dc.getDocument().toObject(user.class);
+                                                            if(curr.state != changedUser.state
+                                                                    && geofireCallBacks.callback4UserChangeStateInterface != null){
+                                                                curr.state = changedUser.state;
+                                                                geofireCallBacks.callback4UserChangeStateInterface.callback(changedUser);
+                                                            }
+
+                                                            break;
+                                                        case REMOVED:
+                                                            Log.d("TAG", "Removed Msg: " + dc.getDocument().toObject(Message.class));
+                                                            break;
+                                                    }
+                                                }
+
+                                            }
+                                        });
+
+                                        curr.listenerRegistration = reg;
+
                             }
                         } else {
                             Log.w(TAG, "Error getting documents.", task.getException());
@@ -181,6 +222,7 @@ public class mapGeofireViewModel extends ViewModel {
                         Log.w(TAG, "Error getting documents.");
                     }
                 });
+
 
     }
 
@@ -200,4 +242,6 @@ public class mapGeofireViewModel extends ViewModel {
 
         return forRemove.email;
     }
+
+
 }

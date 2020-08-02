@@ -57,7 +57,7 @@ public class customerMapsUtils {
     public static boolean isImgLocationPinUpOn = false;
 
     //
-    private static boolean isDriversClickable = false;
+    private static boolean isDriversClickable = true;
 
     private static final String TAG = "myLogs";
     private static AppCompatActivity mapActivity;
@@ -429,7 +429,7 @@ if(zoom != 0f) {
         int size;
 
         if(zoomLevel >= carZoomLevel){
-            carId = item.is_busy() ? R.drawable.car_red2 : R.drawable.car_yellow1;
+            carId = item.is_busy() ? R.drawable.car_red2 : R.drawable.car1;
             size = 100;
         } else if(zoomLevel >= dotZoomLevel){
             carId = R.drawable.dot;
