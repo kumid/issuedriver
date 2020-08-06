@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "576003693463",
+    "firebase_url": "https://fleetm2.firebaseio.com",
+    "project_id": "fleetm2",
+    "storage_bucket": "fleetm2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:576003693463:android:75206127628a36108802d2",
+        "android_client_info": {
+          "package_name": "com.ru.issuedriver.fleetm2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "576003693463-5nqdvvte5ulmsjievga76ddflqriruqh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ru.issuedriver.fleetm2",
+            "certificate_hash": "8f1920f5f80ef6e5011dc86fcd96f3ae8a46087e"
+          }
+        },
+        {
+          "client_id": "576003693463-fbeuherk2alkur0q8h88o34lpub19i2g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAkkC6ne8Hh539nzrjc6mSsnoRbajVh5iw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "576003693463-fbeuherk2alkur0q8h88o34lpub19i2g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <title>Fleet management</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+</head>
+    <body>
+
+    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+        <h5 class="my-0 mr-md-auto font-weight-normal">Fleet management</h5>
+        <nav class="my-2 my-md-0 mr-md-3">
+            <a class="btn btn-outline-primary" href="/">Назад</a>
+        </nav>
+        <a class="btn btn-outline-primary" href="#" hidden>Sign up</a>
+    </div>
+        <form method="post" action="/options">
+
+            <div class="container" >
+                <div class="row">
+                    <div class="col">
+                        <h2>Настройки отправки сообщений</h2>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="inputLogin">Логин отправителя</label>
+                            <input type="email" class="form-control" id="inputLogin" name="login" value="<%=current_options.sender_login%>">
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="inputPass">Пароль отправителя</label>
+                            <input type="text" class="form-control" id="inputPass" name="pass" value="<%=current_options.sender_pass%>">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+                            <label for="inputReciever">Email завгара</label>
+                            <input type="email" class="form-control" id="inputReciever" name="loginzavgar" value="<%=current_options.zavgar_login%>">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <button type="submit" class="btn btn-primary" name="action" value="Update">Сохранить</button>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+
+    </body>
+</html>
+
+

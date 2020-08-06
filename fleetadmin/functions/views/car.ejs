@@ -15,143 +15,139 @@
     </style>
 
 </head>
-<body>
+    <body>
 
-<div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
-    <h5 class="my-0 mr-md-auto font-weight-normal">Fleet management</h5>
-    <nav class="my-2 my-md-0 mr-md-3">
-        <a class="p-2 text-dark" href="/users">Пользователи</a>
-        <a class="p-2 text-dark" href="/cars">Автомашины</a>
-        <a class="p-2 text-dark" href="/feedback">Сообщения</a>
-        <a class="p-2 text-dark" href="/texservice" >Техобслуживание</a>
-        <a class="p-2 text-dark" href="/shina" >Шиномонтаж</a>
-    </nav>
-    <a class="btn btn-outline-primary" href="#">Sign up</a>
-</div>
-                <%if(current_car.key == '') {%>
-                        <form method="post" action="/cars/newcar">
-                    <%} else {%>
-                            <form method="post" action="/cars">
-                    <%}%>
-                    <div class="container" >
-                        <div class="row">
-                            <div class="col-8">
-                                <div class="container" >
-                                            <div class="row">
-                                                <div class="col">
-                                                    <h2><%=(current_car.key == '' ? 'Новая автомашина' : 'Изменение данных автомашины')%></h2>
-                                                </div>
-                                            </div>
+    <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+        <h5 class="my-0 mr-md-auto font-weight-normal">Fleet management</h5>
+        <nav class="my-2 my-md-0 mr-md-3">
+            <a class="p-2 text-dark" href="/users">Пользователи</a>
+            <a class="p-2 text-dark" href="/cars">Автомашины</a>
+            <a class="p-2 text-dark" href="/feedback">Сообщения</a>
+            <a class="p-2 text-dark" href="/texservice" >Техобслуживание</a>
+            <a class="p-2 text-dark" href="/shina" >Шиномонтаж</a>
+        </nav>
+        <a class="btn btn-outline-primary" href="#">Sign up</a>
+    </div>
+    <%if(current_car.key == '') {%>
+        <form method="post" action="/cars/newcar">
+        <%} else {%>
+        <form method="post" action="/cars">
+            <%}%>
+            <div class="container" >
+                <div class="row">
+                    <div class="col-8">
+                        <div class="container" >
+                            <div class="row">
+                                <div class="col">
+                                    <h2><%=(current_car.key == '' ? 'Новая автомашина' : 'Изменение данных автомашины')%></h2>
+                                </div>
+                            </div>
 
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <label for="inputGos_number">Госномер</label>
-                                                <%if(current_car.key == '') {%>
-                                                <input type="text" class="form-control" id="inputGos_number" name="gos_number" value="<%=current_car.gos_number%>">
-                                                     <%} else {%>
-                                                <input type="text" class="form-control" id="inputGos_number" name="gos_number" value="<%=current_car.gos_number%>" readonly>
-                                                        <%}%>
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <label for="inputVIN">ВИН</label>
-                                                <input type="text" class="form-control" id="inputVIN" name="vin" value="<%=current_car.vin%>">
-                                            </div>
-                                        </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputGos_number">Госномер</label>
+                                        <%if(current_car.key == '') {%>
+                                        <input type="text" class="form-control" id="inputGos_number" name="gos_number" value="<%=current_car.gos_number%>">
+                                        <%} else {%>
+                                        <input type="text" class="form-control" id="inputGos_number" name="gos_number" value="<%=current_car.gos_number%>" readonly>
+                                        <%}%>
                                     </div>
-
-
-                                    <div class="row">
-
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <label for="inputMarka">Марка</label>
-                                                <input type="text" class="form-control" id="inputMarka" name="marka" value="<%=current_car.marka%>">
-                                            </div>
-                                        </div>
-
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <label for="inputModel">Модель</label>
-                                                <input type="text" class="form-control" id="inputModel" name="model" value="<%=current_car.model%>">
-                                            </div>
-                                        </div>
-
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputVIN">ВИН</label>
+                                        <input type="text" class="form-control" id="inputVIN" name="vin" value="<%=current_car.vin%>">
                                     </div>
+                                </div>
+                            </div>
 
+                            <div class="row">
 
-                                    <div class="row">
-
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <label for="inputPTS">ПТС</label>
-                                                <input type="text" class="form-control" id="inputPTS" name="pts" value="<%=current_car.pts%>">
-                                            </div>
-                                        </div>
-
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <label for="inputSTS">СТС</label>
-                                                <input type="text" class="form-control" id="inputSTS" name="sts" value="<%=current_car.sts%>">
-                                            </div>
-                                        </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputMarka">Марка</label>
+                                        <input type="text" class="form-control" id="inputMarka" name="marka" value="<%=current_car.marka%>">
                                     </div>
+                                </div>
 
-
-
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <label for="inputOsago_number">ОСАГО</label>
-                                                <input type="text" class="form-control" id="inputOsago_number" name="osago_number" value="<%=current_car.osago_number%>">
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <label for="inputOsago_start_date">Дата ОСАГО</label>
-                                                <input  type="date" class="form-control" id="inputOsago_start_date" name="osago_start_date" value="<%=current_car.osago_start_date%>">
-                                            </div>
-                                        </div>
-
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <label for="inputOsago_expire_date">Дата истечения ОСАГО</label>
-                                                <input type="date" class="form-control" id="inputOsago_expire_date" name="osago_expire_date" value="<%=current_car.osago_expire_date%>">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <label for="inputTexservice_start_date">Дата техосмотра</label>
-                                                <input type="date" class="form-control" id="inputTexservice_start_date" name="texservice_start_date" value="<%=current_car.texservice_start_date%>">
-                                            </div>
-                                        </div>
-
-                                        <div class="col">
-                                            <div class="form-group">
-                                                <label for="inputTexservice_expire_date">Дата истечения техосмотра</label>
-                                                <input type="date" class="form-control" id="inputTexservice_expire_date" name="texservice_expire_date" value="<%=current_car.texservice_expire_date%>">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col">
-                                            <button type="submit" class="btn btn-primary" name="action" value="Update">Сохранить</button>
-                                        </div>
-                                        <div class="col">
-                                            <button type="submit" class="btn btn-primary" name="action" value="Delete" style="float: right;">Удалить</button>
-                                        </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputModel">Модель</label>
+                                        <input type="text" class="form-control" id="inputModel" name="model" value="<%=current_car.model%>">
                                     </div>
                                 </div>
 
                             </div>
-                        </div>
-                    </div>
 
-                </form>
+                            <div class="row">
+
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputPTS">ПТС</label>
+                                        <input type="text" class="form-control" id="inputPTS" name="pts" value="<%=current_car.pts%>">
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputSTS">СТС</label>
+                                        <input type="text" class="form-control" id="inputSTS" name="sts" value="<%=current_car.sts%>">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputOsago_number">ОСАГО</label>
+                                        <input type="text" class="form-control" id="inputOsago_number" name="osago_number" value="<%=current_car.osago_number%>">
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputOsago_start_date">Дата ОСАГО</label>
+                                        <input  type="date" class="form-control" id="inputOsago_start_date" name="osago_start_date" value="<%=current_car.osago_start_date%>">
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputOsago_expire_date">Дата истечения ОСАГО</label>
+                                        <input type="date" class="form-control" id="inputOsago_expire_date" name="osago_expire_date" value="<%=current_car.osago_expire_date%>">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputTexservice_start_date">Дата техосмотра</label>
+                                        <input type="date" class="form-control" id="inputTexservice_start_date" name="texservice_start_date" value="<%=current_car.texservice_start_date%>">
+                                    </div>
+                                </div>
+
+                                <div class="col">
+                                    <div class="form-group">
+                                        <label for="inputTexservice_expire_date">Дата истечения техосмотра</label>
+                                        <input type="date" class="form-control" id="inputTexservice_expire_date" name="texservice_expire_date" value="<%=current_car.texservice_expire_date%>">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <button type="submit" class="btn btn-primary" name="action" value="Update">Сохранить</button>
+                                </div>
+                                <div class="col">
+                                    <button type="submit" class="btn btn-primary" name="action" value="Delete" style="float: right;">Удалить</button>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </form>
 
     </body>
 </html>

@@ -10,6 +10,7 @@ const texservice = require('./texserviceUtils');
 const shina = require('./shinaUtils');
 const userUtils = require('./userUtils');
 const carUtils = require('./carUtils');
+const myutils = require('./utils');
 
 const app = express();
 app.engine('ejs', require('ejs-locals'))
@@ -449,8 +450,61 @@ app.post('/cars', urlencodedParser, function (req, res) {
     }
 })
 
-exports.app = functions.https.onRequest(app);
+app.get('/options', async function(req, res){
+    // let current_options = myutils.getOptions(db);
+    console.log('functions - getOptions:', '1');
+    let sender = await db.collection('options').doc('sender').get()
+        .catch(function (exception) {
+            console.log('functions - getOptions:', exception.toString());
+        });
+    console.log('functions - getOptions:', '2');
 
+    let login, pass, zavgar;
+
+    if (!sender.exists) {
+        login = '';
+        pass = '';
+        console.log('functions - getOptions:', 'No docs');
+
+    } else {
+        login = sender.data().login;
+        pass = sender.data().pass;
+        console.log('functions - getOptions:', '3');
+    }
+
+
+    let reciever = await db.collection('options').doc('reciever').get();
+    console.log('functions - getOptions:', '4');
+
+    if (!reciever.exists) {
+        zavgar = '';
+        console.log('functions - getOptions:', 'no doc zavgar');
+
+    } else {
+        zavgar = reciever.data().zavgar;
+        console.log('functions - getOptions:', '5');
+    }
+
+    console.log('functions - getOptions:', login + '-' + pass +'-'+zavgar);
+    console.log('functions - getOptions:', 'OK');
+
+    let current_options =  {
+        sender_login: login,
+        sender_pass: pass,
+        zavgar_login: zavgar
+    };
+
+    res.render('options', {current_options: current_options});
+});
+
+app.post('/options', urlencodedParser, function (req, res) {
+    if(!req.body) return res.sendStatus(400);
+    myutils.updateOptions(db, req.body).then(r => {
+            res.redirect('/');
+        });
+});
+
+exports.app = functions.https.onRequest(app);
 
 // Create a new function which is triggered on changes to /status/{uid}
 // Note: This is a Realtime Database trigger, *not* Cloud Firestore.
@@ -573,3 +627,32 @@ exports.onOrderStateChanged = functions.firestore
 
     });
 
+
+// let exp = false;
+
+exports.checkCarDocsLiquid = functions.pubsub
+    // .schedule('every 1 minutes') //
+    .schedule('every day 09:00')
+    .timeZone('Europe/Moscow')
+    .onRun(async _ctx => {
+        // try {
+        //     const topStories = await getTopStories()
+        //
+        //     await sendNewsletter(topStories, [
+        //         EMAILS.daily,
+        //         EMAILS.two_daily,
+        //         EMAILS.three_daily,
+        //     ])
+        // } catch (error) {
+        //     console.error(error)
+        //     res.status(500).send(error)
+        // }
+
+        // if(exp)
+        //     return ;
+        // exp = true;
+
+        myutils.checkCarDocLiquide(db);
+        return null;
+
+    });
