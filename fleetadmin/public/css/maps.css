@@ -1,0 +1,14 @@
+.container {
+    width:100%;
+    height: 100%;
+}
+
+#panel {
+    padding: 10px;
+    font-weight: bold;
+}
+#map {
+
+    width:1200px;
+    height:800px;
+}

@@ -66,7 +66,8 @@ function getObjectFromUser4MapSnapshot(childSnapshot) {
         'tel': item.tel,
         'UUID': item.UUID,
         'photoPath': item.photoPath,
-        'position': [item.position.latitude, item.position.longitude]
+        'position': [item.position.latitude, item.position.longitude],
+        'state': item.state
     };
     return obj;
 }

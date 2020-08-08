@@ -14,7 +14,6 @@
 
     <script type="text/javascript">
 
-
         var readUserListTimeout;
 
         function readUserList() {
@@ -23,27 +22,9 @@
                 timeout: 3000,
                 success: function(users) {
                     console.log(users);
-
-                    let myCar;
                     users.forEach(function (item) {
-                        if(item.state == 0)
-                            myCar = DG.icon({
-                                iconUrl: '/img/car.png',
-                                iconSize: [36, 36]
-                            });
-                        else
-                            myCar = DG.icon({
-                                iconUrl: '/img/car_busy.png',
-                                iconSize: [36, 36]
-                            });
-
                         if (markers.has(item.key)) {
                             markers.get(item.key).setLatLng(item.position);
-                            markers.get(item.key).setIcon(myCar);
-                            } else {
-                            newMarker = DG.marker([item.position], {icon: myCar})
-                                .addTo(map).bindPopup(item.fio);
-                            markers.set(item.key, newMarker);
                         }
                     });
 
@@ -69,12 +50,8 @@
                 zoom: oldZoom
             });
 
-            const freeCar = DG.icon({
+            myCar = DG.icon({
                 iconUrl: '/img/car.png',
-                iconSize: [36, 36]
-            });
-            const busyCar = DG.icon({
-                iconUrl: '/img/car_busy.png',
                 iconSize: [36, 36]
             });
 
@@ -85,22 +62,9 @@
 
             let newMarker;
             <% for(var i=0; i<users4map.length;i++) {%>
-                <%if(users4map[i].state == 0) {%>
-                newMarker = DG.marker([<%=users4map[i].position%>], {icon: freeCar})
-                    .addTo(map).bindPopup("<%=users4map[i].fio%>");
-                markers.set("<%=users4map[i].key%>", newMarker);
-                newMarker.on('click', function(e) {
-                    alert("<%=users4map[i].fio%>");
-                } );
-                <%} else {%>
-                newMarker = DG.marker([<%=users4map[i].position%>], {icon: busyCar})
-                    .addTo(map).bindPopup("<%=users4map[i].fio%>");
-            newMarker.on('click', function(e) {
-                alert("<%=users4map[i].fio%>");
-            } );
-                markers.set("<%=users4map[i].key%>", newMarker);
-                <%}%>
-
+                 newMarker = DG.marker([<%=users4map[i].position%>], {icon: myCar})
+                        .addTo(map).bindPopup("<%=users4map[i].fio%>");
+                 markers.set("<%=users4map[i].key%>", newMarker);
             <%} %>
 
             $(readUserList);
