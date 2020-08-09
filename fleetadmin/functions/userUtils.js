@@ -60,14 +60,15 @@ module.exports.getUsersWithPosition = async function getUsersWithPosition(db) {
 function getObjectFromUser4MapSnapshot(childSnapshot) {
     let item = childSnapshot.data();
     const obj = {
-        'key': childSnapshot.id,
+        'key': childSnapshot.id, // email
         'fio': item.fio,
         'email': childSnapshot.id,
         'tel': item.tel,
         'UUID': item.UUID,
         'photoPath': item.photoPath,
         'position': [item.position.latitude, item.position.longitude],
-        'state': item.state
+        'state': item.state,
+        'gos_number': item.autonumber
     };
     return obj;
 }

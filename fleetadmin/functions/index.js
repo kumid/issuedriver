@@ -122,7 +122,7 @@ app.post('/users', urlencodedParser, function (req, res) {
         });
     } else {
         userUtils.deleteUser(db, req.body.email).then(r => {
-            res.redirect('/users');
+            res.redirect('/users?aaaa=aaaa');
         });
     }
 })

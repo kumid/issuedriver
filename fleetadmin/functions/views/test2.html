@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
@@ -11,9 +12,19 @@
         const markers = new Map();
         let oldZoom = 12.0;
         let map;
+
+        function findCar() {
+            let str = $('#inputGosnomer').val();
+            markers.forEach((value, key, markers_this) =>{
+
+                console.log("m[" + key + "] = " + value);
+
+            });
+        }
     </script>
 
     <script type="text/javascript">
+
 
         var readUserListTimeout;
 
@@ -23,9 +34,28 @@
                 timeout: 3000,
                 success: function(users) {
                     console.log(users);
+
+                    let myCar;
                     users.forEach(function (item) {
+                        if(item.state == 0)
+                            myCar = DG.icon({
+                                iconUrl: '/img/car.png',
+                                iconSize: [36, 36]
+                            });
+                        else
+                            myCar = DG.icon({
+                                iconUrl: '/img/car_busy.png',
+                                iconSize: [36, 36]
+                            });
+
                         if (markers.has(item.key)) {
-                            markers.get(item.key).setLatLng(item.position);
+                            markers.get(item.key).marker.setLatLng(item.position);
+                            markers.get(item.key).marker.setIcon(myCar);
+                            markers.get(item.key).user = item;
+                        } else {
+                            newMarker = DG.marker([item.position], {icon: myCar})
+                                .addTo(map).bindPopup(item.fio);
+                            markers.set(item.key, {marker: newMarker, user: item});
                         }
                     });
 
@@ -40,41 +70,23 @@
         }
     </script>
 
-    <style>
-        .container {
-            width:100%;
-            height: 100%;
-        }
-
-        #panel {
-            padding: 10px;
-            font-weight: bold;
-        }
-        #map {
-
-            width:1200px;
-            height:800px;
-        }
-    </style>
-
 </head>
 <body>
 <div class="container">
-
     <div id="panel">
         <form class="form-inline">
-            <div class="form-group mb-2">
-               <p>Автомобиль</p>
+            <div style="background-color: #d1ffc4; ">
+                <p style="border: 5px red solid; padding:100px; margin-top: 50px; display: inline-block; background-color: #039be5">Спички</p>
+                <p style="border: 5px red solid; padding:100px; margin-top: 50px; display: inline-block; background-color: #039be5">Спички</p>
             </div>
             <div class="form-group mx-sm-3 mb-2">
-                <label for="inputGosnomer" class="sr-only">Password</label>
+                <label for="inputGosnomer" class="sr-only">ГОСНОМЕР</label>
                 <input type="text" class="form-control" id="inputGosnomer" placeholder="ГОСНОМЕР">
             </div>
-            <button type="button" class="btn btn-primary mb-2" onclick="alert('OK')">Найти</button>
+            <button type="button" class="btn btn-primary mb-2" onclick="findCar()">Найти</button>
         </form>
     </div>
     <div id="map"></div>
-
 </div>
 
 <script type="text/javascript">
@@ -84,8 +96,12 @@
             zoom: oldZoom
         });
 
-        myCar = DG.icon({
+        const freeCar = DG.icon({
             iconUrl: '/img/car.png',
+            iconSize: [36, 36]
+        });
+        const busyCar = DG.icon({
+            iconUrl: '/img/car_busy.png',
             iconSize: [36, 36]
         });
 
@@ -94,47 +110,125 @@
             iconSize: [12, 12]
         });
 
+        let newMarker, obj ;
 
-    map.on('click', function(e) {
-                alert(e.latlng);
-            } );
+        obj = {
+            'key': 'a.korkishko.krd@gmail.com', // email
+            'fio': 'роман петров',
+            'email': 'a.korkishko.krd@gmail.com',
+            'tel': '+7 (938) 444-14-44',
+            'UUID': '2ae8ebbc-36a0-4718-9a4a-b0ce15559c91',
+            'photoPath': '',
+            'state': '0'
+        };
 
-            map.on('zoom', function(e) {
-                const newZoom = map.getZoom();
-                console.log('old:' + oldZoom);
-                console.log('new:' + newZoom);
-                let markerIcon;
-                let action = true;
-                if(newZoom >= 12.0){
-                    markerIcon = myCar;
 
-                    if(oldZoom >= 12.0) {
-                        console.log('action = false');
-                        action = false;
-                    }
+        newMarker = DG.marker([45.0655414,38.9551556], {icon: freeCar})
+            .addTo(map).bindPopup("роман петров");
 
-                    console.log('car');
-                } else {
-                    markerIcon = myCarDot;
-                    if(oldZoom < 12.0) {
-                        console.log('action = false');
-                        action = false;
-                    }
-                    console.log('dot');
+        newMarker.on('click', function(e) {
+            alert(obj.fio);
+        } );
+
+        markers.set("a.korkishko.krd@gmail.com", {marker: newMarker, user: obj});
+
+
+
+        obj = {
+            'key': 'kazanokcentre@gmail.com', // email
+            'fio': 'Петр Иванов',
+            'email': 'kazanokcentre@gmail.com',
+            'tel': '+7 (222) 222-22-22',
+            'UUID': '82a761e2-f968-4b5a-9f04-13596c13eefa',
+            'photoPath': '',
+            'state': '1'
+        };
+
+
+        newMarker = DG.marker([53.6041714,34.3332278], {icon: busyCar})
+            .addTo(map).bindPopup(obj.fio);
+
+
+        newMarker.on('click', function(e) {
+            alert(obj.fio);
+        } );
+
+        markers.set("kazanokcentre@gmail.com", {marker: newMarker, user: obj});
+
+
+
+
+        obj = {
+            'key': 'kostyakostyskostya@gmail.com', // email
+            'fio': 'пирогов',
+            'email': 'kostyakostyskostya@gmail.com',
+            'tel': '+7 (918) 627-85-98',
+            'UUID': 'ecf89ada-7834-4eae-918c-836fc25bc5ed',
+            'photoPath': '',
+            'state': '0'
+        };
+
+
+        newMarker = DG.marker([45.0270988,39.1305357], {icon: freeCar})
+            .addTo(map).bindPopup("пирогов");
+
+        newMarker.on('click', function(e) {
+            alert(obj.fio + ' *************');
+        } );
+
+        markers.set("kostyakostyskostya@gmail.com", {marker: newMarker, user: obj});
+
+
+
+
+        // $(readUserList);
+
+        map.on('click', function(e) {
+            alert(e.latlng);
+        } );
+
+        map.on('zoom', function(e) {
+            const newZoom = map.getZoom();
+            console.log('old:' + oldZoom);
+            console.log('new:' + newZoom);
+            let markerIcon;
+            let action = true;
+            if(newZoom >= 12.0){
+                markerIcon = myCar;
+
+                if(oldZoom >= 12.0) {
+                    console.log('action = false');
+                    action = false;
                 }
 
-                if(action){
-                    console.log('action');
-                    for (var car of markers.values()) {
-                        car.setIcon(markerIcon);
-                    }
-                 }
+                console.log('car');
+            } else {
+                markerIcon = myCarDot;
+                if(oldZoom < 12.0) {
+                    console.log('action = false');
+                    action = false;
+                }
+                console.log('dot');
+            }
 
-                oldZoom = newZoom;
-            } );
-        });
-    </script>
+            if(action){
+                console.log('action');
+                for (var car of markers.values()) {
+                    car.marker.setIcon(markerIcon);
+                }
+            }
 
+            oldZoom = newZoom;
+        } );
+    });
+</script>
+
+<table>
+    <tr>
+        <td></td>
+        <td></td>
+    </tr>
+</table>
 
 </body>
 </html>

@@ -55,3 +55,23 @@ function clickMePls() {
     collapse2.hidden = !collapse2.hidden;
 
 }
+
+function deleteIt(email) {
+    const accept = prompt('Для удаления записи напишите "УДАЛИТЬ"', null);
+    if (accept == 'УДАЛИТЬ') {
+
+        var xhr = new XMLHttpRequest();
+
+        var body = 'email=' + email;
+
+        xhr.open("POST", '/users', true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+        // xhr.onreadystatechange = ...;
+
+        xhr.send(body);
+
+        console.log('send to delete');
+
+    }
+}
