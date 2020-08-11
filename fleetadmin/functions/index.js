@@ -46,7 +46,6 @@ app.get('/', function(req, res){
 })
 
 
-
 app.get('/users', function(req, res) {
     const id = req.query.id;
     const paging = req.query.paging;
@@ -706,6 +705,22 @@ app.use(cookieSession({
     name: 'fleet-session',
     keys: [process.env.COOKIE_KEY, 'key2']
 }));
+server.use(
+    session({
+        store: new FirebaseSession({  // <== connect-session-firebase
+            database: firebase.database(),
+        }),
+        name: 'ws_auth',
+        secret: 'mysecret',
+        secure: true,
+        httpOnly: true,
+        resave: false,
+        rolling: true,
+        cookie: { maxAge: 604800000 }, // week
+        saveUninitialized: false,
+        signed: true,
+    })
+);
 
 // app.use(flash());
 // app.use(cookieParser(process.env.COOKIE_KEY));
