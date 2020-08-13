@@ -51,7 +51,8 @@ module.exports.getUsersWithPosition = async function getUsersWithPosition(db) {
     const snapshots = await query.get();
     snapshots.forEach(function(childSnapshot) {
         let obj = getObjectFromUser4MapSnapshot(childSnapshot);
-        users4map.push(obj);
+        if(obj)
+            users4map.push(obj);
     });
 
     return users4map;
@@ -59,6 +60,9 @@ module.exports.getUsersWithPosition = async function getUsersWithPosition(db) {
 }
 function getObjectFromUser4MapSnapshot(childSnapshot) {
     let item = childSnapshot.data();
+    if(!item.position)
+        return null;
+
     const obj = {
         'key': childSnapshot.id, // email
         'fio': item.fio,
