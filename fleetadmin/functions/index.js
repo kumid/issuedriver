@@ -1,10 +1,58 @@
+const express = require('express');
+const dotenv = require('dotenv');
+const morgan = require('morgan');
+const passport = require('passport')
+const session = require('express-session')
+const path = require('path');
+const cors = require('cors')({origin: true});
+
+const {ensureAuth, ensureGuest} =  require('./middleware/auth')
+
+dotenv.config({path: './config/.env'});
+require('./config/passport')(passport);
+
+const connectDb = require('./config/db')
+connectDb();
+
+
+const app = express();
+
+app.engine('ejs', require('ejs-locals'))
+app.set('view engine', 'ejs');
+app.set('views', __dirname + '/views');
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use(cors);
+
+// Logging
+if(process.env.NODE_ENV === 'development'){
+    app.use(morgan('dev'));
+}
+
+// sessions
+app.use(session({
+    secret: 'keyboard cat',
+    resave: false,
+    saveUninitialized: false
+}));
+
+// pasport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use('/auth', require('./routes/auth'));
+
+
+
+
+
+
 const functions = require('firebase-functions');
 const firebase = require('firebase-admin');
-const express = require('express');
+
 const bodyParser = require('body-parser')
-const cors = require('cors')({origin: true});
 const jwt = require('jsonwebtoken');
-const Cookies = require('cookies');
+
 
 var cookieParser = require('cookie-parser');
 
@@ -14,12 +62,6 @@ const shina = require('./shinaUtils');
 const userUtils = require('./userUtils');
 const carUtils = require('./carUtils');
 const myutils = require('./utils');
-
-const app = express();
-app.engine('ejs', require('ejs-locals'))
-app.set('view engine', 'ejs');
-app.set('views', __dirname + '/views');
-app.use(cors);
 
 
 // create application/x-www-form-urlencoded parser
@@ -41,7 +83,7 @@ async function setFeedbackAccept(id) {
     await db.collection('feedbacks').doc(id).update('accept', true);
 }
 
-app.get('/', function(req, res){
+app.get('/', ensureGuest, function(req, res){
     res.render('index', {someinfo: 'hello'});
 })
 
@@ -673,15 +715,9 @@ app.post('/options', urlencodedParser, function (req, res) {
 
 
 
-const passport = require('passport'),
-    session = require('express-session'),
-    GoogleStrategy = require('passport-google-oauth').OAuth2Strategy,
-    flash = require('connect-flash'
-    );
 
-
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user, done) => done(null, user));
+// passport.serializeUser((user, done) => done(null, user));
+// passport.deserializeUser((user, done) => done(null, user));
 
 // function checkAuth() {
 //     return app.use((req, res, next) => {
@@ -693,18 +729,18 @@ passport.deserializeUser((user, done) => done(null, user));
 //     });
 // }
 
-const cookieSession = require('cookie-session');
+// const cookieSession = require('cookie-session');
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 // app.use(session({secret: 'you secret key'}));
 // set up session cookies
-app.use(cookieSession({
-    // maxAge: 24 * 60 * 60 * 1000,
-    maxAge: 1 * 60 * 1000,
-    name: 'fleet-session',
-    keys: [process.env.COOKIE_KEY, 'key2']
-}));
+// app.use(cookieSession({
+//     // maxAge: 24 * 60 * 60 * 1000,
+//     maxAge: 1 * 60 * 1000,
+//     name: 'fleet-session',
+//     keys: [process.env.COOKIE_KEY, 'key2']
+// }));
 //
 // app.use(
 //     session({
@@ -725,61 +761,61 @@ app.use(cookieSession({
 
 // app.use(flash());
 // app.use(cookieParser(process.env.COOKIE_KEY));
-app.use(cookieParser());
+// app.use(cookieParser());
 
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 
-passport.use(new GoogleStrategy({
-        clientID: '940126965514-94dlavgqmgvuh7rb29chq03mm949e3uf.apps.googleusercontent.com', //YOUR GOOGLE_CLIENT_ID
-        clientSecret: 'vPwSqwELOcpj6j9QRdEqWMCF', //YOUR GOOGLE_CLIENT_SECRET
-        callbackURL: "https://fleet-management-8dfc9.firebaseapp.com/auth/google/callback"
-    },
-    (accessToken, refreshToken, profile, done) => {
-        return done(null, profile);
-    })
-);
-
-
-
-app.get('/logout', (req, res)=>{
-   req.logout();
-   // req.session = null;
-   req.redirect('/');
-});
+// passport.use(new GoogleStrategy({
+//         clientID: '940126965514-94dlavgqmgvuh7rb29chq03mm949e3uf.apps.googleusercontent.com', //YOUR GOOGLE_CLIENT_ID
+//         clientSecret: 'vPwSqwELOcpj6j9QRdEqWMCF', //YOUR GOOGLE_CLIENT_SECRET
+//         callbackURL: "https://fleet-management-8dfc9.firebaseapp.com/auth/google/callback"
+//     },
+//     (accessToken, refreshToken, profile, done) => {
+//         return done(null, profile);
+//     })
+// );
 
 
-const authCheck = (req, res, next) => {
-    console.log('FLEET -> AUTH 2-> cookies -> Start..................................', req.headers['cookie']);
-    // // console.log('FLEET -> AUTH 2-> cookies..................................', req.cookies['token']);
-    //
-    // // var tok = req.cookies['token'];
-    // if(!req.session || !req.session.user_id){ //if (!tok) {//    if(!req.isAuthenticated()){//
-    //     res.send('Not Authenticated')
-    //     //res.sendStatus(401);
-    // } else {
-    next();
-    // }
-};
 
-app.get('/failed', (req, res)=> res.send('You filed login'));
-app.get('/good', authCheck, (req, res)=> {
+// app.get('/logout', (req, res)=>{
+//    req.logout();
+//    // req.session = null;
+//    req.redirect('/');
+// });
+
+
+// const authCheck = (req, res, next) => {
+//     console.log('FLEET -> AUTH 2-> cookies -> Start..................................', req.headers['cookie']);
+//     // // console.log('FLEET -> AUTH 2-> cookies..................................', req.cookies['token']);
+//     //
+//     // // var tok = req.cookies['token'];
+//     // if(!req.session || !req.session.user_id){ //if (!tok) {//    if(!req.isAuthenticated()){//
+//     //     res.send('Not Authenticated')
+//     //     //res.sendStatus(401);
+//     // } else {
+//     next();
+//     // }
+// };
+//
+// app.get('/failed', (req, res)=> res.send('You filed login'));
+app.get('/dashboard', ensureAuth, (req, res)=> {
     res.send('Welcome mr...')
 }); //res.send(`Welcome mr.${req.user.email}`));  //
-
-app.get('/google', passport.authenticate('google', { scope: ['email', 'profile']}));
-
-app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/failed' }),
-    function(req, res) {
-        // Successful authentication, redirect home.
-        // console.log(`FLEET -> AUTH 1-> Start...............................user..................................`);
-        // console.log('FLEET -> AUTH 1-> session.id -> Start..................................', req.session.id);
-        // console.log(`FLEET -> AUTH 1-> Start...............................user - ${req.user._json.email}..................................`);
-        // res.cookie('session', 'test5', {
-        //     maxAge: 5*60*1000,
-        //     httpOnly: true,
-        //     secure: true
-        // })
-        res.setHeader('Set-Cookie', 'session=test7');
-        res.redirect('/good');
-    });
+//
+// app.get('/google', passport.authenticate('google', { scope: ['email', 'profile']}));
+//
+// app.get('/auth/google/callback', passport.authenticate('google', { failureRedirect: '/failed' }),
+//     function(req, res) {
+//         // Successful authentication, redirect home.
+//         // console.log(`FLEET -> AUTH 1-> Start...............................user..................................`);
+//         // console.log('FLEET -> AUTH 1-> session.id -> Start..................................', req.session.id);
+//         // console.log(`FLEET -> AUTH 1-> Start...............................user - ${req.user._json.email}..................................`);
+//         // res.cookie('session', 'test5', {
+//         //     maxAge: 5*60*1000,
+//         //     httpOnly: true,
+//         //     secure: true
+//         // })
+//         res.setHeader('Set-Cookie', 'session=test7');
+//         res.redirect('/good');
+//     });
