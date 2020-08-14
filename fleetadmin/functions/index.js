@@ -6,6 +6,7 @@ const session = require('express-session')
 const path = require('path');
 const cors = require('cors')({origin: true});
 
+
 const {ensureAuth, ensureGuest} =  require('./middleware/auth')
 
 dotenv.config({path: './config/.env'});
@@ -40,34 +41,9 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.use('/auth', require('./routes/auth'));
-
-
-
-
-
 
 const functions = require('firebase-functions');
 const firebase = require('firebase-admin');
-
-const bodyParser = require('body-parser')
-const jwt = require('jsonwebtoken');
-
-
-var cookieParser = require('cookie-parser');
-
-const feedback = require('./feedbackUtils');
-const texservice = require('./texserviceUtils');
-const shina = require('./shinaUtils');
-const userUtils = require('./userUtils');
-const carUtils = require('./carUtils');
-const myutils = require('./utils');
-
-
-// create application/x-www-form-urlencoded parser
-const urlencodedParser = bodyParser.urlencoded({ extended: false })
-
-
 const firebaseApp = firebase.initializeApp(
     {
         credential: firebase.credential.applicationDefault()
@@ -75,427 +51,41 @@ const firebaseApp = firebase.initializeApp(
 //   // functions.config().firebase
 );
 
-const db = firebase.firestore();
+global.db = firebase.firestore();
 
-
-
-async function setFeedbackAccept(id) {
-    await db.collection('feedbacks').doc(id).update('accept', true);
-}
-
-app.get('/', ensureGuest, function(req, res){
-    res.render('index', {someinfo: 'hello'});
-})
-
-
-app.get('/users', function(req, res) {
-    const id = req.query.id;
-    const paging = req.query.paging;
-    const filter = req.query.filter;
-    if(id) {
-        userUtils.getUser(db, id).then((doc) =>{
-            if (!doc.exists) {
-                res.sendStatus(404);
-            } else {
-                res.render('user', {current_user: userUtils.getObjectFromUserSnapshot(doc)});
-            }
-        });
-    } else if(paging){
-        if(paging == 'next') {
-            userUtils.getUsers(db,true, paging, filter).then((emails) => {
-                if(emails)
-                    res.render('user_collection', {emails: emails, 'accept': true, searchMode: null});
-            });
-        } else {
-
-        }
-    } else if(filter){
-        userUtils.getFilteredUsers(db, filter).then((emails) => {
-                if(emails)
-                    res.render('user_collection', {emails: emails, 'accept': true, searchMode: true});
-                else
-                    res.send('user_collection');
-            });
-
-    }
-    else { // нет GET аргумента - выдать весь список
-        userUtils.getUsers(db, true, null, null).then((emails) => {
-            res.render('user_collection', {emails: emails, 'accept': true, searchMode: null});
-        });
-    }
-});
-app.get('/users/unconfirmed', function(req, res){
-    const id = req.query.id;
-    const paging = req.query.paging;
-    if(id) {
-        userUtils.getUser(db, id).then((doc) =>{
-            if (!doc.exists) {
-                res.sendStatus(404);
-            } else {
-                res.render('user', {current_user: userUtils.getObjectFromUserSnapshot(doc)});
-            }
-        });
-    }if(paging) {
-        if (paging == 'next') {
-            userUtils.getUsers(db,false, paging).then((emails) => {
-                if (emails)
-                    res.render('user_collection', {emails: emails, 'accept': false, searchMode: null});
-            });
-        } else {
-
-        }
-    }
-    else { // нет GET аргумента - выдать весь список
-        userUtils.getUsers(db,false, null).then((emails) => {
-            res.render('user_collection', {emails: emails, 'accept': false, searchMode: null}); //, id: req.params.id
-        });
-    }
-});
-app.post('/users', urlencodedParser, function (req, res) {
-    if(!req.body) return res.sendStatus(400);
-
-    if(req.body.action == 'Update') {
-        userUtils.setUserReturnAccept(db, req.body).then(r => {
-            if(req.body.accept === 'on')
-                res.redirect('/users');
-            else
-                res.redirect('/users/unconfirmed');
-        });
-    } else {
-        userUtils.deleteUser(db, req.body.email).then(r => {
-            res.redirect('/users?aaaa=aaaa');
-        });
-    }
-})
-
-app.get('/maps', function(req, res) {
-        // carUtils.getCars(db, null).then((cars) => {
-        //     res.render('maps', {cars: cars});
-        // });
-
-        userUtils.getUsersWithPosition(db).then((users) => {
-            res.render('maps', { users4map: users });
-        });
-});
-
-
-app.get('/mapsupdate', function(req, res) {
-    // carUtils.getCars(db, null).then((cars) => {
-    //     res.render('maps', {cars: cars});
-    // });
-
-    userUtils.getUsersWithPosition(db).then((users) => {
-        res.send(users);
-    });
-});
-
-
-app.get('/userorders', function(req, res) {
-    const id = req.query.id;
-    const dateStart = req.query.start;
-    const dateEnd = req.query.end;
-
-    // if(!id || !dateStart || !dateEnd)
-    //     return [];
-
-    userUtils.getUserOrders(firebase, db, id, dateStart, dateEnd).then((orders) => {
-        // userUtils.getUserOrders(db, id, null, null).then((orders) => {
-        res.send(orders);
-    });
-});
-
-
-
-app.get('/feedback', function(req, res) {
-    const id = req.query.id;
-    const paging = req.query.paging;
-    if(id) {
-        feedback.getfeedback(db, id).then((doc) =>{
-            if (!doc.exists) {
-                res.sendStatus(404);
-            } else {
-                res.render('feedback', {current_feedback: feedback.getObjectFromfeedbackSnapshot(doc)});
-            }
-        });
-    } else if(paging){
-        if(paging == 'next') {
-            feedback.getfeedbacks(db,false, paging).then((emails) => {
-                if(emails)
-                    res.render('feedback_collection', {emails: emails, 'accept': false});
-                // res.render('users', {emails: getDataFromUsersCollection(emails), 'accept': true});
-            });
-        } else {
-            res.send('/feedback - ' + paging);
-        }
-    }
-    else { // нет GET аргумента - выдать весь список
-        feedback.getfeedbacks(db, false, null).then((emails) => {
-            if(emails)
-                res.render('feedback_collection', {emails: emails, 'accept': false});
-            else
-                res.redirect('/');
-        });
-    }
-});
-app.get('/feedback/archive', function(req, res){
-    const id = req.query.id;
-    const paging = req.query.paging;
-    if(id) {
-        feedback.getfeedback(db, id).then((doc) =>{
-            if (!doc.exists) {
-                res.sendStatus(404);
-            } else {
-                res.render('feedback', {current_user: feedback.getObjectFromfeedbackSnapshot(doc)});
-            }
-        });
-    }if(paging) {
-        if (paging == 'next') {
-            feedback.getfeedbacks(db,true, paging).then((emails) => {
-                if (emails)
-                    res.render('feedback_collection', {emails: emails, 'accept': true});
-                else
-                    res.redirect('/');
-            });
-        } else {
-            res.send('/feedback/archive - ' + paging);
-        }
-    }
-    else { // нет GET аргумента - выдать весь список
-        feedback.getfeedbacks(db,true, null).then((emails) => {
-            if(emails)
-                res.render('feedback_collection', {emails: emails, 'accept': true}); //, id: req.params.id
-        });
-    }
-});
-app.post('/feedback', urlencodedParser, function (req, res) {
-    if(!req.body) return res.sendStatus(400);
-
-    if(req.body.action == 'Update') {
-        feedback.setfeedbackReturnAccept(db, req.body).then(r => {
-            if(req.body.accept === 'on')
-                res.redirect('/feedback');
-            else
-                res.redirect('/feedback/archive');
-        });
-    } else {
-        feedback.deletefeedback(db, req.body.email).then(r => {
-            res.redirect('/feedback');
-        });
-    }
-})
-
-
-app.get('/shina', function(req, res) {
-    const id = req.query.id;
-    const paging = req.query.paging;
-    if(id) {
-        shina.getshina(db, id).then((doc) =>{
-            if (!doc.exists) {
-                res.sendStatus(404);
-            } else {
-                res.render('shina', {current_shina: shina.getObjectFromshinaSnapshot(doc)});
-            }
-        });
-    } else if(paging){
-        if(paging == 'next') {
-            shina.getshinas(db,false, paging).then((emails) => {
-                if(emails)
-                    res.render('shina_collection', {emails: emails, 'accept': false});
-                // res.render('users', {emails: getDataFromUsersCollection(emails), 'accept': true});
-            });
-        } else {
-            res.send('/shina - ' + paging);
-        }
-    }
-    else { // нет GET аргумента - выдать весь список
-        shina.getshinas(db, false, null).then((emails) => {
-            if(emails)
-                res.render('shina_collection', {emails: emails, 'accept': false});
-            else
-                res.redirect('/');
-        });
-    }
-});
-app.get('/shina/archive', function(req, res){
-    const id = req.query.id;
-    const paging = req.query.paging;
-    if(id) {
-        shina.getshina(db, id).then((doc) =>{
-            if (!doc.exists) {
-                res.sendStatus(404);
-            } else {
-                res.render('shina', {current_shina: shina.getObjectFromshinaSnapshot(doc)});
-            }
-        });
-    } else if(paging) {
-        if (paging == 'next') {
-            shina.getshinas(db,true, paging).then((emails) => {
-                if (emails)
-                    res.render('shina_collection', {emails: emails, 'accept': true});
-                else
-                    res.redirect('/');
-            });
-        } else {
-            res.send('/shina/archive - ' + paging);
-        }
-    }
-    else { // нет GET аргумента - выдать весь список
-        shina.getshinas(db,true, null).then((emails) => {
-            if(emails)
-                res.render('shina_collection', {emails: emails, 'accept': true}); //, id: req.params.id
-        });
-    }
-});
-app.post('/shina', urlencodedParser, function (req, res) {
-    if(!req.body) return res.sendStatus(400);
-
-    if(req.body.action == 'Update') {
-        shina.setshinaReturnAccept(db, req.body).then(r => {
-            if(req.body.accept === 'on')
-                res.redirect('/shina');
-            else
-                res.redirect('/shina/archive');
-        });
-    } else {
-        shina.deleteshina(db, req.body.email).then(r => {
-            res.redirect('/shina');
-        });
-    }
-})
+const bodyParser = require('body-parser')
+// create application/x-www-form-urlencoded parser
+global.urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 
 
 
-app.get('/texservice', function(req, res) {
-    const id = req.query.id;
-    const paging = req.query.paging;
-    if(id) {
-        texservice.gettexservice(db, id).then((doc) =>{
-            if (!doc.exists) {
-                res.sendStatus(404);
-            } else {
-                res.render('texservice', {current_texservice: texservice.getObjectFromtexserviceSnapshot(doc)});
-            }
-        });
-    } else if(paging){
-        if(paging == 'next') {
-            texservice.gettexservices(db,false, paging).then((emails) => {
-                if(emails)
-                    res.render('texservice_collection', {emails: emails, 'accept': false});
-                // res.render('users', {emails: getDataFromUsersCollection(emails), 'accept': true});
-            });
-        } else {
-            res.send('/texservice - ' + paging);
-        }
-    }
-    else { // нет GET аргумента - выдать весь список
-        texservice.gettexservices(db, false, null).then((emails) => {
-            if(emails)
-                res.render('texservice_collection', {emails: emails, 'accept': false});
-            else
-                res.redirect('/');
-        });
-    }
-});
-app.get('/texservice/archive', function(req, res){
-    const id = req.query.id;
-    const paging = req.query.paging;
-    if(id) {
-        texservice.gettexservice(db, id).then((doc) =>{
-            if (!doc.exists) {
-                res.sendStatus(404);
-            } else {
-                res.render('texservice', {current_texservice: shina.getObjectFromtexserviceSnapshot(doc)});
-            }
-        });
-    } else if(paging) {
-        if (paging == 'next') {
-            texservice.gettexservices(db,true, paging).then((emails) => {
-                if (emails)
-                    res.render('texservice_collection', {emails: emails, 'accept': true});
-                else
-                    res.redirect('/');
-            });
-        } else {
-            res.send('/texservice/archive - ' + paging);
-        }
-    }
-    else { // нет GET аргумента - выдать весь список
-        texservice.gettexservices(db,true, null).then((emails) => {
-            if(emails)
-                res.render('texservice_collection', {emails: emails, 'accept': true}); //, id: req.params.id
-        });
-    }
-});
-app.post('/texservice', urlencodedParser, function (req, res) {
-    if(!req.body) return res.sendStatus(400);
 
-    if(req.body.action == 'Update') {
-        texservice.settexserviceReturnAccept(db, req.body).then(r => {
-            if(req.body.accept === 'on')
-                res.redirect('/texservice');
-            else
-                res.redirect('/texservice/archive');
-        });
-    } else {
-        texservice.deletetexservice(db, req.body.email).then(r => {
-            res.redirect('/texservice');
-        });
-    }
-})
+// Routers
+app.use('/', require('./routes/root'));
+app.use('/auth', require('./routes/auth'));
+app.use('/users', require('./routes/users'));
+app.use('/cars', require('./routes/cars'));
+
+app.use('/feedback', require('./routes/feedback'));
+app.use('/shina', require('./routes/shina'));
+app.use('/texservice', require('./routes/texservice'));
 
 
 
-app.get('/cars', function(req, res){
-    const id = req.query.id;
-    const paging = req.query.paging;
-    if(id) {
-        carUtils.getCar(db, id).then((doc) =>{
-            if (!doc.exists) {
-                res.sendStatus(404);
-            } else {
-                res.render('car', {current_car: carUtils.getObjectFromCarSnapshot(doc)});
-            }
-        });
-    } else  if (paging){
-        if(paging == 'next') {
-            carUtils.getCars(db, paging).then((cars) => {
-                    res.render('cars', {cars: cars});
-            });
-        } else {
-            res.send('/cars - ' + paging);
-        }
-    }
-    else { // нет GET аргумента - выдать весь список
-        // userUtils.
-        carUtils.getCars(db, null).then((cars) => {
-                res.render('cars', {cars: cars});
-        });
-    }
-});
-app.get('/cars/newcar', function(req, res){
-     res.render('car', {current_car: carUtils.createCarData(null)});
-});
-app.post('/cars/newcar', urlencodedParser, function (req, res) {
-    if(!req.body) return res.sendStatus(400);
+const myutils = require('./utils/otherUtils');
 
-    carUtils.addNewCar(db, req.body).then(r => {
-         res.redirect('/cars');
-     });
-})
-app.post('/cars', urlencodedParser, function (req, res) {
-    if(!req.body) return res.sendStatus(400);
 
-    if(req.body.action == 'Update') {
-        carUtils.updateCar(db, req.body).then(r => {
-            res.redirect('/cars');
-        });
-    } else {
-        carUtils.deleteCar(db, req.body.gos_number).then(r => {
-            res.redirect('/cars');
-        });
-    }
-})
+// const jwt = require('jsonwebtoken');
+
+//
+// async function setFeedbackAccept(id) {
+//     await db.collection('feedbacks').doc(id).update('accept', true);
+// }
+
+
+
+
 
 
 exports.app = functions.https.onRequest(app);
@@ -652,60 +242,6 @@ exports.checkCarDocsLiquid = functions.pubsub
     });
 
 
-app.get('/options', async function(req, res){
-    // let current_options = myutils.getOptions(db);
-    console.log('functions - getOptions:', '1');
-    let sender = await db.collection('options').doc('sender').get()
-        .catch(function (exception) {
-            console.log('functions - getOptions:', exception.toString());
-        });
-    console.log('functions - getOptions:', '2');
-
-    let login, pass, zavgar;
-
-    if (!sender.exists) {
-        login = '';
-        pass = '';
-        console.log('functions - getOptions:', 'No docs');
-
-    } else {
-        login = sender.data().login;
-        pass = sender.data().pass;
-        console.log('functions - getOptions:', '3');
-    }
-
-
-    let reciever = await db.collection('options').doc('reciever').get();
-    console.log('functions - getOptions:', '4');
-
-    if (!reciever.exists) {
-        zavgar = '';
-        console.log('functions - getOptions:', 'no doc zavgar');
-
-    } else {
-        zavgar = reciever.data().zavgar;
-        console.log('functions - getOptions:', '5');
-    }
-
-    console.log('functions - getOptions:', login + '-' + pass +'-'+zavgar);
-    console.log('functions - getOptions:', 'OK');
-
-    let current_options =  {
-        sender_login: login,
-        sender_pass: pass,
-        zavgar_login: zavgar
-    };
-
-    res.render('options', {current_options: current_options});
-});
-
-app.post('/options', urlencodedParser, function (req, res) {
-    if(!req.body) return res.sendStatus(400);
-    myutils.updateOptions(db, req.body).then(r => {
-        res.redirect('/');
-    });
-});
-
 
 
 
@@ -731,8 +267,8 @@ app.post('/options', urlencodedParser, function (req, res) {
 
 // const cookieSession = require('cookie-session');
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({extended: true}));
 // app.use(session({secret: 'you secret key'}));
 // set up session cookies
 // app.use(cookieSession({
