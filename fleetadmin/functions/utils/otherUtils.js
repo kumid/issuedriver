@@ -141,9 +141,9 @@ module.exports.checkCarDocLiquide = async function checkCarDocLiquide(db) {
     let theDate = moment();
     theDate.add(14, 'days');
 
-    let result = '<h2>Автомашины. Срок ОСАГО</h2><br>';
+    let result = '<h2>Автомобили. Срок ОСАГО</h2><br>';
     result += getTable4Osago(snapshots, theDate);
-    result += '<br> <h2>Автомашины. Срок ТО</h2>';
+    result += '<br> <h2>Автомобили. Срок ТО</h2>';
     result += getTable4TO(snapshots, theDate);
 
     console.log('generate - OK');
