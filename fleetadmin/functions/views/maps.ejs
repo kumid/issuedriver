@@ -47,9 +47,8 @@
         function readUserList() {
             $.ajax({
                 url: "/mapsupdate",
-                timeout: 3000,
+                timeout: 10*1000,
                 success: function(users) {
-                    console.log(users);
 
                     let myCar;
                     users.forEach(function (item) {
@@ -76,11 +75,11 @@
                     });
 
                     clearTimeout(readUserListTimeout)
-                    readUserListTimeout = setTimeout(readUserList, 10000)
+                    readUserListTimeout = setTimeout(readUserList, 60*1000)
                 },
                 error: function() {
                     clearTimeout(readUserListTimeout)
-                    setTimeout(readUserList, 3000)
+                    setTimeout(readUserList, 60*1000)
                 }
             });
         }
@@ -179,8 +178,7 @@
 
             map.on('zoom', function(e) {
                 const newZoom = map.getZoom();
-                // console.log('old:' + oldZoom);
-                // console.log('new:' + newZoom);
+
                 let markerIcon;
                 let action = true;
 
@@ -197,22 +195,16 @@
                     // markerIcon = myCar;
 
                     if(oldZoom >= zoomLine) {
-                        // console.log('action = false');
                         action = false;
                     }
 
-                    console.log('car');
                 } else {
-                    // markerIcon = myCarDot;
                     if(oldZoom < zoomLine) {
-                        // console.log('action = false');
                         action = false;
                     }
-                    // console.log('dot');
                 }
 
                 if(action){
-                    // console.log('action');
                     for (var car of markers.values()) {
                         if(newZoom >= zoomLine){
                             if(car.user.state == 0)

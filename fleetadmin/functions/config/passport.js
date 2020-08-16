@@ -11,12 +11,16 @@ module.exports = function (passport) {
                 callbackURL: 'https://fleet-management-8dfc9.web.app/auth/google/callback',
             },
             async (accessToken, refreshToken, profile, done) => {
-                const newUser = {
+
+                console.log(`functions - user .....................${profile._json.email}` );
+
+               const newUser = {
                     googleId: profile.id,
                     displayName: profile.displayName,
                     firstName: profile.name.givenName,
                     lastName: profile.name.familyName,
                     image: profile.photos[0].value,
+                    email: profile._json.email
                 }
 
                 try {

@@ -2,9 +2,10 @@ const express = require('express')
 const router = express.Router()
 
 
+const {ensureAuth, ensureGuest} =  require('../middleware/auth')
 const shina = require('../utils/shinaUtils');
 
-router.get('/', function(req, res) {
+router.get('/', ensureAuth,function(req, res) {
     const id = req.query.id;
     const paging = req.query.paging;
     if(id) {
@@ -35,7 +36,7 @@ router.get('/', function(req, res) {
         });
     }
 });
-router.get('/archive', function(req, res){
+router.get('/archive',ensureAuth, function(req, res){
     const id = req.query.id;
     const paging = req.query.paging;
     if(id) {
@@ -65,7 +66,7 @@ router.get('/archive', function(req, res){
         });
     }
 });
-router.post('/', urlencodedParser, function (req, res) {
+router.post('/', ensureAuth, urlencodedParser, function (req, res) {
     if(!req.body) return res.sendStatus(400);
 
     if(req.body.action == 'Update') {

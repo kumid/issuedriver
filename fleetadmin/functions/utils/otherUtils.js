@@ -4,7 +4,7 @@ module.exports.getOptions = async function getOptions(db) {
         .catch(function (exception) {
             console.log('functions - getOptions:', exception.toString());
         });
-    console.log('functions - getOptions:', '2');
+    // console.log('functions - getOptions:', '2');
 
     let login, pass, zavgar;
 
@@ -16,12 +16,12 @@ module.exports.getOptions = async function getOptions(db) {
     } else {
         login = sender.data().login;
         pass = sender.data().pass;
-        console.log('functions - getOptions:', '3');
+        // console.log('functions - getOptions:', '3');
     }
 
 
     let reciever = await db.collection('options').doc('reciever').get();
-    console.log('functions - getOptions:', '4');
+    // console.log('functions - getOptions:', '4');
 
     if (!reciever.exists) {
         zavgar = '';
@@ -29,11 +29,11 @@ module.exports.getOptions = async function getOptions(db) {
 
     } else {
         zavgar = reciever.data().zavgar;
-        console.log('functions - getOptions:', '5');
+        // console.log('functions - getOptions:', '5');
     }
 
-    console.log('functions - getOptions:', login + '-' + pass +'-'+zavgar);
-    console.log('functions - getOptions:', 'OK');
+    // console.log('functions - getOptions:', login + '-' + pass +'-'+zavgar);
+    // console.log('functions - getOptions:', 'OK');
 
     return  {
             sender_login: login,

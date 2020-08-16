@@ -8,13 +8,18 @@ const {ensureAuth, ensureGuest} =  require('../middleware/auth')
 const myutils = require('../utils/otherUtils');
 const userUtils = require('../utils/userUtils');
 
-router.get('/', ensureGuest, function(req, res){
+router.get('/', ensureAuth, function(req, res){
     res.render('index', {someinfo: 'hello'});
-})
+});
+
+
+router.get('/login', function(req, res){
+    res.render('login');
+});
 
 // @desc    Set ptions
 // @route   GET /options
-router.get('/options', async function(req, res){
+router.get('/options', ensureAuth, async function(req, res){
     // let current_options = myutils.getOptions(db);
     console.log('functions - getOptions:', '1');
     let sender = await db.collection('options').doc('sender').get()
@@ -63,7 +68,7 @@ router.get('/options', async function(req, res){
 
 // @desc    Set ptions
 // @route   POST /options
-router.post('/options', urlencodedParser, function (req, res) {
+router.post('/options', ensureAuth, urlencodedParser, function (req, res) {
     if(!req.body) return res.sendStatus(400);
     myutils.updateOptions(db, req.body).then(r => {
         res.redirect('/');
@@ -74,7 +79,7 @@ router.post('/options', urlencodedParser, function (req, res) {
 
 
 
-router.get('/maps', function(req, res) {
+router.get('/maps', ensureAuth, function(req, res) {
     // carUtils.getCars(db, null).then((cars) => {
     //     res.render('maps', {cars: cars});
     // });
@@ -85,7 +90,7 @@ router.get('/maps', function(req, res) {
 });
 
 
-router.get('/mapsupdate', function(req, res) {
+router.get('/mapsupdate', ensureAuth, function(req, res) {
     // carUtils.getCars(db, null).then((cars) => {
     //     res.render('maps', {cars: cars});
     // });
@@ -96,7 +101,7 @@ router.get('/mapsupdate', function(req, res) {
 });
 
 
-router.get('/userorders', function(req, res) {
+router.get('/userorders', ensureAuth, function(req, res) {
     const id = req.query.id;
     const dateStart = req.query.start;
     const dateEnd = req.query.end;

@@ -1,9 +1,10 @@
 const express = require('express')
 const router = express.Router()
 
+const {ensureAuth, ensureGuest} =  require('../middleware/auth')
 const carUtils = require('../utils/carUtils');
 
-router.get('/', function(req, res){
+router.get('/', ensureAuth, function(req, res){
     const id = req.query.id;
     const paging = req.query.paging;
     if(id) {
@@ -33,14 +34,14 @@ router.get('/', function(req, res){
 router.get('/newcar', function(req, res){
     res.render('car', {current_car: carUtils.createCarData(null)});
 });
-router.post('/newcar', urlencodedParser, function (req, res) {
+router.post('/newcar', ensureAuth, urlencodedParser, function (req, res) {
     if(!req.body) return res.sendStatus(400);
 
     carUtils.addNewCar(db, req.body).then(r => {
         res.redirect('/cars');
     });
 })
-router.post('/', urlencodedParser, function (req, res) {
+router.post('/', ensureAuth, urlencodedParser, function (req, res) {
     if(!req.body) return res.sendStatus(400);
 
     if(req.body.action == 'Update') {
