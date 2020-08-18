@@ -43,7 +43,7 @@ app.use(passport.session());
 
 
 const functions = require('firebase-functions');
-const firebase = require('firebase-admin');
+global.firebase = require('firebase-admin');
 const firebaseApp = firebase.initializeApp(
     {
         credential: firebase.credential.applicationDefault()

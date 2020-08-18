@@ -77,13 +77,13 @@ function getObjectFromUser4MapSnapshot(childSnapshot) {
     return obj;
 }
 
-module.exports.getUserOrders = async function getUserOrders(admin, db, id, dateStart, dateEnd) {
+module.exports.getUserOrders = async function getUserOrders(id, dateStart, dateEnd) {
     const firstDate = new Date(dateStart);
-    const timestamp1 = admin.firestore.Timestamp.fromDate(firstDate);
+    const timestamp1 = firebase.firestore.Timestamp.fromDate(firstDate);
     const lastDate = new Date(dateEnd);
     lastDate.setDate(lastDate.getDate() + 1);
 
-    const timestamp2 = admin.firestore.Timestamp.fromDate(lastDate);
+    const timestamp2 = firebase.firestore.Timestamp.fromDate(lastDate);
     let query = db.collection('orders')
         .where('performer_email', '==', id)
         .where('accept_timestamp', '>=', firstDate)
