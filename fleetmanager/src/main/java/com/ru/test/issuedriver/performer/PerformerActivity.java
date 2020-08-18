@@ -557,7 +557,11 @@ public class PerformerActivity extends MyActivity implements UserStateBottonDial
     protected void onResume() {
         super.onResume();
         initExtra();
-        registerReceiver();
+        try {
+            registerReceiver();
+        } catch(IllegalArgumentException e) {
+            e.printStackTrace();
+        }
     }
 
     MyBroadcastReceiver broadcastReceiver;

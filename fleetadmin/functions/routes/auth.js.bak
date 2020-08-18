@@ -61,15 +61,12 @@ router.get(
 
 // @desc    Logout user
 // @route   /auth/logout
-router.get('/logout', async (req, res) => {
+router.get('/logout', (req, res) => {
     req.logout();
-//    await Token.remove({id: newToken.id});
-    let currentCookie = new Cookies(req, res);
-    let userSession = currentCookie.get('__session');
+    let newCookie = new Cookies(req, res);
     // console.log(req.user);
-    await Token.remove({ accessToken: userSession });
     res.setHeader('Cache-Control', 'private');
-    currentCookie.set('__session', '', {
+    newCookie.set('__session', '', {
         maxAge: 100 , // срок в мс
     });
     res.redirect('/login')

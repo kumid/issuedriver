@@ -59,8 +59,6 @@ global.urlencodedParser = bodyParser.urlencoded({ extended: false })
 
 
 
-
-
 // Routers
 app.use('/', require('./routes/root'));
 app.use('/auth', require('./routes/auth'));
@@ -70,8 +68,6 @@ app.use('/cars', require('./routes/cars'));
 app.use('/feedback', require('./routes/feedback'));
 app.use('/shina', require('./routes/shina'));
 app.use('/texservice', require('./routes/texservice'));
-
-
 
 const myutils = require('./utils/otherUtils');
 
