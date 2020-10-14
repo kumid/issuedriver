@@ -51,8 +51,10 @@ public class order implements Parcelable {
     public Date order_active_time;
 
     public String spent_time;
-    public String distance;
-    public String fuel;
+    public double distance;
+    public String distanceDisplay;
+    public double fuel;
+    public String fuelDisplay;
 
     public String id;
     /// 0 - норм, 1 - отменен
@@ -134,8 +136,10 @@ public class order implements Parcelable {
         end_timestamp = in.readParcelable(Timestamp.class.getClassLoader());
         order_active_timestamp = in.readParcelable(Timestamp.class.getClassLoader());
         spent_time = in.readString();
-        distance = in.readString();
-        fuel = in.readString();
+        distance = in.readDouble();
+        distanceDisplay = in.readString();
+        fuel = in.readDouble();
+        fuelDisplay = in.readString();
         id = in.readString();
         state = in.readInt();
         cancel_reason = in.readString();
@@ -211,8 +215,10 @@ public class order implements Parcelable {
         dest.writeParcelable(end_timestamp, flags);
         dest.writeParcelable(order_active_timestamp, flags);
         dest.writeString(spent_time);
-        dest.writeString(distance);
-        dest.writeString(fuel);
+        dest.writeDouble(distance);
+        dest.writeString(distanceDisplay);
+        dest.writeDouble(fuel);
+        dest.writeString(fuelDisplay);
         dest.writeString(id);
         dest.writeInt(state);
         dest.writeString(cancel_reason);
